@@ -2,8 +2,10 @@ import Link from 'next/link'
 import { supabaseAdmin } from '@/lib/supabase/server'
 import { Button } from '@/components/ui/button'
 import { FiPlus, FiEdit, FiTrash2, FiUsers } from 'react-icons/fi'
+import { TeamMember } from '@/types'
+import Image from 'next/image'
 
-async function getTeamMembers() {
+async function getTeamMembers(): Promise<TeamMember[]> {
   const { data, error } = await supabaseAdmin
     .from('team_members')
     .select('*')

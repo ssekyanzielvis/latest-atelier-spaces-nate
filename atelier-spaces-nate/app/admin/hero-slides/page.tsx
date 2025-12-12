@@ -2,8 +2,10 @@ import Link from 'next/link'
 import { supabaseAdmin } from '@/lib/supabase/server'
 import { Button } from '@/components/ui/button'
 import { FiPlus, FiEdit, FiTrash2, FiSliders } from 'react-icons/fi'
+import { HeroSlide } from '@/types'
+import Image from 'next/image'
 
-async function getHeroSlides() {
+async function getHeroSlides(): Promise<HeroSlide[]> {
   const { data, error } = await supabaseAdmin
     .from('hero_slides')
     .select('*')

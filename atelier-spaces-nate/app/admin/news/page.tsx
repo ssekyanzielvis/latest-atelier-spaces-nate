@@ -3,8 +3,10 @@ import { supabaseAdmin } from '@/lib/supabase/server'
 import { Button } from '@/components/ui/button'
 import { FiPlus, FiEdit, FiTrash2, FiEye, FiFileText } from 'react-icons/fi'
 import { format } from 'date-fns'
+import { NewsArticle } from '@/types'
+import Image from 'next/image'
 
-async function getNews() {
+async function getNews(): Promise<NewsArticle[]> {
   const { data, error } = await supabaseAdmin
     .from('news_articles')
     .select('*')

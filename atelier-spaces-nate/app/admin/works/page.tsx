@@ -2,8 +2,10 @@ import Link from 'next/link'
 import { supabaseAdmin } from '@/lib/supabase/server'
 import { Button } from '@/components/ui/button'
 import { FiPlus, FiEdit, FiTrash2, FiEye, FiImage } from 'react-icons/fi'
+import { Work } from '@/types'
+import Image from 'next/image'
 
-async function getWorks() {
+async function getWorks(): Promise<Work[]> {
   const { data, error } = await supabaseAdmin
     .from('works')
     .select('*')
