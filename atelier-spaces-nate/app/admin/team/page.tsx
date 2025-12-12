@@ -66,7 +66,7 @@ export default async function AdminTeamPage() {
               )}
               <div className="p-6">
                 <h3 className="text-lg font-semibold text-gray-900">{member.name}</h3>
-                <p className="text-sm text-gray-600 mt-1">{member.role}</p>
+                <p className="text-sm text-gray-600 mt-1">{member.position}</p>
                 {member.bio && (
                   <p className="text-sm text-gray-500 mt-3 line-clamp-2">{member.bio}</p>
                 )}

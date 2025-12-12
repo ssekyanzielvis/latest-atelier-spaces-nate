@@ -64,7 +64,7 @@ export default async function AdminNewsPage() {
                     Article
                   </th>
                   <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                    Category
+                    Author
                   </th>
                   <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                     Published Date
@@ -79,9 +79,9 @@ export default async function AdminNewsPage() {
                   <tr key={article.id} className="hover:bg-gray-50 transition-colors">
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-4">
-                        {article.cover_image && (
+                        {article.image && (
                           <img
-                            src={article.cover_image}
+                            src={article.image}
                             alt={article.title}
                             className="w-16 h-16 rounded-lg object-cover"
                           />
@@ -96,7 +96,7 @@ export default async function AdminNewsPage() {
                     </td>
                     <td className="px-6 py-4">
                       <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
-                        {article.category}
+                        {article.author || 'Admin'}
                       </span>
                     </td>
                     <td className="px-6 py-4 text-gray-700">

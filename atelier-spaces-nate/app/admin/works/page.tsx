@@ -57,9 +57,9 @@ export default async function AdminWorksPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {works.map((work) => (
             <div key={work.id} className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow">
-              {work.cover_image && (
+              {work.image && (
                 <img
-                  src={work.cover_image}
+                  src={work.image}
                   alt={work.title}
                   className="w-full h-48 object-cover"
                 />

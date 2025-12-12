@@ -80,9 +80,9 @@ export default async function AdminProjectsPage() {
                   <tr key={project.id} className="hover:bg-gray-50 transition-colors">
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-4">
-                        {project.cover_image && (
+                        {project.image && (
                           <img
-                            src={project.cover_image}
+                            src={project.image}
                             alt={project.title}
                             className="w-16 h-16 rounded-lg object-cover"
                           />

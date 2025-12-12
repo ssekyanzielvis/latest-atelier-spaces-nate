@@ -58,9 +58,9 @@ export default async function AdminHeroSlidesPage() {
           {slides.map((slide) => (
             <div key={slide.id} className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow">
               <div className="flex flex-col md:flex-row">
-                {slide.image_url && (
+                {slide.image && (
                   <img
-                    src={slide.image_url}
+                    src={slide.image}
                     alt={slide.title}
                     className="w-full md:w-64 h-48 object-cover"
                   />
@@ -69,10 +69,7 @@ export default async function AdminHeroSlidesPage() {
                   <div className="flex items-start justify-between">
                     <div>
                       <h3 className="text-lg font-semibold text-gray-900">{slide.title}</h3>
-                      <p className="text-gray-600 mt-1">{slide.subtitle}</p>
-                      {slide.description && (
-                        <p className="text-sm text-gray-500 mt-2 line-clamp-2">{slide.description}</p>
-                      )}
+                      <p className="text-gray-600 mt-1">{slide.subtitle || 'No subtitle'}</p>
                       <div className="flex items-center gap-3 mt-4">
                         <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700">
                           Order: {slide.order_position}
