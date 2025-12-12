@@ -2,6 +2,7 @@ import { auth } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import AdminSidebar from '@/components/admin/Sidebar'
 import AdminHeader from '@/components/admin/AdminHeader'
+import '../globals.css'
 
 export default async function AdminLayout({
   children,
