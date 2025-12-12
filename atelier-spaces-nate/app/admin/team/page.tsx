@@ -57,9 +57,9 @@ export default async function AdminTeamPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {teamMembers.map((member) => (
             <div key={member.id} className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow">
-              {member.photo && (
+              {member.image && (
                 <img
-                  src={member.photo}
+                  src={member.image}
                   alt={member.name}
                   className="w-full h-64 object-cover"
                 />
