@@ -4,12 +4,12 @@ import { Button } from '@/components/ui/button'
 
 export default function AdminHeader() {
   return (
-    <header className="bg-white border-b border-border h-16 flex items-center px-6">
+    <header className="bg-white border-b border-gray-200 h-16 flex items-center px-6 shadow-sm">
       <div className="flex items-center justify-between w-full">
-        <h1 className="text-xl font-semibold">Admin Dashboard</h1>
+        <h1 className="text-xl font-bold text-gray-900">Admin Dashboard</h1>
         <Link href="/" target="_blank">
-          <Button variant="outline" size="sm">
-            <FiEye className="mr-2" size={16} />
+          <Button variant="outline" size="sm" className="gap-2 hover:bg-gray-100">
+            <FiEye size={16} />
             View Site
           </Button>
         </Link>
