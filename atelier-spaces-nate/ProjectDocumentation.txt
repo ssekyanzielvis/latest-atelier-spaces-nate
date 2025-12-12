@@ -1,0 +1,1648 @@
+🚀 Atelier Spaces Nate - Next.js Migration Guide
+📋 Table of Contents
+Project Overview
+
+Architecture Comparison
+
+Technology Stack
+
+Database Schema
+
+Authentication Strategy
+
+Project Structure
+
+Implementation Roadmap
+
+Detailed Implementation Steps
+
+Deployment Guide
+
+Migration Checklist
+
+🎯 Project Overview
+Transform the current Django REST API + React frontend architecture into a unified Next.js 14+ full-stack application with:
+
+✅ Single Framework: Next.js for both frontend and backend
+
+✅ Same Functionality: All current features (Projects, News, Team, Works, Collaborations)
+
+✅ Same UI/UX: Maintain existing design and user experience
+
+✅ Admin Interface: Secure admin dashboard for content management
+
+✅ Public Website: Open access for all visitors
+
+✅ Supabase Backend: PostgreSQL database + file storage
+
+✅ Netlify Deployment: Single deployment for entire application
+
+🏗️ Architecture Comparison
+Current Architecture (Django + React)
+text
+┌─────────────┐         ┌──────────────┐         ┌─────────────┐
+│   Netlify   │  HTTP   │    Render    │  SQL    │  Supabase   │
+│   (React)   │────────▶│   (Django)   │────────▶│    (DB)     │
+│  Frontend   │  CORS   │  REST API    │         │  Storage    │
+└─────────────┘         └──────────────┘         └─────────────┘
+New Architecture (Next.js)
+text
+┌──────────────────────────────┐         ┌─────────────┐
+│          Netlify             │         │  Supabase   │
+│  ┌────────────────────────┐  │  SQL    │             │
+│  │      Next.js App       │  │────────▶│  PostgreSQL │
+│  │  ┌──────────────────┐  │  │         │   Database  │
+│  │  │  Public Website  │  │  │         │             │
+│  │  │  (SSR/SSG)       │  │  │  HTTP   │   Storage   │
+│  │  └──────────────────┘  │  │────────▶│   Buckets   │
+│  │  ┌──────────────────┐  │  │         │             │
+│  │  │ Admin Dashboard  │  │  │         └─────────────┘
+│  │  │  (Protected)     │  │  │
+│  │  └──────────────────┘  │  │
+│  │  ┌──────────────────┐  │  │
+│  │  │   API Routes     │  │  │
+│  │  │  (Serverless)    │  │  │
+│  │  └──────────────────┘  │  │
+│  └────────────────────────┘  │
+└──────────────────────────────┘
+Benefits:
+
+⚡ No CORS issues (same origin)
+
+🚀 Faster (no network hop between frontend/backend)
+
+💰 Cheaper (one deployment instead of two)
+
+🔧 Simpler (one codebase, one framework)
+
+📦 Better SEO (Server-Side Rendering)
+
+🛠️ Technology Stack
+Core Framework
+Next.js 14+: App Router (React Server Components)
+
+React 18+: UI components
+
+TypeScript: Type safety throughout
+
+Database & Storage
+Supabase PostgreSQL: Primary database
+
+Supabase Storage: Image/file uploads
+
+@supabase/supabase-js: JavaScript client
+
+Authentication
+NextAuth.js v5 (Auth.js): Admin authentication
+
+Supabase Auth (Alternative): Can use for admin login
+
+Credentials Provider: Username/password for admins
+
+Styling & UI
+Tailwind CSS: Same utility classes as current
+
+Headless UI: Accessible components
+
+React Icons: Icon library
+
+Framer Motion: Animations
+
+Admin Interface
+React Admin (Option 1): Full-featured admin framework
+
+Custom Dashboard (Option 2): Build from scratch with Shadcn/ui
+
+Refine (Option 3): Headless admin framework
+
+Forms & Validation
+React Hook Form: Form management
+
+Zod: Schema validation
+
+Server Actions: Form submissions
+
+Deployment
+Netlify: Hosting with serverless functions
+
+Environment Variables: Secure config management
+
+🗄️ Database Schema
+Supabase Tables (Same as Django Models)
+1. Categories
+sql
+CREATE TABLE categories (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  name VARCHAR(100) NOT NULL UNIQUE,
+  description TEXT,
+  slug VARCHAR(100) NOT NULL UNIQUE,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE INDEX idx_categories_slug ON categories(slug);
+2. Projects
+sql
+CREATE TABLE projects (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  title VARCHAR(200) NOT NULL,
+  description TEXT NOT NULL,
+  category_id UUID REFERENCES categories(id) ON DELETE SET NULL,
+  image TEXT NOT NULL,
+  client VARCHAR(200),
+  location VARCHAR(200),
+  year INTEGER,
+  area DECIMAL(10,2),
+  status VARCHAR(50),
+  featured BOOLEAN DEFAULT false,
+  slug VARCHAR(200) NOT NULL UNIQUE,
+  gallery_image_1 TEXT,
+  gallery_image_2 TEXT,
+  gallery_image_3 TEXT,
+  gallery_image_4 TEXT,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE INDEX idx_projects_slug ON projects(slug);
+CREATE INDEX idx_projects_category ON projects(category_id);
+CREATE INDEX idx_projects_featured ON projects(featured);
+3. News Articles
+sql
+CREATE TABLE news_articles (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  title VARCHAR(200) NOT NULL,
+  content TEXT NOT NULL,
+  excerpt TEXT,
+  image TEXT NOT NULL,
+  author VARCHAR(100),
+  published_date DATE DEFAULT CURRENT_DATE,
+  slug VARCHAR(200) NOT NULL UNIQUE,
+  featured BOOLEAN DEFAULT false,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE INDEX idx_news_slug ON news_articles(slug);
+CREATE INDEX idx_news_published ON news_articles(published_date);
+CREATE INDEX idx_news_featured ON news_articles(featured);
+4. Collaborations
+sql
+CREATE TABLE collaborations (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  name VARCHAR(200) NOT NULL,
+  description TEXT NOT NULL,
+  email VARCHAR(100) NOT NULL,
+  company VARCHAR(200),
+  phone VARCHAR(20),
+  project_type VARCHAR(100),
+  budget VARCHAR(100),
+  message TEXT NOT NULL,
+  status VARCHAR(50) DEFAULT 'pending',
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE INDEX idx_collaborations_status ON collaborations(status);
+CREATE INDEX idx_collaborations_created ON collaborations(created_at);
+5. Hero Slides
+sql
+CREATE TABLE hero_slides (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  title VARCHAR(200) NOT NULL,
+  subtitle TEXT,
+  image TEXT NOT NULL,
+  cta_text VARCHAR(50),
+  cta_link VARCHAR(200),
+  order_position INTEGER DEFAULT 0,
+  is_active BOOLEAN DEFAULT true,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE INDEX idx_hero_slides_order ON hero_slides(order_position);
+CREATE INDEX idx_hero_slides_active ON hero_slides(is_active);
+6. Work Categories
+sql
+CREATE TABLE work_categories (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  name VARCHAR(100) NOT NULL UNIQUE,
+  description TEXT,
+  slug VARCHAR(100) NOT NULL UNIQUE,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE INDEX idx_work_categories_slug ON work_categories(slug);
+7. Works
+sql
+CREATE TABLE works (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  title VARCHAR(200) NOT NULL,
+  description TEXT NOT NULL,
+  category_id UUID REFERENCES work_categories(id) ON DELETE SET NULL,
+  image TEXT NOT NULL,
+  client VARCHAR(200),
+  year INTEGER,
+  featured BOOLEAN DEFAULT false,
+  slug VARCHAR(200) NOT NULL UNIQUE,
+  gallery_image_1 TEXT,
+  gallery_image_2 TEXT,
+  gallery_image_3 TEXT,
+  gallery_image_4 TEXT,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE INDEX idx_works_slug ON works(slug);
+CREATE INDEX idx_works_category ON works(category_id);
+CREATE INDEX idx_works_featured ON works(featured);
+8. Team Members
+sql
+CREATE TABLE team_members (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  name VARCHAR(200) NOT NULL,
+  position VARCHAR(100) NOT NULL,
+  bio TEXT,
+  image TEXT NOT NULL,
+  email VARCHAR(100),
+  phone VARCHAR(20),
+  linkedin VARCHAR(200),
+  twitter VARCHAR(200),
+  order_position INTEGER DEFAULT 0,
+  is_active BOOLEAN DEFAULT true,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE INDEX idx_team_order ON team_members(order_position);
+CREATE INDEX idx_team_active ON team_members(is_active);
+9. About Section (Singleton)
+sql
+CREATE TABLE about_section (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  title VARCHAR(200) NOT NULL,
+  content TEXT NOT NULL,
+  mission TEXT,
+  vision TEXT,
+  values TEXT,
+  image TEXT,
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Ensure only one row exists
+CREATE UNIQUE INDEX idx_about_singleton ON about_section((id IS NOT NULL));
+10. Slogan Section (Singleton)
+sql
+CREATE TABLE slogan_section (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  main_slogan VARCHAR(200) NOT NULL,
+  sub_slogan TEXT,
+  background_image TEXT,
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Ensure only one row exists
+CREATE UNIQUE INDEX idx_slogan_singleton ON slogan_section((id IS NOT NULL));
+11. Admins (New - For Authentication)
+sql
+CREATE TABLE admins (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  username VARCHAR(50) NOT NULL UNIQUE,
+  email VARCHAR(100) NOT NULL UNIQUE,
+  password_hash TEXT NOT NULL,
+  full_name VARCHAR(200),
+  role VARCHAR(50) DEFAULT 'admin',
+  is_active BOOLEAN DEFAULT true,
+  last_login TIMESTAMP WITH TIME ZONE,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE INDEX idx_admins_username ON admins(username);
+CREATE INDEX idx_admins_email ON admins(email);
+Row Level Security (RLS) Policies
+sql
+-- Enable RLS on all tables
+ALTER TABLE categories ENABLE ROW LEVEL SECURITY;
+ALTER TABLE projects ENABLE ROW LEVEL SECURITY;
+ALTER TABLE news_articles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE collaborations ENABLE ROW LEVEL SECURITY;
+ALTER TABLE hero_slides ENABLE ROW LEVEL SECURITY;
+ALTER TABLE work_categories ENABLE ROW LEVEL SECURITY;
+ALTER TABLE works ENABLE ROW LEVEL SECURITY;
+ALTER TABLE team_members ENABLE ROW LEVEL SECURITY;
+ALTER TABLE about_section ENABLE ROW LEVEL SECURITY;
+ALTER TABLE slogan_section ENABLE ROW LEVEL SECURITY;
+ALTER TABLE admins ENABLE ROW LEVEL SECURITY;
+
+-- Public read access for content tables
+CREATE POLICY "Public read access" ON categories FOR SELECT USING (true);
+CREATE POLICY "Public read access" ON projects FOR SELECT USING (true);
+CREATE POLICY "Public read access" ON news_articles FOR SELECT USING (true);
+CREATE POLICY "Public read access" ON hero_slides FOR SELECT USING (is_active = true);
+CREATE POLICY "Public read access" ON work_categories FOR SELECT USING (true);
+CREATE POLICY "Public read access" ON works FOR SELECT USING (true);
+CREATE POLICY "Public read access" ON team_members FOR SELECT USING (is_active = true);
+CREATE POLICY "Public read access" ON about_section FOR SELECT USING (true);
+CREATE POLICY "Public read access" ON slogan_section FOR SELECT USING (true);
+
+-- Public insert for collaborations (contact form)
+CREATE POLICY "Public insert access" ON collaborations FOR INSERT WITH CHECK (true);
+
+-- Admin access (authenticated users) - CRUD for all tables
+-- Note: You'll need to use Supabase Auth or custom JWT verification
+CREATE POLICY "Admin full access" ON categories FOR ALL USING (auth.role() = 'authenticated');
+CREATE POLICY "Admin full access" ON projects FOR ALL USING (auth.role() = 'authenticated');
+CREATE POLICY "Admin full access" ON news_articles FOR ALL USING (auth.role() = 'authenticated');
+CREATE POLICY "Admin full access" ON collaborations FOR ALL USING (auth.role() = 'authenticated');
+CREATE POLICY "Admin full access" ON hero_slides FOR ALL USING (auth.role() = 'authenticated');
+CREATE POLICY "Admin full access" ON work_categories FOR ALL USING (auth.role() = 'authenticated');
+CREATE POLICY "Admin full access" ON works FOR ALL USING (auth.role() = 'authenticated');
+CREATE POLICY "Admin full access" ON team_members FOR ALL USING (auth.role() = 'authenticated');
+CREATE POLICY "Admin full access" ON about_section FOR ALL USING (auth.role() = 'authenticated');
+CREATE POLICY "Admin full access" ON slogan_section FOR ALL USING (auth.role() = 'authenticated');
+
+-- Admins table: Only accessible by authenticated admins
+CREATE POLICY "Admins read own data" ON admins FOR SELECT USING (auth.uid() = id);
+🔐 Authentication Strategy
+Option 1: NextAuth.js with Credentials Provider (Recommended)
+Why: Full control, works with custom admin table, no dependency on Supabase Auth
+
+Flow:
+
+Admin enters username/password on /admin/login
+
+NextAuth validates credentials against admins table in Supabase
+
+JWT token stored in secure HTTP-only cookie
+
+Middleware protects /admin/* routes
+
+Admin can access dashboard and manage content
+
+Implementation:
+
+typescript
+// lib/auth.ts
+import NextAuth from "next-auth"
+import Credentials from "next-auth/providers/credentials"
+import { compare } from "bcryptjs"
+import { createClient } from "@supabase/supabase-js"
+
+export const { handlers, auth, signIn, signOut } = NextAuth({
+  providers: [
+    Credentials({
+      credentials: {
+        username: { label: "Username", type: "text" },
+        password: { label: "Password", type: "password" }
+      },
+      authorize: async (credentials) => {
+        const supabase = createClient(
+          process.env.NEXT_PUBLIC_SUPABASE_URL!,
+          process.env.SUPABASE_SERVICE_ROLE_KEY! // Server-side only
+        )
+
+        const { data: admin } = await supabase
+          .from('admins')
+          .select('*')
+          .eq('username', credentials.username)
+          .single()
+
+        if (!admin || !admin.is_active) {
+          return null
+        }
+
+        const isValid = await compare(
+          credentials.password as string,
+          admin.password_hash
+        )
+
+        if (!isValid) {
+          return null
+        }
+
+        // Update last login
+        await supabase
+          .from('admins')
+          .update({ last_login: new Date().toISOString() })
+          .eq('id', admin.id)
+
+        return {
+          id: admin.id,
+          name: admin.full_name,
+          email: admin.email,
+          role: admin.role
+        }
+      }
+    })
+  ],
+  pages: {
+    signIn: '/admin/login',
+  },
+  callbacks: {
+    authorized: async ({ auth, request }) => {
+      const isAdminRoute = request.nextUrl.pathname.startsWith('/admin')
+      const isLoginPage = request.nextUrl.pathname === '/admin/login'
+
+      if (isAdminRoute && !isLoginPage) {
+        return !!auth // Require authentication for admin routes
+      }
+      return true // Allow access to public routes
+    }
+  }
+})
+Option 2: Supabase Auth
+Why: Integrated with Supabase, handles password reset, email verification
+
+Flow:
+
+Create admin users in Supabase Auth dashboard
+
+Use supabase.auth.signInWithPassword()
+
+Store session in cookies
+
+Middleware checks session validity
+
+Setup:
+
+Create admins in Supabase Auth dashboard manually
+
+Add custom user_metadata to distinguish admins from regular users
+
+Use Supabase RLS policies with auth.uid()
+
+📁 Project Structure
+text
+atelier-spaces-nextjs/
+├── app/
+│   ├── (public)/              # Public routes (website)
+│   │   ├── layout.tsx         # Public layout
+│   │   ├── page.tsx           # Homepage
+│   │   ├── projects/
+│   │   │   ├── page.tsx       # Projects list
+│   │   │   └── [slug]/
+│   │   │       └── page.tsx   # Project detail
+│   │   ├── news/
+│   │   │   ├── page.tsx       # News list
+│   │   │   └── [slug]/
+│   │   │       └── page.tsx   # News detail
+│   │   ├── works/
+│   │   │   ├── page.tsx       # Works list
+│   │   │   └── [slug]/
+│   │   │       └── page.tsx   # Work detail
+│   │   ├── team/
+│   │   │   └── page.tsx       # Team page
+│   │   ├── collaborate/
+│   │   │   └── page.tsx       # Collaboration form
+│   │   └── contact/
+│   │       └── page.tsx       # Contact page
+│   │
+│   ├── admin/                 # Admin routes (protected)
+│   │   ├── layout.tsx         # Admin layout
+│   │   ├── login/
+│   │   │   └── page.tsx       # Login page
+│   │   ├── dashboard/
+│   │   │   └── page.tsx       # Admin dashboard
+│   │   ├── projects/
+│   │   │   ├── page.tsx       # Manage projects
+│   │   │   ├── new/
+│   │   │   │   └── page.tsx   # Create project
+│   │   │   └── [id]/
+│   │   │       └── edit/
+│   │   │           └── page.tsx # Edit project
+│   │   ├── news/
+│   │   ├── works/
+│   │   ├── team/
+│   │   ├── hero-slides/
+│   │   ├── about/
+│   │   ├── slogan/
+│   │   └── collaborations/
+│   │
+│   ├── api/                   # API routes
+│   │   ├── projects/
+│   │   │   └── route.ts       # GET /api/projects
+│   │   ├── news/
+│   │   │   └── route.ts       # GET /api/news
+│   │   ├── upload/
+│   │   │   └── route.ts       # POST /api/upload (images)
+│   │   └── collaborate/
+│   │       └── route.ts       # POST /api/collaborate
+│   │
+│   ├── layout.tsx             # Root layout
+│   └── globals.css            # Global styles
+│
+├── components/
+│   ├── public/                # Public website components
+│   │   ├── Header.tsx
+│   │   ├── Footer.tsx
+│   │   ├── HeroSection.tsx
+│   │   ├── ProjectCard.tsx
+│   │   ├── NewsCard.tsx
+│   │   └── ContactForm.tsx
+│   │
+│   ├── admin/                 # Admin dashboard components
+│   │   ├── Sidebar.tsx
+│   │   ├── AdminHeader.tsx
+│   │   ├── DataTable.tsx
+│   │   ├── ImageUpload.tsx
+│   │   ├── RichTextEditor.tsx
+│   │   └── forms/
+│   │       ├── ProjectForm.tsx
+│   │       ├── NewsForm.tsx
+│   │       └── TeamMemberForm.tsx
+│   │
+│   └── ui/                    # Shared UI components (shadcn/ui)
+│       ├── button.tsx
+│       ├── input.tsx
+│       ├── dialog.tsx
+│       └── ...
+│
+├── lib/
+│   ├── supabase/
+│   │   ├── client.ts          # Client-side Supabase
+│   │   ├── server.ts          # Server-side Supabase
+│   │   └── storage.ts         # File upload helpers
+│   ├── auth.ts                # NextAuth configuration
+│   ├── utils.ts               # Utility functions
+│   └── validations.ts         # Zod schemas
+│
+├── types/
+│   ├── database.ts            # Supabase generated types
+│   └── index.ts               # Custom types
+│
+├── middleware.ts              # Auth middleware
+├── next.config.js             # Next.js config
+├── tailwind.config.ts         # Tailwind config
+├── .env.local                 # Environment variables
+└── package.json
+🗺️ Implementation Roadmap
+Phase 1: Project Setup (1-2 days)
+Initialize Next.js 14 project with TypeScript
+
+Install dependencies (Supabase, NextAuth, Tailwind, etc.)
+
+Configure environment variables
+
+Set up Supabase project and database
+
+Create database tables with SQL scripts
+
+Configure Supabase storage buckets
+
+Phase 2: Authentication (1-2 days)
+Set up NextAuth.js with Credentials provider
+
+Create admin login page UI
+
+Implement authentication logic
+
+Create middleware for route protection
+
+Create first admin user (using bcrypt for password)
+
+Test login/logout flow
+
+Phase 3: Public Website (3-5 days)
+Create layouts (public layout with header/footer)
+
+Build homepage with hero slides
+
+Implement projects list and detail pages
+
+Implement news list and detail pages
+
+Implement works list and detail pages
+
+Build team page
+
+Create about page
+
+Implement contact/collaboration form
+
+Add loading states and error handling
+
+Optimize with Server Components and caching
+
+Phase 4: Admin Dashboard (5-7 days)
+Create admin layout with sidebar navigation
+
+Build dashboard overview page
+
+Implement CRUD for Projects
+
+List view with search/filter
+
+Create form with image upload
+
+Edit form
+
+Delete functionality
+
+Implement CRUD for News Articles
+
+Implement CRUD for Works
+
+Implement CRUD for Team Members
+
+Implement CRUD for Hero Slides
+
+Implement CRUD for Work Categories
+
+Implement editor for About Section
+
+Implement editor for Slogan Section
+
+View and manage Collaborations
+
+Phase 5: API Routes (2-3 days)
+Create API route for fetching projects
+
+Create API route for fetching news
+
+Create API route for fetching works
+
+Create API route for team members
+
+Create API route for hero slides
+
+Create API route for about/slogan sections
+
+Create POST endpoint for collaborations
+
+Create upload endpoint for images
+
+Add rate limiting and validation
+
+Phase 6: Image Upload & Storage (1-2 days)
+Configure Supabase storage buckets
+
+Create image upload component
+
+Implement image optimization (next/image)
+
+Handle multiple images for galleries
+
+Add image preview functionality
+
+Test upload from admin dashboard
+
+Phase 7: Testing & Optimization (2-3 days)
+Test all CRUD operations
+
+Test authentication flows
+
+Test public website functionality
+
+Optimize images and performance
+
+Add loading skeletons
+
+Implement error boundaries
+
+Add toast notifications
+
+Test responsive design
+
+SEO optimization (metadata, sitemap)
+
+Phase 8: Deployment (1 day)
+Set up Netlify project
+
+Configure environment variables on Netlify
+
+Deploy to Netlify
+
+Test production build
+
+Configure custom domain (if needed)
+
+Set up monitoring and error tracking
+
+Total Estimated Time: 16-25 days (depending on experience)
+
+📖 Detailed Implementation Steps
+Step 1: Initialize Next.js Project
+bash
+# Create new Next.js app
+npx create-next-app@latest atelier-spaces-nextjs --typescript --tailwind --app --src-dir --import-alias "@/*"
+
+cd atelier-spaces-nextjs
+
+# Install dependencies
+npm install @supabase/supabase-js
+npm install next-auth@beta bcryptjs
+npm install react-hook-form zod @hookform/resolvers
+npm install react-icons
+npm install @tanstack/react-query
+npm install date-fns
+npm install sharp # For image optimization
+
+# Install dev dependencies
+npm install -D @types/bcryptjs
+npm install -D @supabase/supabase-js
+Step 2: Configure Environment Variables
+Create .env.local:
+
+bash
+# Supabase
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+
+# NextAuth
+NEXTAUTH_SECRET=generate-random-secret-here
+NEXTAUTH_URL=http://localhost:3000
+
+# App
+NEXT_PUBLIC_APP_URL=http://localhost:3000
+Step 3: Set Up Supabase
+Create Supabase Project:
+
+Go to https://app.supabase.com
+
+Click "New Project"
+
+Name: atelier-spaces-production
+
+Choose region closest to your users
+
+Generate strong database password
+
+Run SQL Scripts:
+
+Go to SQL Editor in Supabase dashboard
+
+Copy all CREATE TABLE statements from Database Schema
+
+Execute the SQL
+
+Verify tables created in Table Editor
+
+Create Storage Bucket:
+
+sql
+-- In Supabase SQL Editor
+INSERT INTO storage.buckets (id, name, public)
+VALUES ('atelier-media', 'atelier-media', true);
+Configure Storage Policy:
+
+sql
+-- Allow public read access
+CREATE POLICY "Public read access"
+ON storage.objects FOR SELECT
+USING (bucket_id = 'atelier-media');
+
+-- Allow authenticated uploads
+CREATE POLICY "Authenticated upload access"
+ON storage.objects FOR INSERT
+WITH CHECK (bucket_id = 'atelier-media' AND auth.role() = 'authenticated');
+
+-- Allow authenticated delete
+CREATE POLICY "Authenticated delete access"
+ON storage.objects FOR DELETE
+USING (bucket_id = 'atelier-media' AND auth.role() = 'authenticated');
+Step 4: Create Supabase Client
+typescript
+// lib/supabase/client.ts (Client-side)
+import { createBrowserClient } from '@supabase/ssr'
+
+export function createClient() {
+  return createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  )
+}
+
+// lib/supabase/server.ts (Server-side)
+import { createServerClient, type CookieOptions } from '@supabase/ssr'
+import { cookies } from 'next/headers'
+
+export function createServerClient() {
+  const cookieStore = cookies()
+
+  return createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        get(name: string) {
+          return cookieStore.get(name)?.value
+        },
+      },
+    }
+  )
+}
+
+// lib/supabase/storage.ts (File uploads)
+import { createClient } from './client'
+
+export async function uploadImage(file: File, path: string) {
+  const supabase = createClient()
+  
+  const fileExt = file.name.split('.').pop()
+  const fileName = `${Math.random()}.${fileExt}`
+  const filePath = `${path}/${fileName}`
+
+  const { data, error } = await supabase.storage
+    .from('atelier-media')
+    .upload(filePath, file, {
+      cacheControl: '3600',
+      upsert: false
+    })
+
+  if (error) throw error
+
+  const { data: urlData } = supabase.storage
+    .from('atelier-media')
+    .getPublicUrl(filePath)
+
+  return urlData.publicUrl
+}
+Step 5: Set Up NextAuth
+typescript
+// lib/auth.ts
+import NextAuth from "next-auth"
+import Credentials from "next-auth/providers/credentials"
+import { compare } from "bcryptjs"
+import { createClient } from "@supabase/supabase-js"
+
+const supabaseAdmin = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+)
+
+export const { handlers, auth, signIn, signOut } = NextAuth({
+  providers: [
+    Credentials({
+      credentials: {
+        username: {},
+        password: {}
+      },
+      authorize: async (credentials) => {
+        const { data: admin } = await supabaseAdmin
+          .from('admins')
+          .select('*')
+          .eq('username', credentials.username)
+          .eq('is_active', true)
+          .single()
+
+        if (!admin) return null
+
+        const isValid = await compare(
+          credentials.password as string,
+          admin.password_hash
+        )
+
+        if (!isValid) return null
+
+        // Update last login
+        await supabaseAdmin
+          .from('admins')
+          .update({ last_login: new Date().toISOString() })
+          .eq('id', admin.id)
+
+        return {
+          id: admin.id,
+          name: admin.full_name,
+          email: admin.email,
+        }
+      }
+    })
+  ],
+  pages: {
+    signIn: '/admin/login',
+  },
+  session: {
+    strategy: 'jwt',
+  },
+})
+
+// middleware.ts (Root level)
+import { auth } from "./lib/auth"
+import { NextResponse } from "next/server"
+
+export default auth((req) => {
+  const isAdminRoute = req.nextUrl.pathname.startsWith('/admin')
+  const isLoginPage = req.nextUrl.pathname === '/admin/login'
+  const isAuthenticated = !!req.auth
+
+  if (isAdminRoute && !isLoginPage && !isAuthenticated) {
+    return NextResponse.redirect(new URL('/admin/login', req.url))
+  }
+
+  if (isLoginPage && isAuthenticated) {
+    return NextResponse.redirect(new URL('/admin/dashboard', req.url))
+  }
+
+  return NextResponse.next()
+})
+
+export const config = {
+  matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
+}
+Step 6: Create First Admin User
+typescript
+// scripts/create-admin.ts
+import { createClient } from '@supabase/supabase-js'
+import { hash } from 'bcryptjs'
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+)
+
+async function createAdmin() {
+  const password = 'your-secure-password' // Change this!
+  const passwordHash = await hash(password, 10)
+
+  const { data, error } = await supabase
+    .from('admins')
+    .insert({
+      username: 'admin',
+      email: 'admin@atelierspacesnate.com',
+      password_hash: passwordHash,
+      full_name: 'Main Administrator',
+      role: 'admin',
+      is_active: true
+    })
+    .select()
+
+  if (error) {
+    console.error('Error creating admin:', error)
+  } else {
+    console.log('Admin created successfully:', data)
+  }
+}
+
+createAdmin()
+Run with: npx tsx scripts/create-admin.ts
+
+Step 7: Build Public Homepage
+typescript
+// app/(public)/page.tsx
+import { createServerClient } from '@/lib/supabase/server'
+import HeroSection from '@/components/public/HeroSection'
+import FeaturedProjects from '@/components/public/FeaturedProjects'
+import LatestNews from '@/components/public/LatestNews'
+
+export const revalidate = 60 // Revalidate every 60 seconds
+
+export default async function HomePage() {
+  const supabase = createServerClient()
+
+  // Fetch hero slides
+  const { data: heroSlides } = await supabase
+    .from('hero_slides')
+    .select('*')
+    .eq('is_active', true)
+    .order('order_position')
+
+  // Fetch featured projects
+  const { data: featuredProjects } = await supabase
+    .from('projects')
+    .select('*, category:categories(name)')
+    .eq('featured', true)
+    .limit(6)
+
+  // Fetch latest news
+  const { data: latestNews } = await supabase
+    .from('news_articles')
+    .select('*')
+    .order('published_date', { ascending: false })
+    .limit(3)
+
+  // Fetch slogan
+  const { data: slogan } = await supabase
+    .from('slogan_section')
+    .select('*')
+    .single()
+
+  return (
+    <main>
+      <HeroSection slides={heroSlides || []} />
+      
+      {slogan && (
+        <section className="py-20 bg-gray-100">
+          <div className="container mx-auto text-center">
+            <h2 className="text-4xl font-bold mb-4">{slogan.main_slogan}</h2>
+            <p className="text-xl text-gray-600">{slogan.sub_slogan}</p>
+          </div>
+        </section>
+      )}
+
+      <FeaturedProjects projects={featuredProjects || []} />
+      <LatestNews articles={latestNews || []} />
+    </main>
+  )
+}
+Step 8: Build Admin Dashboard
+typescript
+// app/admin/dashboard/page.tsx
+import { auth } from '@/lib/auth'
+import { redirect } from 'next/navigation'
+import { createServerClient } from '@/lib/supabase/server'
+import StatsCard from '@/components/admin/StatsCard'
+
+export default async function AdminDashboard() {
+  const session = await auth()
+  if (!session) redirect('/admin/login')
+
+  const supabase = createServerClient()
+
+  // Get stats
+  const [
+    { count: projectsCount },
+    { count: newsCount },
+    { count: worksCount },
+    { count: collaborationsCount }
+  ] = await Promise.all([
+    supabase.from('projects').select('*', { count: 'exact', head: true }),
+    supabase.from('news_articles').select('*', { count: 'exact', head: true }),
+    supabase.from('works').select('*', { count: 'exact', head: true }),
+    supabase.from('collaborations').select('*', { count: 'exact', head: true })
+  ])
+
+  return (
+    <div className="p-8">
+      <h1 className="text-3xl font-bold mb-8">Dashboard</h1>
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <StatsCard title="Projects" count={projectsCount || 0} icon="📁" />
+        <StatsCard title="News Articles" count={newsCount || 0} icon="📰" />
+        <StatsCard title="Works" count={worksCount || 0} icon="🎨" />
+        <StatsCard title="Collaborations" count={collaborationsCount || 0} icon="🤝" />
+      </div>
+    </div>
+  )
+}
+Step 9: Implement CRUD Operations
+typescript
+// app/admin/projects/page.tsx (List)
+import { createServerClient } from '@/lib/supabase/server'
+import Link from 'next/link'
+import { DeleteButton } from '@/components/admin/DeleteButton'
+
+export default async function ProjectsPage() {
+  const supabase = createServerClient()
+  
+  const { data: projects } = await supabase
+    .from('projects')
+    .select('*, category:categories(name)')
+    .order('created_at', { ascending: false })
+
+  return (
+    <div className="p-8">
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-3xl font-bold">Projects</h1>
+        <Link 
+          href="/admin/projects/new"
+          className="bg-blue-600 text-white px-4 py-2 rounded-lg"
+        >
+          Add New Project
+        </Link>
+      </div>
+
+      <div className="bg-white rounded-lg shadow overflow-hidden">
+        <table className="min-w-full">
+          <thead className="bg-gray-50">
+            <tr>
+              <th className="px-6 py-3 text-left">Title</th>
+              <th className="px-6 py-3 text-left">Category</th>
+              <th className="px-6 py-3 text-left">Status</th>
+              <th className="px-6 py-3 text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {projects?.map((project) => (
+              <tr key={project.id} className="border-t">
+                <td className="px-6 py-4">{project.title}</td>
+                <td className="px-6 py-4">{project.category?.name}</td>
+                <td className="px-6 py-4">{project.status}</td>
+                <td className="px-6 py-4 text-right">
+                  <Link 
+                    href={`/admin/projects/${project.id}/edit`}
+                    className="text-blue-600 mr-4"
+                  >
+                    Edit
+                  </Link>
+                  <DeleteButton projectId={project.id} />
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  )
+}
+
+// app/admin/projects/new/page.tsx (Create)
+import { ProjectForm } from '@/components/admin/forms/ProjectForm'
+
+export default function NewProjectPage() {
+  return (
+    <div className="p-8">
+      <h1 className="text-3xl font-bold mb-8">Create New Project</h1>
+      <ProjectForm />
+    </div>
+  )
+}
+
+// components/admin/forms/ProjectForm.tsx
+'use client'
+
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { z } from 'zod'
+import { createClient } from '@/lib/supabase/client'
+import { uploadImage } from '@/lib/supabase/storage'
+import { useRouter } from 'next/navigation'
+
+const projectSchema = z.object({
+  title: z.string().min(1, 'Title is required'),
+  description: z.string().min(1, 'Description is required'),
+  category_id: z.string().uuid(),
+  client: z.string().optional(),
+  location: z.string().optional(),
+  year: z.number().optional(),
+  area: z.number().optional(),
+  status: z.string().optional(),
+  featured: z.boolean().default(false),
+})
+
+type ProjectFormData = z.infer<typeof projectSchema>
+
+export function ProjectForm({ project }: { project?: any }) {
+  const router = useRouter()
+  const [loading, setLoading] = useState(false)
+  
+  const { register, handleSubmit, formState: { errors } } = useForm<ProjectFormData>({
+    resolver: zodResolver(projectSchema),
+    defaultValues: project || {}
+  })
+
+  const onSubmit = async (data: ProjectFormData) => {
+    setLoading(true)
+    const supabase = createClient()
+
+    try {
+      // Handle main image upload
+      let imageUrl = project?.image
+      if (mainImageFile) {
+        imageUrl = await uploadImage(mainImageFile, 'projects')
+      }
+
+      // Generate slug
+      const slug = data.title.toLowerCase().replace(/\s+/g, '-')
+
+      const projectData = {
+        ...data,
+        slug,
+        image: imageUrl,
+      }
+
+      if (project) {
+        // Update
+        await supabase
+          .from('projects')
+          .update(projectData)
+          .eq('id', project.id)
+      } else {
+        // Create
+        await supabase
+          .from('projects')
+          .insert(projectData)
+      }
+
+      router.push('/admin/projects')
+      router.refresh()
+    } catch (error) {
+      console.error('Error saving project:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return (
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      {/* Form fields */}
+    </form>
+  )
+}
+Step 10: Create API Routes
+typescript
+// app/api/projects/route.ts
+import { createServerClient } from '@/lib/supabase/server'
+import { NextResponse } from 'next/server'
+
+export async function GET(request: Request) {
+  const supabase = createServerClient()
+  const { searchParams } = new URL(request.url)
+  
+  const featured = searchParams.get('featured')
+  const category = searchParams.get('category')
+  
+  let query = supabase
+    .from('projects')
+    .select('*, category:categories(name)')
+  
+  if (featured === 'true') {
+    query = query.eq('featured', true)
+  }
+  
+  if (category) {
+    query = query.eq('category_id', category)
+  }
+  
+  const { data, error } = await query.order('created_at', { ascending: false })
+  
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 })
+  }
+  
+  return NextResponse.json(data)
+}
+
+// app/api/collaborate/route.ts
+import { createServerClient } from '@/lib/supabase/server'
+import { NextResponse } from 'next/server'
+import { z } from 'zod'
+
+const collaborationSchema = z.object({
+  name: z.string().min(1),
+  email: z.string().email(),
+  company: z.string().optional(),
+  phone: z.string().optional(),
+  project_type: z.string().optional(),
+  budget: z.string().optional(),
+  message: z.string().min(1),
+})
+
+export async function POST(request: Request) {
+  const supabase = createServerClient()
+  
+  try {
+    const body = await request.json()
+    const validatedData = collaborationSchema.parse(body)
+    
+    const { error } = await supabase
+      .from('collaborations')
+      .insert(validatedData)
+    
+    if (error) throw error
+    
+    return NextResponse.json({ success: true })
+  } catch (error) {
+    return NextResponse.json(
+      { error: 'Failed to submit collaboration request' },
+      { status: 400 }
+    )
+  }
+}
+🚀 Deployment Guide
+Prerequisites
+Netlify account
+
+Supabase project set up with all tables
+
+Next.js app fully tested locally
+
+Step 1: Prepare for Deployment
+bash
+# Build locally to test
+npm run build
+
+# Test production build
+npm start
+Step 2: Configure Netlify
+Push to Git:
+
+bash
+git init
+git add .
+git commit -m "Initial Next.js migration"
+git remote add origin <your-repo-url>
+git push -u origin main
+Connect to Netlify:
+
+Go to https://app.netlify.com
+
+Click "Add new site" → "Import an existing project"
+
+Select your Git provider (GitHub/GitLab)
+
+Choose your repository
+
+Configure build settings:
+
+Build command: npm run build
+
+Publish directory: .next
+
+Framework: Next.js
+
+Set Environment Variables:
+
+Go to Site settings → Environment variables
+
+Add all variables from .env.local:
+
+text
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+NEXTAUTH_SECRET=your-secret
+NEXTAUTH_URL=https://your-site.netlify.app
+NEXT_PUBLIC_APP_URL=https://your-site.netlify.app
+Deploy:
+
+Click "Deploy site"
+
+Wait for build to complete
+
+Visit your live site!
+
+Step 3: Configure Custom Domain (Optional)
+Go to Domain settings in Netlify
+
+Add custom domain
+
+Update DNS records as instructed
+
+Enable HTTPS (automatic)
+
+Step 4: Set Up Continuous Deployment
+Every push to main branch triggers automatic deployment
+
+Preview deployments for pull requests
+
+Branch deploys for testing
+
+✅ Migration Checklist
+Pre-Migration
+Review current Django codebase and identify all features
+
+Export current UI components and designs
+
+Document all API endpoints
+
+List all admin functionalities
+
+Back up current database (if migrating data)
+
+Supabase Setup
+Create Supabase project
+
+Run all CREATE TABLE SQL scripts
+
+Set up Row Level Security policies
+
+Create storage bucket atelier-media
+
+Configure storage policies
+
+Test database connectivity
+
+Create first admin user
+
+Next.js Development
+Initialize Next.js project
+
+Install all dependencies
+
+Configure environment variables
+
+Set up Supabase clients (client/server)
+
+Implement authentication with NextAuth
+
+Create middleware for route protection
+
+Build public website layouts
+
+Implement all public pages
+
+Build admin dashboard layout
+
+Implement admin CRUD operations
+
+Create API routes
+
+Implement image upload functionality
+
+Add form validations
+
+Implement error handling
+
+Add loading states
+
+Optimize images
+
+Test responsive design
+
+Test all features locally
+
+Data Migration (If Needed)
+Export data from Django database
+
+Transform data to match new schema
+
+Import data into Supabase
+
+Migrate images to Supabase storage
+
+Verify data integrity
+
+Test with production data
+
+Testing
+Test public website (all pages)
+
+Test admin login/logout
+
+Test all CRUD operations
+
+Test image uploads
+
+Test collaboration form submission
+
+Test on multiple devices
+
+Test on multiple browsers
+
+Perform security testing
+
+Check performance metrics
+
+Deployment
+Create production build
+
+Test production build locally
+
+Push code to Git repository
+
+Connect repository to Netlify
+
+Configure build settings
+
+Add environment variables
+
+Deploy to Netlify
+
+Test deployed application
+
+Configure custom domain (optional)
+
+Set up SSL certificate
+
+Test production site thoroughly
+
+Post-Deployment
+Monitor error logs
+
+Check performance metrics
+
+Verify all features work in production
+
+Add content through admin panel
+
+Test with real users
+
+Set up analytics (optional)
+
+Document any issues and fixes
+
+Create user guide for admin panel
+
+💡 Best Practices
+Security
+✅ Use environment variables for all secrets
+
+✅ Enable RLS on all Supabase tables
+
+✅ Implement proper authentication
+
+✅ Validate all user inputs (Zod)
+
+✅ Use CSRF protection (built into NextAuth)
+
+✅ Sanitize file uploads
+
+✅ Rate limit API endpoints
+
+Performance
+✅ Use Server Components for data fetching
+
+✅ Implement proper caching strategies
+
+✅ Optimize images with next/image
+
+✅ Use revalidation for frequently updated content
+
+✅ Minimize client-side JavaScript
+
+✅ Implement pagination for large lists
+
+Code Quality
+✅ Use TypeScript throughout
+
+✅ Create reusable components
+
+✅ Implement proper error handling
+
+✅ Add loading states everywhere
+
+✅ Write clean, documented code
+
+✅ Follow Next.js best practices
+
+SEO
+✅ Add proper metadata to all pages
+
+✅ Implement dynamic OG images
+
+✅ Create XML sitemap
+
+✅ Add robots.txt
+
+✅ Use semantic HTML
+
+✅ Optimize Core Web Vitals
+
+🆘 Troubleshooting
+Common Issues
+"Middleware not protecting routes"
+
+Check middleware.ts is in root directory
+
+Verify matcher pattern includes admin routes
+
+Test auth() function returns session
+
+"Supabase connection failed"
+
+Verify environment variables are set
+
+Check Supabase project is active
+
+Ensure correct URL and keys
+
+"Images not uploading"
+
+Verify storage bucket exists and is public
+
+Check RLS policies on storage.objects
+
+Ensure using service role key for server-side uploads
+
+"Admin can't login"
+
+Verify admin exists in database
+
+Check password hash matches
+
+Ensure is_active is true
+
+"Build fails on Netlify"
+
+Check all environment variables are set
+
+Verify all dependencies in package.json
+
+Review build logs for specific errors
+
+📚 Additional Resources
+Next.js Documentation: https://nextjs.org/docs
+
+Supabase Documentation: https://supabase.com/docs
+
+NextAuth.js Documentation: https://authjs.dev
+
+Tailwind CSS: https://tailwindcss.com/docs
+
+React Hook Form: https://react-hook-form.com
+
+Netlify Documentation: https://docs.netlify.com
+
+🎉 Conclusion
+This migration from Django + React to Next.js will:
+
+✅ Simplify your architecture (one framework)
+
+✅ Reduce deployment complexity (one deployment)
+
+✅ Improve performance (SSR, no CORS issues)
+
+✅ Maintain all current functionality
+
+✅ Keep the same UI/UX
+
+✅ Provide better SEO
+
+✅ Lower costs (one hosting platform)
+
+Estimated Timeline: 16-25 days for complete migration
+
+Ready to start? Follow the implementation steps above and refer back to this guide throughout the process!
+
+Good luck with your Next.js migration! 🚀
