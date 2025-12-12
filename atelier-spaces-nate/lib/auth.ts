@@ -64,17 +64,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   session: {
     strategy: 'jwt',
   },
-  callbacks: {
-    authorized: async ({ auth, request }) => {
-      const isAdminRoute = request.nextUrl.pathname.startsWith('/admin')
-      const isLoginPage = request.nextUrl.pathname === '/admin/login'
-
-      if (isAdminRoute && !isLoginPage) {
-        return !!auth
-      }
-      return true
-    },
-  },
   secret: process.env.NEXTAUTH_SECRET,
   trustHost: true,
 })
