@@ -1,5 +1,9 @@
 import { Database } from './database'
 
+export type Admin = Database['public']['Tables']['admins']['Row']
+export type AdminInsert = Database['public']['Tables']['admins']['Insert']
+export type AdminUpdate = Database['public']['Tables']['admins']['Update']
+
 export type Project = Database['public']['Tables']['projects']['Row']
 export type ProjectInsert = Database['public']['Tables']['projects']['Insert']
 export type ProjectUpdate = Database['public']['Tables']['projects']['Update']

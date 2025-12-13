@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { hash } from 'bcryptjs'
 import { supabaseAdmin } from '@/lib/supabase/server'
+import { Database } from '@/types/database'
 
 export async function POST(request: NextRequest) {
   try {
@@ -47,18 +48,19 @@ export async function POST(request: NextRequest) {
     const passwordHash = await hash(password, 10)
 
     // Create new admin user
+    type AdminInsert = Database['public']['Tables']['admins']['Insert']
+    const insertData: AdminInsert = {
+      username,
+      email,
+      password_hash: passwordHash,
+      full_name,
+      role: role || 'admin',
+      is_active: true,
+    }
+
     const { data: newAdmin, error: insertError } = await supabaseAdmin
       .from('admins')
-      .insert([
-        {
-          username,
-          email,
-          password_hash: passwordHash,
-          full_name,
-          role: role || 'admin',
-          is_active: true,
-        },
-      ])
+      .insert(insertData as any)
       .select()
       .single()
 
@@ -70,15 +72,18 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    type AdminRow = Database['public']['Tables']['admins']['Row']
+    const admin = newAdmin as AdminRow
+
     return NextResponse.json(
       { 
         message: 'Admin user created successfully',
         admin: {
-          id: newAdmin.id,
-          username: newAdmin.username,
-          email: newAdmin.email,
-          full_name: newAdmin.full_name,
-          role: newAdmin.role,
+          id: admin.id,
+          username: admin.username,
+          email: admin.email,
+          full_name: admin.full_name,
+          role: admin.role,
         }
       },
       { status: 201 }
@@ -104,7 +109,8 @@ export async function PATCH(request: NextRequest) {
       )
     }
 
-    const updateData: any = {
+    type AdminUpdate = Database['public']['Tables']['admins']['Update']
+    const updateData: AdminUpdate = {
       updated_at: new Date().toISOString(),
     }
 
@@ -119,9 +125,9 @@ export async function PATCH(request: NextRequest) {
       updateData.password_hash = await hash(password, 10)
     }
 
-    const { data: updatedAdmin, error: updateError } = await supabaseAdmin
-      .from('admins')
-      .update(updateData)
+    const { data: updatedAdmin, error: updateError } = await (supabaseAdmin
+      .from('admins') as any)
+      .update(updateData as any)
       .eq('id', id)
       .select()
       .single()
@@ -134,16 +140,19 @@ export async function PATCH(request: NextRequest) {
       )
     }
 
+    type AdminRow = Database['public']['Tables']['admins']['Row']
+    const admin = updatedAdmin as AdminRow
+
     return NextResponse.json(
       {
         message: 'Admin user updated successfully',
         admin: {
-          id: updatedAdmin.id,
-          username: updatedAdmin.username,
-          email: updatedAdmin.email,
-          full_name: updatedAdmin.full_name,
-          role: updatedAdmin.role,
-          is_active: updatedAdmin.is_active,
+          id: admin.id,
+          username: admin.username,
+          email: admin.email,
+          full_name: admin.full_name,
+          role: admin.role,
+          is_active: admin.is_active,
         }
       },
       { status: 200 }
