@@ -4,6 +4,8 @@ import { Database } from '@/types/database'
 
 type Admin = Database['public']['Tables']['admins']['Row']
 
+export const dynamic = 'force-dynamic'
+
 export default async function AdminUsersPage() {
   const { data, error } = await supabaseAdmin
     .from('admins')

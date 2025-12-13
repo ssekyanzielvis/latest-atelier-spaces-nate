@@ -3,33 +3,49 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { FiFolder, FiFileText, FiImage, FiUsers, FiMessageSquare, FiLayers, FiTag } from 'react-icons/fi'
 import Link from 'next/link'
 
-async function getStats() {
-  const [
-    { count: projectsCount },
-    { count: newsCount },
-    { count: worksCount },
-    { count: teamCount },
-    { count: collaborationsCount },
-    { count: categoriesCount },
-    { count: heroSlidesCount },
-  ] = await Promise.all([
-    supabaseAdmin.from('projects').select('*', { count: 'exact', head: true }),
-    supabaseAdmin.from('news_articles').select('*', { count: 'exact', head: true }),
-    supabaseAdmin.from('works').select('*', { count: 'exact', head: true }),
-    supabaseAdmin.from('team_members').select('*', { count: 'exact', head: true }),
-    supabaseAdmin.from('collaborations').select('*', { count: 'exact', head: true }),
-    supabaseAdmin.from('categories').select('*', { count: 'exact', head: true }),
-    supabaseAdmin.from('hero_slides').select('*', { count: 'exact', head: true }),
-  ])
+// Force dynamic rendering
+export const dynamic = 'force-dynamic'
 
-  return {
-    projects: projectsCount || 0,
-    news: newsCount || 0,
-    works: worksCount || 0,
-    team: teamCount || 0,
-    collaborations: collaborationsCount || 0,
-    categories: categoriesCount || 0,
-    heroSlides: heroSlidesCount || 0,
+async function getStats() {
+  try {
+    const [
+      projectsResult,
+      newsResult,
+      worksResult,
+      teamResult,
+      collaborationsResult,
+      categoriesResult,
+      heroSlidesResult,
+    ] = await Promise.all([
+      supabaseAdmin.from('projects').select('*', { count: 'exact', head: true }),
+      supabaseAdmin.from('news_articles').select('*', { count: 'exact', head: true }),
+      supabaseAdmin.from('works').select('*', { count: 'exact', head: true }),
+      supabaseAdmin.from('team_members').select('*', { count: 'exact', head: true }),
+      supabaseAdmin.from('collaborations').select('*', { count: 'exact', head: true }),
+      supabaseAdmin.from('categories').select('*', { count: 'exact', head: true }),
+      supabaseAdmin.from('hero_slides').select('*', { count: 'exact', head: true }),
+    ])
+
+    return {
+      projects: projectsResult.count || 0,
+      news: newsResult.count || 0,
+      works: worksResult.count || 0,
+      team: teamResult.count || 0,
+      collaborations: collaborationsResult.count || 0,
+      categories: categoriesResult.count || 0,
+      heroSlides: heroSlidesResult.count || 0,
+    }
+  } catch (error) {
+    console.error('Error fetching stats:', error)
+    return {
+      projects: 0,
+      news: 0,
+      works: 0,
+      team: 0,
+      collaborations: 0,
+      categories: 0,
+      heroSlides: 0,
+    }
   }
 }
 
