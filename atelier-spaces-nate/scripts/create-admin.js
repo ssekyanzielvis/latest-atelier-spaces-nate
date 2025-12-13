@@ -26,43 +26,58 @@ if (!supabaseUrl || !supabaseServiceKey) {
 const supabase = createClient(supabaseUrl, supabaseServiceKey)
 
 async function createAdmin() {
-  const username = 'admin'
-  const email = 'admin@atelier.com'
-  const password = 'admin123' // Change this to a secure password
-  const fullName = 'Administrator'
+  const admins = [
+    {
+      username: 'admin',
+      email: 'admin@atelier.com',
+      password: 'admin123',
+      full_name: 'Administrator',
+      role: 'admin',
+    },
+    {
+      username: 'ssekyanzi',
+      email: 'abdulsalamssekyanzi@gmail.com',
+      password: 'Su4at3#0',
+      full_name: 'Abdul Salam Ssekyanzi',
+      role: 'super_admin',
+    },
+  ]
 
   try {
-    // Hash the password
-    const passwordHash = await bcrypt.hash(password, 10)
+    for (const admin of admins) {
+      // Hash the password
+      const passwordHash = await bcrypt.hash(admin.password, 10)
 
-    // Insert admin user
-    const { data, error } = await supabase
-      .from('admins')
-      .insert([
-        {
-          username,
-          email,
-          password_hash: passwordHash,
-          full_name: fullName,
-          role: 'admin',
-          is_active: true,
-        },
-      ])
-      .select()
+      // Insert admin user
+      const { data, error } = await supabase
+        .from('admins')
+        .insert([
+          {
+            username: admin.username,
+            email: admin.email,
+            password_hash: passwordHash,
+            full_name: admin.full_name,
+            role: admin.role,
+            is_active: true,
+          },
+        ])
+        .select()
 
-    if (error) {
-      if (error.code === '23505') {
-        console.log('Admin user already exists')
+      if (error) {
+        if (error.code === '23505') {
+          console.log(`ℹ️  ${admin.username} already exists`)
+        } else {
+          throw error
+        }
       } else {
-        throw error
+        console.log(`✅ Admin user created successfully!`)
+        console.log(`Username: ${admin.username}`)
+        console.log(`Email: ${admin.email}`)
+        console.log(`Role: ${admin.role}`)
+        console.log('')
       }
-    } else {
-      console.log('✅ Admin user created successfully!')
-      console.log('Username:', username)
-      console.log('Email:', email)
-      console.log('Password:', password)
-      console.log('\n⚠️  IMPORTANT: Change the password after first login!')
     }
+    console.log('\n🎉 All admin users processed!')
   } catch (error) {
     console.error('Error creating admin:', error.message)
     process.exit(1)
