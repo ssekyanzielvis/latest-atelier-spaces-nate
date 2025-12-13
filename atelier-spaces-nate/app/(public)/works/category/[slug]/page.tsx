@@ -1,4 +1,4 @@
-import { createServerClient } from '@/lib/supabase/server'
+import { supabaseAdmin } from '@/lib/supabase/server'
 import { Database } from '@/types/database'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -8,8 +8,7 @@ type Work = Database['public']['Tables']['works']['Row']
 type WorkCategory = Database['public']['Tables']['work_categories']['Row']
 
 async function getCategory(slug: string): Promise<WorkCategory | null> {
-  const supabase = await createServerClient()
-  const { data, error } = await supabase
+  const { data, error } = await supabaseAdmin
     .from('work_categories')
     .select('*')
     .eq('slug', slug)

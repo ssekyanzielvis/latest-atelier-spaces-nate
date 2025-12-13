@@ -1,14 +1,13 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { createServerClient } from '@/lib/supabase/server'
+import { supabaseAdmin } from '@/lib/supabase/server'
 import { Database } from '@/types/database'
 
 type Work = Database['public']['Tables']['works']['Row']
 
 async function getWork(slug: string): Promise<Work | null> {
-  const supabase = await createServerClient()
-  const { data, error } = await supabase
+  const { data, error } = await supabaseAdmin
     .from('works')
     .select('*')
     .eq('slug', slug)
@@ -25,8 +24,7 @@ async function getWork(slug: string): Promise<Work | null> {
 async function getRelatedWorks(categoryId: string | null, currentWorkId: string): Promise<Work[]> {
   if (!categoryId) return []
   
-  const supabase = await createServerClient()
-  const { data, error } = await supabase
+  const { data, error } = await supabaseAdmin
     .from('works')
     .select('*')
     .eq('category_id', categoryId)

@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { createServerClient } from '@/lib/supabase/server'
+import { supabaseAdmin } from '@/lib/supabase/server'
 import HeroSection from '@/components/public/HeroSection'
 import { Database } from '@/types/database'
 import Image from 'next/image'
@@ -12,8 +12,7 @@ type TeamMember = Database['public']['Tables']['team_members']['Row']
 type SloganSection = Database['public']['Tables']['slogan_section']['Row']
 
 async function getHeroSlides(): Promise<HeroSlide[]> {
-  const supabase = await createServerClient()
-  const { data, error } = await supabase
+  const { data, error } = await supabaseAdmin
     .from('hero_slides')
     .select('*')
     .eq('is_active', true)
@@ -28,8 +27,7 @@ async function getHeroSlides(): Promise<HeroSlide[]> {
 }
 
 async function getFeaturedWorks(): Promise<Work[]> {
-  const supabase = await createServerClient()
-  const { data, error } = await supabase
+  const { data, error } = await supabaseAdmin
     .from('works')
     .select('*')
     .eq('featured', true)
@@ -45,8 +43,7 @@ async function getFeaturedWorks(): Promise<Work[]> {
 }
 
 async function getWorkCategories(): Promise<WorkCategory[]> {
-  const supabase = await createServerClient()
-  const { data, error } = await supabase
+  const { data, error } = await supabaseAdmin
     .from('work_categories')
     .select('*')
     .order('name', { ascending: true })
@@ -60,8 +57,7 @@ async function getWorkCategories(): Promise<WorkCategory[]> {
 }
 
 async function getAboutSection(): Promise<AboutSection | null> {
-  const supabase = await createServerClient()
-  const { data, error } = await supabase
+  const { data, error } = await supabaseAdmin
     .from('about_section')
     .select('*')
     .single()
@@ -74,8 +70,7 @@ async function getAboutSection(): Promise<AboutSection | null> {
 }
 
 async function getTeamMembers(): Promise<TeamMember[]> {
-  const supabase = await createServerClient()
-  const { data, error } = await supabase
+  const { data, error } = await supabaseAdmin
     .from('team_members')
     .select('*')
     .eq('is_active', true)
@@ -91,8 +86,7 @@ async function getTeamMembers(): Promise<TeamMember[]> {
 }
 
 async function getSloganSection(): Promise<SloganSection | null> {
-  const supabase = await createServerClient()
-  const { data, error } = await supabase
+  const { data, error } = await supabaseAdmin
     .from('slogan_section')
     .select('*')
     .single()
