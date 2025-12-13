@@ -13,7 +13,9 @@ import {
   FiInfo, 
   FiMessageSquare,
   FiLogOut,
-  FiLayout
+  FiLayout,
+  FiTag,
+  FiLayers
 } from 'react-icons/fi'
 
 const navItems = [
@@ -23,6 +25,8 @@ const navItems = [
   { href: '/admin/news', label: 'News', icon: FiFileText },
   { href: '/admin/team', label: 'Team', icon: FiUsers },
   { href: '/admin/hero-slides', label: 'Hero Slides', icon: FiSliders },
+  { href: '/admin/categories', label: 'Categories', icon: FiTag },
+  { href: '/admin/work-categories', label: 'Work Categories', icon: FiLayers },
   { href: '/admin/about', label: 'About', icon: FiInfo },
   { href: '/admin/slogan', label: 'Slogan', icon: FiLayout },
   { href: '/admin/collaborations', label: 'Collaborations', icon: FiMessageSquare },
