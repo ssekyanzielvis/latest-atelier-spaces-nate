@@ -45,14 +45,36 @@ async function createAdmin() {
 
   try {
     for (const admin of admins) {
+      // Create Supabase Auth user
+      const { data: authData, error: authError } = await supabase.auth.admin.createUser({
+        email: admin.email,
+        password: admin.password,
+        email_confirm: true,
+        user_metadata: {
+          username: admin.username,
+          full_name: admin.full_name,
+          role: admin.role,
+        },
+      })
+
+      if (authError) {
+        if (authError.message.includes('already registered')) {
+          console.log(`ℹ️  Auth user ${admin.email} already exists`)
+        } else {
+          console.error(`Error creating auth user ${admin.email}:`, authError.message)
+          continue
+        }
+      }
+
       // Hash the password
       const passwordHash = await bcrypt.hash(admin.password, 10)
 
-      // Insert admin user
+      // Insert admin user in admins table
       const { data, error } = await supabase
         .from('admins')
         .insert([
           {
+            id: authData?.user?.id,
             username: admin.username,
             email: admin.email,
             password_hash: passwordHash,
@@ -65,7 +87,7 @@ async function createAdmin() {
 
       if (error) {
         if (error.code === '23505') {
-          console.log(`ℹ️  ${admin.username} already exists`)
+          console.log(`ℹ️  Admin record ${admin.username} already exists`)
         } else {
           throw error
         }

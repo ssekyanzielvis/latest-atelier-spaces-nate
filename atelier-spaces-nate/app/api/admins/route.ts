@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { hash } from 'bcryptjs'
 import { supabaseAdmin } from '@/lib/supabase/server'
+import { createAuthUser, updateUserPassword } from '@/lib/supabase/auth'
 import { Database } from '@/types/database'
 
 export async function POST(request: NextRequest) {
@@ -44,12 +45,32 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Hash password
+    // Create Supabase Auth user first
+    const { data: authData, error: authError } = await createAuthUser(
+      email,
+      password,
+      {
+        username,
+        full_name,
+        role: role || 'admin',
+      }
+    )
+
+    if (authError) {
+      console.error('Error creating auth user:', authError)
+      return NextResponse.json(
+        { error: 'Failed to create authentication user' },
+        { status: 500 }
+      )
+    }
+
+    // Hash password for admins table
     const passwordHash = await hash(password, 10)
 
-    // Create new admin user
+    // Create admin record in admins table
     type AdminInsert = Database['public']['Tables']['admins']['Insert']
     const insertData: AdminInsert = {
+      id: authData.user!.id, // Use the same ID as Supabase Auth user
       username,
       email,
       password_hash: passwordHash,

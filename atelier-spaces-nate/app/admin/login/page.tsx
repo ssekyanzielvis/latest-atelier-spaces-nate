@@ -3,13 +3,18 @@
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { loginSchema } from '@/lib/validations'
-import { signIn } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { z } from 'zod'
+import { signInWithPassword } from '@/lib/supabase/auth'
+import { supabaseAdmin } from '@/lib/supabase/server'
+
+const loginSchema = z.object({
+  email: z.string().email('Invalid email address'),
+  password: z.string().min(1, 'Password is required'),
+})
 
 type LoginFormData = z.infer<typeof loginSchema>
 
@@ -31,18 +36,31 @@ export default function AdminLoginPage() {
     setError(null)
 
     try {
-      const result = await signIn('credentials', {
-        username: data.username,
-        password: data.password,
-        redirect: false,
-      })
+      const { data: authData, error: authError } = await signInWithPassword(
+        data.email,
+        data.password
+      )
 
-      if (result?.error) {
-        setError('Invalid username or password')
-      } else {
-        router.push('/admin/dashboard')
-        router.refresh()
+      if (authError || !authData.user) {
+        setError('Invalid email or password')
+        return
       }
+
+      // Verify user is an admin
+      const { data: admin, error: adminError } = await supabaseAdmin
+        .from('admins')
+        .select('id, is_active, role')
+        .eq('email', data.email)
+        .single()
+
+      if (adminError || !admin || !admin.is_active) {
+        setError('Access denied. Admin account required.')
+        await signInWithPassword(data.email, data.password) // Sign out
+        return
+      }
+
+      router.push('/admin/dashboard')
+      router.refresh()
     } catch (err) {
       setError('An error occurred. Please try again.')
       console.error('Login error:', err)
@@ -67,17 +85,18 @@ export default function AdminLoginPage() {
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
             <div className="space-y-2">
-              <Label htmlFor="username" className="text-sm font-semibold text-gray-700">Username</Label>
+              <Label htmlFor="email" className="text-sm font-semibold text-gray-700">Email</Label>
               <Input
-                id="username"
-                {...register('username')}
-                placeholder="Enter your username"
+                id="email"
+                type="email"
+                {...register('email')}
+                placeholder="Enter your email"
                 className="h-12 text-base border-gray-300 focus:border-black focus:ring-black"
-                autoComplete="username"
+                autoComplete="email"
               />
-              {errors.username && (
+              {errors.email && (
                 <p className="text-sm text-red-600 mt-1.5 flex items-center gap-1">
-                  <span>⚠</span> {errors.username.message}
+                  <span>⚠</span> {errors.email.message}
                 </p>
               )}
             </div>

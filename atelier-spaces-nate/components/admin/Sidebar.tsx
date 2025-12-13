@@ -1,8 +1,8 @@
 'use client'
 
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
-import { signOut } from 'next-auth/react'
+import { usePathname, useRouter } from 'next/navigation'
+import { signOut } from '@/lib/supabase/auth'
 import { 
   FiHome, 
   FiFolder, 
@@ -36,9 +36,12 @@ const navItems = [
 
 export default function AdminSidebar() {
   const pathname = usePathname()
+  const router = useRouter()
 
   const handleLogout = async () => {
-    await signOut({ callbackUrl: '/admin/login' })
+    await signOut()
+    router.push('/admin/login')
+    router.refresh()
   }
 
   return (
