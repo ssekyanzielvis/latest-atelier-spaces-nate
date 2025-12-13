@@ -8,8 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { z } from 'zod'
-import { signInWithPassword } from '@/lib/supabase/auth'
-import { supabaseAdmin } from '@/lib/supabase/server'
+import { signInWithPassword, createSupabaseAuthClient } from '@/lib/supabase/auth'
 
 const loginSchema = z.object({
   email: z.string().email('Invalid email address'),
@@ -46,16 +45,25 @@ export default function AdminLoginPage() {
         return
       }
 
-      // Verify user is an admin
-      const { data: admin, error: adminError } = await supabaseAdmin
+      // Verify user is an admin in the admins table
+      const supabase = createSupabaseAuthClient()
+      const { data: adminData, error: adminError } = await supabase
         .from('admins')
         .select('id, is_active, role')
         .eq('email', data.email)
         .single()
 
+      type AdminCheck = {
+        id: string
+        is_active: boolean
+        role: string
+      }
+
+      const admin = adminData as AdminCheck | null
+
       if (adminError || !admin || !admin.is_active) {
         setError('Access denied. Admin account required.')
-        await signInWithPassword(data.email, data.password) // Sign out
+        await supabase.auth.signOut()
         return
       }
 
