@@ -15,7 +15,8 @@ import {
   FiLogOut,
   FiLayout,
   FiTag,
-  FiLayers
+  FiLayers,
+  FiShield
 } from 'react-icons/fi'
 
 const navItems = [
@@ -30,6 +31,7 @@ const navItems = [
   { href: '/admin/about', label: 'About', icon: FiInfo },
   { href: '/admin/slogan', label: 'Slogan', icon: FiLayout },
   { href: '/admin/collaborations', label: 'Collaborations', icon: FiMessageSquare },
+  { href: '/admin/admins', label: 'Admin Users', icon: FiShield },
 ]
 
 export default function AdminSidebar() {
