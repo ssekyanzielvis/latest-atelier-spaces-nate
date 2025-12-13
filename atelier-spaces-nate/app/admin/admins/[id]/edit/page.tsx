@@ -29,11 +29,12 @@ const adminUpdateSchema = z.object({
 
 type AdminUpdateFormData = z.infer<typeof adminUpdateSchema>
 
-export default function EditAdminPage({ params }: { params: { id: string } }) {
+export default function EditAdminPage({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [adminId, setAdminId] = useState<string>('')
 
   const {
     register,
@@ -45,9 +46,12 @@ export default function EditAdminPage({ params }: { params: { id: string } }) {
   })
 
   useEffect(() => {
-    async function fetchAdmin() {
+    async function initPage() {
+      const { id } = await params
+      setAdminId(id)
+      
       try {
-        const response = await fetch(`/api/admins/${params.id}`)
+        const response = await fetch(`/api/admins/${id}`)
         if (!response.ok) throw new Error('Failed to fetch admin')
         
         const admin = await response.json()
@@ -63,8 +67,8 @@ export default function EditAdminPage({ params }: { params: { id: string } }) {
       }
     }
 
-    fetchAdmin()
-  }, [params.id, setValue])
+    initPage()
+  }, [params, setValue])
 
   const onSubmit = async (data: AdminUpdateFormData) => {
     setIsSubmitting(true)
@@ -72,7 +76,7 @@ export default function EditAdminPage({ params }: { params: { id: string } }) {
 
     try {
       const updateData: any = {
-        id: params.id,
+        id: adminId,
         username: data.username,
         email: data.email,
         full_name: data.full_name,

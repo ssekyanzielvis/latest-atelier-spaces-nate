@@ -3,13 +3,14 @@ import { supabaseAdmin } from '@/lib/supabase/server'
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
     const { data: admin, error } = await supabaseAdmin
       .from('admins')
       .select('id, username, email, full_name, role, is_active, last_login, created_at')
-      .eq('id', params.id)
+      .eq('id', id)
       .single()
 
     if (error || !admin) {
