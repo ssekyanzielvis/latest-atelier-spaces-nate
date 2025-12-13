@@ -28,7 +28,7 @@ export async function POST(request: Request) {
 
     const { data, error } = await supabase
       .from('team_members')
-      .insert([body])
+      .insert(body)
       .select()
       .single()
 
