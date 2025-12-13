@@ -16,26 +16,34 @@ export function createSupabaseAuthClient() {
   return createBrowserClient<Database>(supabaseUrl, supabaseAnonKey)
 }
 
-// Server-side admin client for user management
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+// Server-side admin client for user management (lazy-loaded)
+let _supabaseAuthAdmin: ReturnType<typeof createClient<Database>> | null = null
 
-if (!supabaseUrl || !supabaseServiceKey) {
-  throw new Error(
-    'Missing Supabase environment variables. Please set NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY'
-  )
-}
+export function getSupabaseAuthAdmin() {
+  if (_supabaseAuthAdmin) return _supabaseAuthAdmin
 
-export const supabaseAuthAdmin = createClient<Database>(
-  supabaseUrl,
-  supabaseServiceKey,
-  {
-    auth: {
-      autoRefreshToken: false,
-      persistSession: false,
-    },
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+
+  if (!supabaseUrl || !supabaseServiceKey) {
+    throw new Error(
+      'Missing Supabase environment variables. Please set NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY'
+    )
   }
-)
+
+  _supabaseAuthAdmin = createClient<Database>(
+    supabaseUrl,
+    supabaseServiceKey,
+    {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false,
+      },
+    }
+  )
+
+  return _supabaseAuthAdmin
+}
 
 // Sign in with email and password
 export async function signInWithPassword(email: string, password: string) {
@@ -71,7 +79,8 @@ export async function createAuthUser(email: string, password: string, metadata: 
   full_name: string
   role: string
 }) {
-  const { data, error } = await supabaseAuthAdmin.auth.admin.createUser({
+  const admin = getSupabaseAuthAdmin()
+  const { data, error } = await admin.auth.admin.createUser({
     email,
     password,
     email_confirm: true,
@@ -83,7 +92,8 @@ export async function createAuthUser(email: string, password: string, metadata: 
 
 // Update admin user password
 export async function updateUserPassword(userId: string, password: string) {
-  const { data, error } = await supabaseAuthAdmin.auth.admin.updateUserById(
+  const admin = getSupabaseAuthAdmin()
+  const { data, error } = await admin.auth.admin.updateUserById(
     userId,
     { password }
   )
@@ -93,6 +103,7 @@ export async function updateUserPassword(userId: string, password: string) {
 
 // Delete admin user from Supabase Auth
 export async function deleteAuthUser(userId: string) {
-  const { data, error } = await supabaseAuthAdmin.auth.admin.deleteUser(userId)
+  const admin = getSupabaseAuthAdmin()
+  const { data, error } = await admin.auth.admin.deleteUser(userId)
   return { data, error }
 }
