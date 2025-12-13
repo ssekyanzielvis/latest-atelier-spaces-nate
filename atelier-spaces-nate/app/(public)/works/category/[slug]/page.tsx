@@ -23,8 +23,7 @@ async function getCategory(slug: string): Promise<WorkCategory | null> {
 }
 
 async function getWorksByCategory(categoryId: string): Promise<Work[]> {
-  const supabase = await createServerClient()
-  const { data, error } = await supabase
+  const { data, error } = await supabaseAdmin
     .from('works')
     .select('*')
     .eq('category_id', categoryId)
