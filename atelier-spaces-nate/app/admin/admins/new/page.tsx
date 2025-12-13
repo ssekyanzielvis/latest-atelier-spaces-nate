@@ -12,7 +12,7 @@ const adminSchema = z.object({
   password: z.string().min(6, 'Password must be at least 6 characters'),
   confirmPassword: z.string(),
   full_name: z.string().min(1, 'Full name is required'),
-  role: z.string().default('admin'),
+  role: z.string().min(1, 'Role is required'),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Passwords don't match",
   path: ["confirmPassword"],
@@ -29,9 +29,14 @@ export default function NewAdminPage() {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<AdminFormData>({
+  } = useForm({
     resolver: zodResolver(adminSchema),
     defaultValues: {
+      username: '',
+      email: '',
+      password: '',
+      confirmPassword: '',
+      full_name: '',
       role: 'admin',
     },
   })

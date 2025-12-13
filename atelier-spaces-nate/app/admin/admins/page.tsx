@@ -5,7 +5,7 @@ import { Database } from '@/types/database'
 type Admin = Database['public']['Tables']['admins']['Row']
 
 export default async function AdminUsersPage() {
-  const { data: admins, error } = await supabaseAdmin
+  const { data, error } = await supabaseAdmin
     .from('admins')
     .select('*')
     .order('created_at', { ascending: false })
@@ -13,6 +13,8 @@ export default async function AdminUsersPage() {
   if (error) {
     console.error('Error fetching admins:', error)
   }
+
+  const admins = (data || []) as Admin[]
 
   return (
     <div className="space-y-6">
@@ -29,7 +31,7 @@ export default async function AdminUsersPage() {
         </Link>
       </div>
 
-      {admins && admins.length > 0 ? (
+      {admins.length > 0 ? (
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full">
