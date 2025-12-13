@@ -1,13 +1,13 @@
-import { createServerClient } from '@/lib/supabase/server'
+import { supabaseAdmin } from '@/lib/supabase/server'
 import Link from 'next/link'
 import { Database } from '@/types/database'
 
 type AboutSection = Database['public']['Tables']['about_section']['Row']
 
 export default async function AboutAdminPage() {
-  const supabase = await createServerClient()
+  const supabase = supabaseAdmin
   
-  const { data: aboutSection, error } = await supabase
+  const { data, error } = await supabase
     .from('about_section')
     .select('*')
     .single()
@@ -15,6 +15,8 @@ export default async function AboutAdminPage() {
   if (error && error.code !== 'PGRST116') {
     console.error('Error fetching about section:', error)
   }
+  
+  const aboutSection = data as AboutSection | null
 
   return (
     <div className="space-y-6">

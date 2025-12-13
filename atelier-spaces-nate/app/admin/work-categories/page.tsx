@@ -1,11 +1,11 @@
-import { createServerClient } from '@/lib/supabase/server'
+import { supabaseAdmin } from '@/lib/supabase/server'
 import Link from 'next/link'
 import { Database } from '@/types/database'
 
 type WorkCategory = Database['public']['Tables']['work_categories']['Row']
 
 export default async function WorkCategoriesAdminPage() {
-  const supabase = await createServerClient()
+  const supabase = supabaseAdmin
   
   const { data: workCategories, error } = await supabase
     .from('work_categories')
@@ -33,7 +33,7 @@ export default async function WorkCategoriesAdminPage() {
 
       {workCategories && workCategories.length > 0 ? (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {workCategories.map((category) => (
+          {workCategories.map((category: WorkCategory) => (
             <div
               key={category.id}
               className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow"

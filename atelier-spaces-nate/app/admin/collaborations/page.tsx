@@ -1,10 +1,10 @@
-import { createServerClient } from '@/lib/supabase/server'
+import { supabaseAdmin } from '@/lib/supabase/server'
 import { Database } from '@/types/database'
 
 type Collaboration = Database['public']['Tables']['collaborations']['Row']
 
 export default async function CollaborationsAdminPage() {
-  const supabase = await createServerClient()
+  const supabase = supabaseAdmin
   
   const { data: collaborations, error } = await supabase
     .from('collaborations')
@@ -69,7 +69,7 @@ export default async function CollaborationsAdminPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
-                {collaborations.map((collab) => (
+                {collaborations.map((collab: Collaboration) => (
                   <tr key={collab.id} className="hover:bg-gray-50 transition-colors">
                     <td className="px-6 py-4">
                       <div>

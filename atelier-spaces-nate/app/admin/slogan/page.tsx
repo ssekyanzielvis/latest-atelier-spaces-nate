@@ -1,13 +1,13 @@
-import { createServerClient } from '@/lib/supabase/server'
+import { supabaseAdmin } from '@/lib/supabase/server'
 import Link from 'next/link'
 import { Database } from '@/types/database'
 
 type SloganSection = Database['public']['Tables']['slogan_section']['Row']
 
 export default async function SloganAdminPage() {
-  const supabase = await createServerClient()
+  const supabase = supabaseAdmin
   
-  const { data: sloganSection, error } = await supabase
+  const { data, error } = await supabase
     .from('slogan_section')
     .select('*')
     .single()
@@ -15,6 +15,8 @@ export default async function SloganAdminPage() {
   if (error && error.code !== 'PGRST116') {
     console.error('Error fetching slogan section:', error)
   }
+  
+  const sloganSection = data as SloganSection | null
 
   return (
     <div className="space-y-6">
