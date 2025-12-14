@@ -91,81 +91,97 @@ export default async function AdminDashboard() {
       </div>
 
       <div className="mt-12 grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Content Management</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-2">
-              <Link
-                href="/admin/projects/new"
-                className="block p-3 rounded-md hover:bg-muted transition-colors"
-              >
-                <h3 className="font-medium">Create New Project</h3>
-                <p className="text-sm text-muted-foreground">Add a new architectural project</p>
-              </Link>
-              <Link
-                href="/admin/news/new"
-                className="block p-3 rounded-md hover:bg-muted transition-colors"
-              >
-                <h3 className="font-medium">Publish News Article</h3>
-                <p className="text-sm text-muted-foreground">Share latest updates and insights</p>
-              </Link>
-              <Link
-                href="/admin/works/new"
-                className="block p-3 rounded-md hover:bg-muted transition-colors"
-              >
-                <h3 className="font-medium">Add New Work</h3>
-                <p className="text-sm text-muted-foreground">Showcase your creative work</p>
-              </Link>
-              <Link
-                href="/admin/team/new"
-                className="block p-3 rounded-md hover:bg-muted transition-colors"
-              >
-                <h3 className="font-medium">Add Team Member</h3>
-                <p className="text-sm text-muted-foreground">Introduce new team members</p>
-              </Link>
-            </div>
-          </CardContent>
-        </Card>
+        <div>
+          <h2 className="text-xl font-semibold mb-4">Content Management</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Link href="/admin/projects/new">
+              <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full">
+                <CardHeader>
+                  <CardTitle className="text-base">Create New Project</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground">Add a new architectural project</p>
+                </CardContent>
+              </Card>
+            </Link>
+            <Link href="/admin/news/new">
+              <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full">
+                <CardHeader>
+                  <CardTitle className="text-base">Publish News Article</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground">Share latest updates and insights</p>
+                </CardContent>
+              </Card>
+            </Link>
+            <Link href="/admin/works/new">
+              <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full">
+                <CardHeader>
+                  <CardTitle className="text-base">Add New Work</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground">Showcase your creative work</p>
+                </CardContent>
+              </Card>
+            </Link>
+            <Link href="/admin/team/new">
+              <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full">
+                <CardHeader>
+                  <CardTitle className="text-base">Add Team Member</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground">Introduce new team members</p>
+                </CardContent>
+              </Card>
+            </Link>
+          </div>
+        </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Site Settings</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-2">
-              <Link
-                href="/admin/about"
-                className="block p-3 rounded-md hover:bg-muted transition-colors"
-              >
-                <h3 className="font-medium">About Section</h3>
-                <p className="text-sm text-muted-foreground">Edit about page content</p>
-              </Link>
-              <Link
-                href="/admin/slogan"
-                className="block p-3 rounded-md hover:bg-muted transition-colors"
-              >
-                <h3 className="font-medium">Slogan Section</h3>
-                <p className="text-sm text-muted-foreground">Update site slogan and tagline</p>
-              </Link>
-              <Link
-                href="/admin/hero-slides"
-                className="block p-3 rounded-md hover:bg-muted transition-colors"
-              >
-                <h3 className="font-medium">Hero Slides</h3>
-                <p className="text-sm text-muted-foreground">Manage homepage hero carousel</p>
-              </Link>
-              <Link
-                href="/admin/categories"
-                className="block p-3 rounded-md hover:bg-muted transition-colors"
-              >
-                <h3 className="font-medium">Manage Categories</h3>
-                <p className="text-sm text-muted-foreground">Organize projects and works</p>
-              </Link>
-            </div>
-          </CardContent>
-        </Card>
+        <div>
+          <h2 className="text-xl font-semibold mb-4">Site Settings</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Link href="/admin/about">
+              <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full">
+                <CardHeader>
+                  <CardTitle className="text-base">About Section</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground">Edit about page content</p>
+                </CardContent>
+              </Card>
+            </Link>
+            <Link href="/admin/slogan">
+              <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full">
+                <CardHeader>
+                  <CardTitle className="text-base">Slogan Section</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground">Update site slogan and tagline</p>
+                </CardContent>
+              </Card>
+            </Link>
+            <Link href="/admin/hero-slides">
+              <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full">
+                <CardHeader>
+                  <CardTitle className="text-base">Hero Slides</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground">Manage homepage hero carousel</p>
+                </CardContent>
+              </Card>
+            </Link>
+            <Link href="/admin/categories">
+              <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full">
+                <CardHeader>
+                  <CardTitle className="text-base">Manage Categories</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground">Organize projects and works</p>
+                </CardContent>
+              </Card>
+            </Link>
+          </div>
+        </div>
 
         <Card>
           <CardHeader>
