@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
+import ImageUpload from '@/components/admin/ImageUpload'
 
 const projectSchema = z.object({
   title: z.string().min(1, 'Title is required'),
@@ -34,6 +35,7 @@ export default function NewProjectPage() {
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm<ProjectFormData>({
     resolver: zodResolver(projectSchema),
@@ -140,20 +142,16 @@ export default function NewProjectPage() {
           </div>
 
           <div className="md:col-span-2">
-            <label htmlFor="image" className="block text-sm font-semibold text-gray-700 mb-2">
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
               Main Project Image * <span className="text-gray-500 font-normal">(1920x1080 recommended)</span>
             </label>
-            <input
-              id="image"
-              type="text"
-              {...register('image')}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
-              placeholder="Image URL or upload to Supabase Storage"
+            <ImageUpload
+              folder="projects"
+              onUploadComplete={(url) => setValue('image', url)}
             />
             {errors.image && (
               <p className="mt-1 text-sm text-red-600">{errors.image.message}</p>
             )}
-            <p className="mt-1 text-xs text-gray-500">Upload images to Supabase Storage and paste the URL here</p>
           </div>
 
           <div>

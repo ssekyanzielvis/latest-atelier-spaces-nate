@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
+import ImageUpload from '@/components/admin/ImageUpload'
 
 const teamMemberSchema = z.object({
   name: z.string().min(1, 'Name is required'),
@@ -29,6 +30,7 @@ export default function NewTeamMemberPage() {
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm<TeamMemberFormData>({
     resolver: zodResolver(teamMemberSchema),
@@ -148,15 +150,12 @@ export default function NewTeamMemberPage() {
           </div>
 
           <div className="md:col-span-2">
-            <label htmlFor="image" className="block text-sm font-semibold text-gray-700 mb-2">
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
               Professional Photo * <span className="text-gray-500 font-normal">(500x500 recommended, square)</span>
             </label>
-            <input
-              id="image"
-              type="text"
-              {...register('image')}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
-              placeholder="Image URL or upload to Supabase Storage"
+            <ImageUpload
+              folder="team"
+              onUploadComplete={(url) => setValue('image', url)}
             />
             {errors.image && (
               <p className="mt-1 text-sm text-red-600">{errors.image.message}</p>
