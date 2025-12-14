@@ -21,6 +21,10 @@ async function getNews(): Promise<NewsArticle[]> {
     }
 
     console.log('Fetched news articles:', data)
+    if (data && data.length > 0) {
+      const first = data[0] as NewsArticle
+      console.log('First article sample:', { id: first.id, title: first.title })
+    }
     return (data as NewsArticle[]) || []
   } catch (err) {
     console.error('Exception fetching news:', err)

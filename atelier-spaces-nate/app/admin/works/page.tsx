@@ -21,6 +21,10 @@ async function getWorks(): Promise<Work[]> {
     }
 
     console.log('Fetched works:', data)
+    if (data && data.length > 0) {
+      const first = data[0] as Work
+      console.log('First work sample:', { id: first.id, title: first.title })
+    }
     return (data as Work[]) || []
   } catch (err) {
     console.error('Exception fetching works:', err)

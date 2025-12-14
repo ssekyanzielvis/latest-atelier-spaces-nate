@@ -21,6 +21,10 @@ async function getTeamMembers(): Promise<TeamMember[]> {
     }
 
     console.log('Fetched team members:', data)
+    if (data && data.length > 0) {
+      const first = data[0] as TeamMember
+      console.log('First member sample:', { id: first.id, name: first.name })
+    }
     return (data as TeamMember[]) || []
   } catch (err) {
     console.error('Exception fetching team members:', err)

@@ -18,11 +18,12 @@ async function getNewsArticles(): Promise<NewsArticle[]> {
 
     console.log('Fetched news articles:', data)
     if (data && data.length > 0) {
+      const first = data[0] as NewsArticle
       console.log('First news article:', {
-        id: data[0].id,
-        title: data[0].title,
-        hasImage: !!data[0].image,
-        image: data[0].image,
+        id: first.id,
+        title: first.title,
+        hasImage: !!first.image,
+        image: first.image,
       })
     }
     return (data as NewsArticle[]) || []

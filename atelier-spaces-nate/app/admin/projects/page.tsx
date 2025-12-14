@@ -21,6 +21,10 @@ async function getProjects(): Promise<Project[]> {
     }
 
     console.log('Fetched projects:', data)
+    if (data && data.length > 0) {
+      const first = data[0] as Project
+      console.log('First project sample:', { id: first.id, title: first.title })
+    }
     return (data as Project[]) || []
   } catch (err) {
     console.error('Exception fetching projects:', err)
