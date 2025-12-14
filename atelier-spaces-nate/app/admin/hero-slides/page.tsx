@@ -1,9 +1,9 @@
 import Link from 'next/link'
 import { supabaseAdmin } from '@/lib/supabase/server'
 import { Button } from '@/components/ui/button'
-import { FiPlus, FiEdit, FiTrash2, FiSliders } from 'react-icons/fi'
+import { FiPlus, FiSliders } from 'react-icons/fi'
 import { HeroSlide } from '@/types'
-import Image from 'next/image'
+import HeroSlidesList from '@/components/admin/HeroSlidesList'
 
 async function getHeroSlides(): Promise<HeroSlide[]> {
   const { data, error } = await supabaseAdmin
@@ -54,49 +54,7 @@ export default async function AdminHeroSlidesPage() {
           </div>
         </div>
       ) : (
-        <div className="space-y-4">
-          {slides.map((slide) => (
-            <div key={slide.id} className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow">
-              <div className="flex flex-col md:flex-row">
-                {slide.image && (
-                  <img
-                    src={slide.image}
-                    alt={slide.title}
-                    className="w-full md:w-64 h-48 object-cover"
-                  />
-                )}
-                <div className="flex-1 p-6">
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <h3 className="text-lg font-semibold text-gray-900">{slide.title}</h3>
-                      <p className="text-gray-600 mt-1">{slide.subtitle || 'No subtitle'}</p>
-                      <div className="flex items-center gap-3 mt-4">
-                        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700">
-                          Order: {slide.order_position}
-                        </span>
-                        <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${
-                          slide.is_active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-600'
-                        }`}>
-                          {slide.is_active ? '✓ Active' : 'Inactive'}
-                        </span>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Link href={`/admin/hero-slides/${slide.id}/edit`}>
-                        <Button variant="outline" size="sm" className="gap-1">
-                          <FiEdit size={14} />
-                        </Button>
-                      </Link>
-                      <Button variant="outline" size="sm" className="gap-1 text-red-600 hover:text-red-700 hover:bg-red-50">
-                        <FiTrash2 size={14} />
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
+        <HeroSlidesList slides={slides} />
       )}
     </div>
   )

@@ -1,10 +1,9 @@
 import Link from 'next/link'
 import { supabaseAdmin } from '@/lib/supabase/server'
 import { Button } from '@/components/ui/button'
-import { FiPlus, FiEdit, FiTrash2, FiEye, FiFileText } from 'react-icons/fi'
-import { format } from 'date-fns'
+import { FiPlus, FiFileText } from 'react-icons/fi'
 import { NewsArticle } from '@/types'
-import Image from 'next/image'
+import NewsList from '@/components/admin/NewsList'
 
 async function getNews(): Promise<NewsArticle[]> {
   const { data, error } = await supabaseAdmin
@@ -55,76 +54,7 @@ export default async function AdminNewsPage() {
           </div>
         </div>
       ) : (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-gray-50 border-b border-gray-200">
-                <tr>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                    Article
-                  </th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                    Author
-                  </th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                    Published Date
-                  </th>
-                  <th className="px-6 py-4 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200">
-                {news.map((article) => (
-                  <tr key={article.id} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-4">
-                        {article.image && (
-                          <img
-                            src={article.image}
-                            alt={article.title}
-                            className="w-16 h-16 rounded-lg object-cover"
-                          />
-                        )}
-                        <div>
-                          <div className="font-semibold text-gray-900">{article.title}</div>
-                          <div className="text-sm text-gray-600 line-clamp-1">
-                            {article.excerpt}
-                          </div>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
-                        {article.author || 'Admin'}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 text-gray-700">
-                      {format(new Date(article.published_date), 'MMM dd, yyyy')}
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center justify-end gap-2">
-                        <Link href={`/news/${article.slug}`} target="_blank">
-                          <Button variant="outline" size="sm" className="gap-1">
-                            <FiEye size={14} />
-                          </Button>
-                        </Link>
-                        <Link href={`/admin/news/${article.id}/edit`}>
-                          <Button variant="outline" size="sm" className="gap-1">
-                            <FiEdit size={14} />
-                          </Button>
-                        </Link>
-                        <Button variant="outline" size="sm" className="gap-1 text-red-600 hover:text-red-700 hover:bg-red-50">
-                          <FiTrash2 size={14} />
-                        </Button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
+        <NewsList news={news} />
       )}
     </div>
   )

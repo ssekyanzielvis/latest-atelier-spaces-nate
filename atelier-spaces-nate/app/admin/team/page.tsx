@@ -1,9 +1,9 @@
 import Link from 'next/link'
 import { supabaseAdmin } from '@/lib/supabase/server'
 import { Button } from '@/components/ui/button'
-import { FiPlus, FiEdit, FiTrash2, FiUsers } from 'react-icons/fi'
+import { FiPlus, FiUsers } from 'react-icons/fi'
 import { TeamMember } from '@/types'
-import Image from 'next/image'
+import TeamList from '@/components/admin/TeamList'
 
 async function getTeamMembers(): Promise<TeamMember[]> {
   const { data, error } = await supabaseAdmin
@@ -54,37 +54,7 @@ export default async function AdminTeamPage() {
           </div>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {teamMembers.map((member) => (
-            <div key={member.id} className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow">
-              {member.image && (
-                <img
-                  src={member.image}
-                  alt={member.name}
-                  className="w-full h-64 object-cover"
-                />
-              )}
-              <div className="p-6">
-                <h3 className="text-lg font-semibold text-gray-900">{member.name}</h3>
-                <p className="text-sm text-gray-600 mt-1">{member.position}</p>
-                {member.bio && (
-                  <p className="text-sm text-gray-500 mt-3 line-clamp-2">{member.bio}</p>
-                )}
-                <div className="flex items-center gap-2 mt-4">
-                  <Link href={`/admin/team/${member.id}/edit`} className="flex-1">
-                    <Button variant="outline" size="sm" className="w-full gap-1">
-                      <FiEdit size={14} />
-                      Edit
-                    </Button>
-                  </Link>
-                  <Button variant="outline" size="sm" className="gap-1 text-red-600 hover:text-red-700 hover:bg-red-50">
-                    <FiTrash2 size={14} />
-                  </Button>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
+        <TeamList teamMembers={teamMembers} />
       )}
     </div>
   )

@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server'
-import { supabase } from '@/lib/supabase/client'
+import { supabaseAdmin } from '@/lib/supabase/server'
 
 export async function GET() {
   try {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
       .from('about_section')
       .select('*')
       .single()
@@ -23,10 +23,10 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
-    const body = await request.json()
+    const body: any = await request.json()
 
     // Check if about section already exists
-    const { data: existing } = await supabase
+    const { data: existing } = await supabaseAdmin
       .from('about_section')
       .select('id')
       .single()
@@ -38,7 +38,7 @@ export async function POST(request: Request) {
       )
     }
 
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
       .from('about_section')
       .insert(body)
       .select()
@@ -49,6 +49,37 @@ export async function POST(request: Request) {
     }
 
     return NextResponse.json(data, { status: 201 })
+  } catch (error) {
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    )
+  }
+}
+
+export async function PUT(request: Request) {
+  try {
+    const { searchParams } = new URL(request.url)
+    const id = searchParams.get('id')
+    
+    if (!id) {
+      return NextResponse.json({ error: 'ID is required' }, { status: 400 })
+    }
+
+    const body: any = await request.json()
+
+    const { data, error } = (await (supabaseAdmin
+      .from('about_section') as any)
+      .update(body)
+      .eq('id', id)
+      .select()
+      .single()) as any
+
+    if (error) {
+      return NextResponse.json({ error: error.message }, { status: 500 })
+    }
+
+    return NextResponse.json(data)
   } catch (error) {
     return NextResponse.json(
       { error: 'Internal server error' },
