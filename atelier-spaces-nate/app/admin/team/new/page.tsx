@@ -41,33 +41,43 @@ export default function NewTeamMemberPage() {
     setError(null)
 
     try {
-      // Convert order_position to number and remove empty strings
+      // Prepare data for submission
       const submitData: any = {
-        ...data,
-        order_position: data.order_position ? parseInt(data.order_position) : undefined,
+        name: data.name,
+        position: data.position,
+        image: data.image,
+        bio: data.bio || null,
+        email: data.email || null,
+        phone: data.phone || null,
+        linkedin: data.linkedin || null,
+        twitter: data.twitter || null,
+        order_position: data.order_position ? parseInt(String(data.order_position)) : 0,
+        is_active: data.is_active ?? true,
       }
-      
-      const cleanedData = Object.fromEntries(
-        Object.entries(submitData).filter(([_, value]) => value !== '')
-      )
+
+      console.log('Submitting team member:', submitData)
 
       const response = await fetch('/api/team', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(cleanedData),
+        body: JSON.stringify(submitData),
       })
 
+      const result = await response.json()
+      console.log('Response:', result)
+
       if (!response.ok) {
-        const result = await response.json()
         throw new Error(result.error || 'Failed to add team member')
       }
 
       router.push('/admin/team')
       router.refresh()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred')
+      const errorMessage = err instanceof Error ? err.message : 'An error occurred'
+      console.error('Error:', errorMessage)
+      setError(errorMessage)
     } finally {
       setIsSubmitting(false)
     }
@@ -209,7 +219,7 @@ export default function NewTeamMemberPage() {
             <input
               id="order_position"
               type="number"
-              {...register('order_position', { valueAsNumber: true })}
+              {...register('order_position')}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
               placeholder="1"
             />

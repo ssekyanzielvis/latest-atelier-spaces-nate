@@ -26,20 +26,33 @@ export async function POST(request: Request) {
   try {
     const body: any = await request.json()
 
+    console.log('Received team member data:', body)
+
+    // Validate required fields
+    if (!body.name || !body.position || !body.image) {
+      return NextResponse.json(
+        { error: 'Name, position, and image are required' },
+        { status: 400 }
+      )
+    }
+
     const { data, error } = await supabaseAdmin
       .from('team_members')
-      .insert(body)
+      .insert([body])
       .select()
       .single()
 
     if (error) {
+      console.error('Database error:', error)
       return NextResponse.json({ error: error.message }, { status: 500 })
     }
 
+    console.log('Team member created successfully:', data)
     return NextResponse.json(data, { status: 201 })
   } catch (error) {
+    console.error('POST error:', error)
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: 'Internal server error', details: String(error) },
       { status: 500 }
     )
   }
