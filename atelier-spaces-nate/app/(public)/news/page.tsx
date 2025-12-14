@@ -1,9 +1,9 @@
-import { supabase } from '@/lib/supabase/client'
+import { supabaseAdmin } from '@/lib/supabase/server'
 import NewsCard from '@/components/public/NewsCard'
 import { NewsArticle } from '@/types'
 
 async function getNewsArticles(): Promise<NewsArticle[]> {
-  const { data, error } = await supabase
+  const { data, error } = await supabaseAdmin
     .from('news_articles')
     .select('*')
     .order('published_date', { ascending: false })

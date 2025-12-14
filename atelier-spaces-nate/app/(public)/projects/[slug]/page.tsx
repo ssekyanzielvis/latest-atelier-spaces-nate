@@ -1,10 +1,10 @@
 import Image from 'next/image'
 import { notFound } from 'next/navigation'
-import { supabase } from '@/lib/supabase/client'
+import { supabaseAdmin } from '@/lib/supabase/server'
 import { Project } from '@/types'
 
 async function getProject(slug: string): Promise<Project | null> {
-  const { data, error } = await supabase
+  const { data, error } = await supabaseAdmin
     .from('projects')
     .select('*')
     .eq('slug', slug)

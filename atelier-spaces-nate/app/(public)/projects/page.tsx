@@ -1,9 +1,9 @@
-import { supabase } from '@/lib/supabase/client'
+import { supabaseAdmin } from '@/lib/supabase/server'
 import ProjectCard from '@/components/public/ProjectCard'
 import { Project } from '@/types'
 
 async function getProjects(): Promise<Project[]> {
-  const { data, error } = await supabase
+  const { data, error } = await supabaseAdmin
     .from('projects')
     .select('*')
     .order('created_at', { ascending: false })

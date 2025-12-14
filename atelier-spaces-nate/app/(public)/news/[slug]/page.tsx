@@ -1,11 +1,11 @@
 import Image from 'next/image'
 import { notFound } from 'next/navigation'
-import { supabase } from '@/lib/supabase/client'
+import { supabaseAdmin } from '@/lib/supabase/server'
 import { NewsArticle } from '@/types'
 import { formatDate } from '@/lib/utils'
 
 async function getNewsArticle(slug: string): Promise<NewsArticle | null> {
-  const { data, error } = await supabase
+  const { data, error } = await supabaseAdmin
     .from('news_articles')
     .select('*')
     .eq('slug', slug)

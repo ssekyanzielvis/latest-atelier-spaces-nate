@@ -1,10 +1,10 @@
-import { supabase } from '@/lib/supabase/client'
+import { supabaseAdmin } from '@/lib/supabase/server'
 import { Work } from '@/types'
 import Image from 'next/image'
 import Link from 'next/link'
 
 async function getWorks(): Promise<Work[]> {
-  const { data, error } = await supabase
+  const { data, error } = await supabaseAdmin
     .from('works')
     .select('*')
     .order('created_at', { ascending: false })

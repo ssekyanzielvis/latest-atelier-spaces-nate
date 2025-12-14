@@ -1,10 +1,10 @@
 import Image from 'next/image'
-import { supabase } from '@/lib/supabase/client'
+import { supabaseAdmin } from '@/lib/supabase/server'
 import { TeamMember } from '@/types'
 import { FiMail, FiLinkedin, FiTwitter } from 'react-icons/fi'
 
 async function getTeamMembers(): Promise<TeamMember[]> {
-  const { data, error } = await supabase
+  const { data, error } = await supabaseAdmin
     .from('team_members')
     .select('*')
     .eq('is_active', true)
