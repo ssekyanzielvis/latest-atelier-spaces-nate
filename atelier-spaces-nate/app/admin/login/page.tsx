@@ -4,14 +4,14 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from 'next/navigation'
+import { signIn } from 'next-auth/react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { z } from 'zod'
-import { signInWithPassword, createSupabaseAuthClient } from '@/lib/supabase/auth'
 
 const loginSchema = z.object({
-  email: z.string().email('Invalid email address'),
+  username: z.string().min(1, 'Username is required'),
   password: z.string().min(1, 'Password is required'),
 })
 
@@ -35,43 +35,27 @@ export default function AdminLoginPage() {
     setError(null)
 
     try {
-      const { data: authData, error: authError } = await signInWithPassword(
-        data.email,
-        data.password
-      )
+      console.log('Attempting login with username:', data.username)
 
-      if (authError || !authData.user) {
-        setError('Invalid email or password')
-        return
-      }
+      const result = await signIn('credentials', {
+        username: data.username,
+        password: data.password,
+        redirect: false,
+      })
 
-      // Verify user is an admin in the admins table
-      const supabase = createSupabaseAuthClient()
-      const { data: adminData, error: adminError } = await supabase
-        .from('admins')
-        .select('id, is_active, role')
-        .eq('email', data.email)
-        .single()
+      console.log('SignIn result:', result)
 
-      type AdminCheck = {
-        id: string
-        is_active: boolean
-        role: string
-      }
-
-      const admin = adminData as AdminCheck | null
-
-      if (adminError || !admin || !admin.is_active) {
-        setError('Access denied. Admin account required.')
-        await supabase.auth.signOut()
+      if (!result?.ok) {
+        setError(result?.error || 'Invalid username or password')
         return
       }
 
       router.push('/admin/dashboard')
       router.refresh()
     } catch (err) {
-      setError('An error occurred. Please try again.')
-      console.error('Login error:', err)
+      const errorMessage = err instanceof Error ? err.message : 'An error occurred. Please try again.'
+      console.error('Login error:', errorMessage, err)
+      setError(errorMessage)
     } finally {
       setIsLoading(false)
     }
@@ -93,18 +77,18 @@ export default function AdminLoginPage() {
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
             <div className="space-y-2">
-              <Label htmlFor="email" className="text-sm font-semibold text-gray-700">Email</Label>
+              <Label htmlFor="username" className="text-sm font-semibold text-gray-700">Username</Label>
               <Input
-                id="email"
-                type="email"
-                {...register('email')}
-                placeholder="Enter your email"
+                id="username"
+                type="text"
+                {...register('username')}
+                placeholder="Enter your username"
                 className="h-12 text-base border-gray-300 focus:border-black focus:ring-black"
-                autoComplete="email"
+                autoComplete="username"
               />
-              {errors.email && (
+              {errors.username && (
                 <p className="text-sm text-red-600 mt-1.5 flex items-center gap-1">
-                  <span>⚠</span> {errors.email.message}
+                  <span>⚠</span> {errors.username.message}
                 </p>
               )}
             </div>
