@@ -1,8 +1,7 @@
-import { createServerClient } from '@supabase/ssr'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
-export async function middleware(request: NextRequest) {
+export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
   // Allow access to login page
@@ -10,46 +9,17 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next()
   }
 
-  let response = NextResponse.next()
+  // Check for auth token in cookies
+  const token = request.cookies.get('sb-access-token')?.value
 
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        get(name: string) {
-          return request.cookies.get(name)?.value
-        },
-        set(name: string, value: string, options: any) {
-          response = NextResponse.next({
-            request: {
-              headers: request.headers,
-            },
-          })
-          response.cookies.set({ name, value, ...options })
-        },
-        remove(name: string, options: any) {
-          response = NextResponse.next({
-            request: {
-              headers: request.headers,
-            },
-          })
-          response.cookies.set({ name, value: '', ...options })
-        },
-      },
-    }
-  )
-
-  const { data: { session } } = await supabase.auth.getSession()
-
-  // Redirect to login if no session for admin routes
-  if (!session && pathname.startsWith('/admin') && pathname !== '/admin/login') {
+  // Redirect to login if no token for admin routes
+  if (!token && pathname.startsWith('/admin') && pathname !== '/admin/login') {
     const redirectUrl = request.nextUrl.clone()
     redirectUrl.pathname = '/admin/login'
     return NextResponse.redirect(redirectUrl)
   }
 
-  return response
+  return NextResponse.next()
 }
 
 export const config = {
