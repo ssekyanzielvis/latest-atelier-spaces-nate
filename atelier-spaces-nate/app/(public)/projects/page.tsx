@@ -17,6 +17,14 @@ async function getProjects(): Promise<Project[]> {
     }
 
     console.log('Fetched projects:', data)
+    if (data && data.length > 0) {
+      console.log('First project:', {
+        id: data[0].id,
+        title: data[0].title,
+        hasImage: !!data[0].image,
+        image: data[0].image,
+      })
+    }
     return (data as Project[]) || []
   } catch (err) {
     console.error('Exception fetching projects:', err)
