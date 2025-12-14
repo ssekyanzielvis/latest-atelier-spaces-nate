@@ -4,6 +4,8 @@ import HeroSection from '@/components/public/HeroSection'
 import { Database } from '@/types/database'
 import Image from 'next/image'
 
+export const revalidate = 0
+
 type HeroSlide = Database['public']['Tables']['hero_slides']['Row']
 type Work = Database['public']['Tables']['works']['Row']
 type WorkCategory = Database['public']['Tables']['work_categories']['Row']
@@ -57,16 +59,34 @@ async function getWorkCategories(): Promise<WorkCategory[]> {
 }
 
 async function getAboutSection(): Promise<AboutSection | null> {
-  const { data, error } = await supabaseAdmin
-    .from('about_section')
-    .select('*')
-    .single()
+  try {
+    const { data, error } = await supabaseAdmin
+      .from('about_section')
+      .select('*')
+      .single()
 
-  if (error && error.code !== 'PGRST116') {
-    console.error('Error fetching about section:', error)
+    if (error && error.code !== 'PGRST116') {
+      console.error('Error fetching about section:', error)
+      return null
+    }
+
+    if (data) {
+      const aboutData = data as AboutSection
+      console.log('Fetched about section:', {
+        id: aboutData.id,
+        title: aboutData.title,
+        hasImage: !!aboutData.image,
+        hasMission: !!aboutData.mission,
+        hasVision: !!aboutData.vision,
+        hasValues: !!aboutData.values,
+      })
+    }
+
+    return data
+  } catch (err) {
+    console.error('Exception fetching about section:', err)
+    return null
   }
-
-  return data
 }
 
 async function getTeamMembers(): Promise<TeamMember[]> {
@@ -112,6 +132,61 @@ export default async function HomePage() {
     <>
       {/* Dynamic Images Section (Hero Slides) */}
       <HeroSection slides={heroSlides} />
+
+      {/* About Us Section - First Section */}
+      {aboutSection && (
+        <section id="about" className="py-16 md:py-24 bg-white">
+          <div className="container mx-auto px-4">
+            <div className="max-w-4xl mx-auto">
+              <div className="text-center mb-12">
+                <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">{aboutSection.title}</h2>
+              </div>
+              
+              <div className="grid md:grid-cols-2 gap-12 items-center">
+                {aboutSection.image && (
+                  <div className="relative h-96 rounded-lg overflow-hidden shadow-xl">
+                    <Image
+                      src={aboutSection.image}
+                      alt="About Atelier Spaces Nate"
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
+                )}
+                
+                <div className={aboutSection.image ? '' : 'md:col-span-2'}>
+                  <div className="space-y-6">
+                    <p className="text-lg text-gray-700 leading-relaxed whitespace-pre-wrap">
+                      {aboutSection.content}
+                    </p>
+                    
+                    {aboutSection.mission && (
+                      <div className="border-l-4 border-black pl-6">
+                        <h3 className="text-2xl font-bold text-gray-900 mb-3">Our Mission</h3>
+                        <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">{aboutSection.mission}</p>
+                      </div>
+                    )}
+                    
+                    {aboutSection.vision && (
+                      <div className="border-l-4 border-black pl-6">
+                        <h3 className="text-2xl font-bold text-gray-900 mb-3">Our Vision</h3>
+                        <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">{aboutSection.vision}</p>
+                      </div>
+                    )}
+                    
+                    {aboutSection.values && (
+                      <div className="border-l-4 border-black pl-6">
+                        <h3 className="text-2xl font-bold text-gray-900 mb-3">Core Values</h3>
+                        <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">{aboutSection.values}</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Featured Works Section */}
       <section id="featured-works" className="py-16 md:py-24 bg-white">
@@ -229,54 +304,6 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* About Us Section */}
-      {aboutSection && (
-        <section id="about" className="py-16 md:py-24 bg-white">
-          <div className="container mx-auto px-4">
-            <div className="max-w-4xl mx-auto">
-              <div className="text-center mb-12">
-                <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">{aboutSection.title}</h2>
-              </div>
-              
-              <div className="grid md:grid-cols-2 gap-12 items-center">
-                {aboutSection.image && (
-                  <div className="relative h-96 rounded-lg overflow-hidden shadow-xl">
-                    <Image
-                      src={aboutSection.image}
-                      alt="About Atelier Spaces Nate"
-                      fill
-                      className="object-cover"
-                    />
-                  </div>
-                )}
-                
-                <div className={aboutSection.image ? '' : 'md:col-span-2'}>
-                  <div className="prose prose-lg max-w-none">
-                    <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">
-                      {aboutSection.content}
-                    </p>
-                    
-                    {aboutSection.mission && (
-                      <div className="mt-6">
-                        <h3 className="text-xl font-bold text-gray-900 mb-2">Our Mission</h3>
-                        <p className="text-gray-700 whitespace-pre-wrap">{aboutSection.mission}</p>
-                      </div>
-                    )}
-                    
-                    {aboutSection.vision && (
-                      <div className="mt-6">
-                        <h3 className="text-xl font-bold text-gray-900 mb-2">Our Vision</h3>
-                        <p className="text-gray-700 whitespace-pre-wrap">{aboutSection.vision}</p>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-      )}
-
       {/* Our Team Section */}
       <section id="team" className="py-16 md:py-24 bg-gray-50">
         <div className="container mx-auto px-4">
@@ -288,7 +315,7 @@ export default async function HomePage() {
           {teamMembers.length > 0 ? (
             <>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
-                {teamMembers.map((member) => (
+                {teamMembers.map((member: TeamMember) => (
                   <div key={member.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow">
                     <div className="relative h-64">
                       <Image
