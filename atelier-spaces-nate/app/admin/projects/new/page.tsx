@@ -147,7 +147,7 @@ export default function NewProjectPage() {
             </label>
             <ImageUpload
               folder="projects"
-              onUploadComplete={(url) => setValue('image', url)}
+              onChange={(url: string) => setValue('image', url)}
             />
             {errors.image && (
               <p className="mt-1 text-sm text-red-600">{errors.image.message}</p>
