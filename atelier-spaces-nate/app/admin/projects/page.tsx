@@ -1,4 +1,5 @@
 export const dynamic = 'force-dynamic'
+export const revalidate = 0
 
 import Link from 'next/link'
 import { supabaseAdmin } from '@/lib/supabase/server'
@@ -8,17 +9,23 @@ import { Project } from '@/types'
 import ProjectsList from '@/components/admin/ProjectsList'
 
 async function getProjects(): Promise<Project[]> {
-  const { data, error } = await supabaseAdmin
-    .from('projects')
-    .select('*')
-    .order('created_at', { ascending: false })
+  try {
+    const { data, error } = await supabaseAdmin
+      .from('projects')
+      .select('*')
+      .order('created_at', { ascending: false })
 
-  if (error) {
-    console.error('Error fetching projects:', error)
+    if (error) {
+      console.error('Error fetching projects:', error)
+      return []
+    }
+
+    console.log('Fetched projects:', data)
+    return (data as Project[]) || []
+  } catch (err) {
+    console.error('Exception fetching projects:', err)
     return []
   }
-
-  return data || []
 }
 
 export default async function AdminProjectsPage() {

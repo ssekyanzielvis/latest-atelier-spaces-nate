@@ -1,21 +1,29 @@
+export const revalidate = 0
+
 import Image from 'next/image'
 import { notFound } from 'next/navigation'
 import { supabaseAdmin } from '@/lib/supabase/server'
 import { Project } from '@/types'
 
 async function getProject(slug: string): Promise<Project | null> {
-  const { data, error } = await supabaseAdmin
-    .from('projects')
-    .select('*')
-    .eq('slug', slug)
-    .single()
+  try {
+    const { data, error } = await supabaseAdmin
+      .from('projects')
+      .select('*')
+      .eq('slug', slug)
+      .single()
 
-  if (error) {
-    console.error('Error fetching project:', error)
+    if (error) {
+      console.error('Error fetching project:', error)
+      return null
+    }
+
+    console.log('Fetched project:', data)
+    return (data as Project) || null
+  } catch (err) {
+    console.error('Exception fetching project:', err)
     return null
   }
-
-  return data
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {

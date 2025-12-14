@@ -1,3 +1,6 @@
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 import Link from 'next/link'
 import { supabaseAdmin } from '@/lib/supabase/server'
 import { Button } from '@/components/ui/button'
@@ -6,17 +9,23 @@ import { TeamMember } from '@/types'
 import TeamList from '@/components/admin/TeamList'
 
 async function getTeamMembers(): Promise<TeamMember[]> {
-  const { data, error } = await supabaseAdmin
-    .from('team_members')
-    .select('*')
-    .order('order_position', { ascending: true })
+  try {
+    const { data, error } = await supabaseAdmin
+      .from('team_members')
+      .select('*')
+      .order('order_position', { ascending: true })
 
-  if (error) {
-    console.error('Error fetching team members:', error)
+    if (error) {
+      console.error('Error fetching team members:', error)
+      return []
+    }
+
+    console.log('Fetched team members:', data)
+    return (data as TeamMember[]) || []
+  } catch (err) {
+    console.error('Exception fetching team members:', err)
     return []
   }
-
-  return data || []
 }
 
 export default async function AdminTeamPage() {

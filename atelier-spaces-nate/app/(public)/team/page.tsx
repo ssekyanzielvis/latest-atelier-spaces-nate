@@ -3,19 +3,27 @@ import { supabaseAdmin } from '@/lib/supabase/server'
 import { TeamMember } from '@/types'
 import { FiMail, FiLinkedin, FiTwitter } from 'react-icons/fi'
 
-async function getTeamMembers(): Promise<TeamMember[]> {
-  const { data, error } = await supabaseAdmin
-    .from('team_members')
-    .select('*')
-    .eq('is_active', true)
-    .order('order_position', { ascending: true })
+export const revalidate = 0
 
-  if (error) {
-    console.error('Error fetching team members:', error)
+async function getTeamMembers(): Promise<TeamMember[]> {
+  try {
+    const { data, error } = await supabaseAdmin
+      .from('team_members')
+      .select('*')
+      .eq('is_active', true)
+      .order('order_position', { ascending: true })
+
+    if (error) {
+      console.error('Error fetching team members:', error)
+      return []
+    }
+
+    console.log('Fetched team members:', data)
+    return (data as TeamMember[]) || []
+  } catch (err) {
+    console.error('Exception fetching team members:', err)
     return []
   }
-
-  return data || []
 }
 
 export const metadata = {

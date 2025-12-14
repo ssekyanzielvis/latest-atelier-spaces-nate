@@ -1,3 +1,5 @@
+export const revalidate = 0
+
 import { supabaseAdmin } from '@/lib/supabase/server'
 import { Database } from '@/types/database'
 import Link from 'next/link'
@@ -8,33 +10,45 @@ type Work = Database['public']['Tables']['works']['Row']
 type WorkCategory = Database['public']['Tables']['work_categories']['Row']
 
 async function getCategory(slug: string): Promise<WorkCategory | null> {
-  const { data, error } = await supabaseAdmin
-    .from('work_categories')
-    .select('*')
-    .eq('slug', slug)
-    .single()
+  try {
+    const { data, error } = await supabaseAdmin
+      .from('work_categories')
+      .select('*')
+      .eq('slug', slug)
+      .single()
 
-  if (error) {
-    console.error('Error fetching category:', error)
+    if (error) {
+      console.error('Error fetching category:', error)
+      return null
+    }
+
+    console.log('Fetched category:', data)
+    return (data as WorkCategory) || null
+  } catch (err) {
+    console.error('Exception fetching category:', err)
     return null
   }
-
-  return data
 }
 
 async function getWorksByCategory(categoryId: string): Promise<Work[]> {
-  const { data, error } = await supabaseAdmin
-    .from('works')
-    .select('*')
-    .eq('category_id', categoryId)
-    .order('created_at', { ascending: false })
+  try {
+    const { data, error } = await supabaseAdmin
+      .from('works')
+      .select('*')
+      .eq('category_id', categoryId)
+      .order('created_at', { ascending: false })
 
-  if (error) {
-    console.error('Error fetching works:', error)
+    if (error) {
+      console.error('Error fetching works:', error)
+      return []
+    }
+
+    console.log('Fetched works by category:', data)
+    return (data as Work[]) || []
+  } catch (err) {
+    console.error('Exception fetching works:', err)
     return []
   }
-
-  return data || []
 }
 
 export default async function CategoryPage({ params }: { params: { slug: string } }) {

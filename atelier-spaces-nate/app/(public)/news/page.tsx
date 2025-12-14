@@ -2,18 +2,26 @@ import { supabaseAdmin } from '@/lib/supabase/server'
 import NewsCard from '@/components/public/NewsCard'
 import { NewsArticle } from '@/types'
 
-async function getNewsArticles(): Promise<NewsArticle[]> {
-  const { data, error } = await supabaseAdmin
-    .from('news_articles')
-    .select('*')
-    .order('published_date', { ascending: false })
+export const revalidate = 0
 
-  if (error) {
-    console.error('Error fetching news:', error)
+async function getNewsArticles(): Promise<NewsArticle[]> {
+  try {
+    const { data, error } = await supabaseAdmin
+      .from('news_articles')
+      .select('*')
+      .order('published_date', { ascending: false })
+
+    if (error) {
+      console.error('Error fetching news:', error)
+      return []
+    }
+
+    console.log('Fetched news articles:', data)
+    return (data as NewsArticle[]) || []
+  } catch (err) {
+    console.error('Exception fetching news:', err)
     return []
   }
-
-  return data || []
 }
 
 export const metadata = {

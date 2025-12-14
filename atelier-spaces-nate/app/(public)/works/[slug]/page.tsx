@@ -1,3 +1,5 @@
+export const revalidate = 0
+
 import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
@@ -7,36 +9,48 @@ import { Database } from '@/types/database'
 type Work = Database['public']['Tables']['works']['Row']
 
 async function getWork(slug: string): Promise<Work | null> {
-  const { data, error } = await supabaseAdmin
-    .from('works')
-    .select('*')
-    .eq('slug', slug)
-    .single()
+  try {
+    const { data, error } = await supabaseAdmin
+      .from('works')
+      .select('*')
+      .eq('slug', slug)
+      .single()
 
-  if (error) {
-    console.error('Error fetching work:', error)
+    if (error) {
+      console.error('Error fetching work:', error)
+      return null
+    }
+
+    console.log('Fetched work:', data)
+    return (data as Work) || null
+  } catch (err) {
+    console.error('Exception fetching work:', err)
     return null
   }
-
-  return data
 }
 
 async function getRelatedWorks(categoryId: string | null, currentWorkId: string): Promise<Work[]> {
   if (!categoryId) return []
   
-  const { data, error } = await supabaseAdmin
-    .from('works')
-    .select('*')
-    .eq('category_id', categoryId)
-    .neq('id', currentWorkId)
-    .limit(3)
+  try {
+    const { data, error } = await supabaseAdmin
+      .from('works')
+      .select('*')
+      .eq('category_id', categoryId)
+      .neq('id', currentWorkId)
+      .limit(3)
 
-  if (error) {
-    console.error('Error fetching related works:', error)
+    if (error) {
+      console.error('Error fetching related works:', error)
+      return []
+    }
+
+    console.log('Fetched related works:', data)
+    return (data as Work[]) || []
+  } catch (err) {
+    console.error('Exception fetching related works:', err)
     return []
   }
-
-  return data || []
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {

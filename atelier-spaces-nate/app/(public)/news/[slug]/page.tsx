@@ -1,3 +1,5 @@
+export const revalidate = 0
+
 import Image from 'next/image'
 import { notFound } from 'next/navigation'
 import { supabaseAdmin } from '@/lib/supabase/server'
@@ -5,18 +7,24 @@ import { NewsArticle } from '@/types'
 import { formatDate } from '@/lib/utils'
 
 async function getNewsArticle(slug: string): Promise<NewsArticle | null> {
-  const { data, error } = await supabaseAdmin
-    .from('news_articles')
-    .select('*')
-    .eq('slug', slug)
-    .single()
+  try {
+    const { data, error } = await supabaseAdmin
+      .from('news_articles')
+      .select('*')
+      .eq('slug', slug)
+      .single()
 
-  if (error) {
-    console.error('Error fetching news article:', error)
+    if (error) {
+      console.error('Error fetching news article:', error)
+      return null
+    }
+
+    console.log('Fetched news article:', data)
+    return (data as NewsArticle) || null
+  } catch (err) {
+    console.error('Exception fetching news article:', err)
     return null
   }
-
-  return data
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {

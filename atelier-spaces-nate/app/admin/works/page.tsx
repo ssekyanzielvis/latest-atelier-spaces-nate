@@ -1,3 +1,6 @@
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 import Link from 'next/link'
 import { supabaseAdmin } from '@/lib/supabase/server'
 import { Button } from '@/components/ui/button'
@@ -6,17 +9,23 @@ import { Work } from '@/types'
 import WorksList from '@/components/admin/WorksList'
 
 async function getWorks(): Promise<Work[]> {
-  const { data, error } = await supabaseAdmin
-    .from('works')
-    .select('*')
-    .order('created_at', { ascending: false })
+  try {
+    const { data, error } = await supabaseAdmin
+      .from('works')
+      .select('*')
+      .order('created_at', { ascending: false })
 
-  if (error) {
-    console.error('Error fetching works:', error)
+    if (error) {
+      console.error('Error fetching works:', error)
+      return []
+    }
+
+    console.log('Fetched works:', data)
+    return (data as Work[]) || []
+  } catch (err) {
+    console.error('Exception fetching works:', err)
     return []
   }
-
-  return data || []
 }
 
 export default async function AdminWorksPage() {

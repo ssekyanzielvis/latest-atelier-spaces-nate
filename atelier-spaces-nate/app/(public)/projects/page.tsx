@@ -2,18 +2,26 @@ import { supabaseAdmin } from '@/lib/supabase/server'
 import ProjectCard from '@/components/public/ProjectCard'
 import { Project } from '@/types'
 
-async function getProjects(): Promise<Project[]> {
-  const { data, error } = await supabaseAdmin
-    .from('projects')
-    .select('*')
-    .order('created_at', { ascending: false })
+export const revalidate = 0
 
-  if (error) {
-    console.error('Error fetching projects:', error)
+async function getProjects(): Promise<Project[]> {
+  try {
+    const { data, error } = await supabaseAdmin
+      .from('projects')
+      .select('*')
+      .order('created_at', { ascending: false })
+
+    if (error) {
+      console.error('Error fetching projects:', error)
+      return []
+    }
+
+    console.log('Fetched projects:', data)
+    return (data as Project[]) || []
+  } catch (err) {
+    console.error('Exception fetching projects:', err)
     return []
   }
-
-  return data || []
 }
 
 export const metadata = {

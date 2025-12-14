@@ -1,3 +1,6 @@
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 import Link from 'next/link'
 import { supabaseAdmin } from '@/lib/supabase/server'
 import { Button } from '@/components/ui/button'
@@ -6,17 +9,23 @@ import { NewsArticle } from '@/types'
 import NewsList from '@/components/admin/NewsList'
 
 async function getNews(): Promise<NewsArticle[]> {
-  const { data, error } = await supabaseAdmin
-    .from('news_articles')
-    .select('*')
-    .order('published_date', { ascending: false })
+  try {
+    const { data, error } = await supabaseAdmin
+      .from('news_articles')
+      .select('*')
+      .order('published_date', { ascending: false })
 
-  if (error) {
-    console.error('Error fetching news:', error)
+    if (error) {
+      console.error('Error fetching news:', error)
+      return []
+    }
+
+    console.log('Fetched news articles:', data)
+    return (data as NewsArticle[]) || []
+  } catch (err) {
+    console.error('Exception fetching news:', err)
     return []
   }
-
-  return data || []
 }
 
 export default async function AdminNewsPage() {
