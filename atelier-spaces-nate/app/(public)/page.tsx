@@ -135,51 +135,62 @@ export default async function HomePage() {
 
       {/* About Us Section - First Section */}
       {aboutSection && (
-        <section id="about" className="py-16 md:py-24 bg-white">
+        <section id="about" className="py-12 md:py-20 bg-gradient-to-b from-white to-gray-50">
           <div className="container mx-auto px-4">
-            <div className="max-w-4xl mx-auto">
-              <div className="text-center mb-12">
-                <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">{aboutSection.title}</h2>
-              </div>
-              
-              <div className="grid md:grid-cols-2 gap-12 items-center">
-                {aboutSection.image && (
-                  <div className="relative h-96 rounded-lg overflow-hidden shadow-xl">
-                    <Image
-                      src={aboutSection.image}
-                      alt="About Atelier Spaces Nate"
-                      fill
-                      className="object-cover"
-                    />
-                  </div>
-                )}
-                
-                <div className={aboutSection.image ? '' : 'md:col-span-2'}>
-                  <div className="space-y-6">
-                    <p className="text-lg text-gray-700 leading-relaxed whitespace-pre-wrap">
-                      {aboutSection.content}
-                    </p>
+            <div className="max-w-5xl mx-auto">
+              {/* Card Container */}
+              <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
+                {/* Grid Layout: Image on left, content on right (responsive) */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-0">
+                  {/* Image Section - Top on mobile, left on desktop */}
+                  {aboutSection.image && (
+                    <div className="relative min-h-64 md:min-h-80 lg:min-h-full order-first lg:order-first">
+                      <Image
+                        src={aboutSection.image}
+                        alt="About Atelier Spaces Nate"
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
+                  )}
+                  
+                  {/* Content Section */}
+                  <div className={`p-6 md:p-10 lg:p-12 flex flex-col justify-center ${!aboutSection.image ? 'lg:col-span-2' : ''}`}>
+                    {/* Title */}
+                    <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
+                      {aboutSection.title}
+                    </h2>
                     
-                    {aboutSection.mission && (
-                      <div className="border-l-4 border-black pl-6">
-                        <h3 className="text-2xl font-bold text-gray-900 mb-3">Our Mission</h3>
-                        <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">{aboutSection.mission}</p>
-                      </div>
-                    )}
-                    
-                    {aboutSection.vision && (
-                      <div className="border-l-4 border-black pl-6">
-                        <h3 className="text-2xl font-bold text-gray-900 mb-3">Our Vision</h3>
-                        <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">{aboutSection.vision}</p>
-                      </div>
-                    )}
-                    
-                    {aboutSection.values && (
-                      <div className="border-l-4 border-black pl-6">
-                        <h3 className="text-2xl font-bold text-gray-900 mb-3">Core Values</h3>
-                        <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">{aboutSection.values}</p>
-                      </div>
-                    )}
+                    {/* Main Content */}
+                    <div className="space-y-6">
+                      <p className="text-base md:text-lg text-gray-700 leading-relaxed whitespace-pre-wrap">
+                        {aboutSection.content}
+                      </p>
+                      
+                      {/* Mission Statement */}
+                      {aboutSection.mission && (
+                        <div className="bg-gray-50 rounded-lg p-4 md:p-6 border-l-4 border-black">
+                          <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-2">Our Mission</h3>
+                          <p className="text-sm md:text-base text-gray-700 leading-relaxed whitespace-pre-wrap">{aboutSection.mission}</p>
+                        </div>
+                      )}
+                      
+                      {/* Vision Statement */}
+                      {aboutSection.vision && (
+                        <div className="bg-gray-50 rounded-lg p-4 md:p-6 border-l-4 border-black">
+                          <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-2">Our Vision</h3>
+                          <p className="text-sm md:text-base text-gray-700 leading-relaxed whitespace-pre-wrap">{aboutSection.vision}</p>
+                        </div>
+                      )}
+                      
+                      {/* Core Values */}
+                      {aboutSection.values && (
+                        <div className="bg-gray-50 rounded-lg p-4 md:p-6 border-l-4 border-black">
+                          <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-2">Core Values</h3>
+                          <p className="text-sm md:text-base text-gray-700 leading-relaxed whitespace-pre-wrap">{aboutSection.values}</p>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
