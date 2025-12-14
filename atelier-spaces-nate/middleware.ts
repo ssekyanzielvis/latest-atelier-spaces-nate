@@ -9,11 +9,12 @@ export function middleware(request: NextRequest) {
     return NextResponse.next()
   }
 
-  // Check for auth token in cookies
-  const token = request.cookies.get('sb-access-token')?.value
+  // Check for NextAuth session token in cookies
+  const sessionToken = request.cookies.get('next-auth.session-token')?.value ||
+                       request.cookies.get('__Secure-next-auth.session-token')?.value
 
-  // Redirect to login if no token for admin routes
-  if (!token && pathname.startsWith('/admin') && pathname !== '/admin/login') {
+  // Redirect to login if no session for admin routes
+  if (!sessionToken && pathname.startsWith('/admin') && pathname !== '/admin/login') {
     const redirectUrl = request.nextUrl.clone()
     redirectUrl.pathname = '/admin/login'
     return NextResponse.redirect(redirectUrl)
