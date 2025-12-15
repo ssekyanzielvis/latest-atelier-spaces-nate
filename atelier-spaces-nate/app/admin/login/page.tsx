@@ -74,7 +74,34 @@ export default function AdminLoginPage() {
       // Get current session to verify it's set
       const { data: sessionData } = await supabase.auth.getSession()
       console.log('Session after login:', sessionData?.session?.user?.id)
-      console.log('Auth token:', sessionData?.session?.access_token?.substring(0, 20) + '...')
+      const accessToken = sessionData?.session?.access_token
+      const refreshToken = sessionData?.session?.refresh_token
+      console.log('Auth token:', accessToken?.substring(0, 20) + '...')
+      
+      // Call server API to set cookies with the tokens
+      if (accessToken) {
+        console.log('Calling API to set cookies...')
+        try {
+          const cookieResponse = await fetch('/api/admin/set-cookies', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              accessToken,
+              refreshToken,
+            }),
+          })
+
+          if (cookieResponse.ok) {
+            console.log('Cookies set successfully via API')
+          } else {
+            console.error('Failed to set cookies via API:', cookieResponse.status)
+          }
+        } catch (cookieErr) {
+          console.error('Error calling set-cookies API:', cookieErr)
+        }
+      }
       
       // Check cookies in browser
       console.log('Document cookies:', document.cookie.substring(0, 100))
