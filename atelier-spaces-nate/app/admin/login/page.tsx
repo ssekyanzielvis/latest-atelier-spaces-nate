@@ -54,20 +54,22 @@ export default function AdminLoginPage() {
       console.log('Login successful for user:', authData.user.id)
 
       // Verify user is an admin in the admins table
-      const { data: adminData, error: adminError } = await supabase
-        .from('admins')
+      const { data: adminData, error: adminError } = (await (supabase
+        .from('admins') as any)
         .select('id, is_active, role')
         .eq('email', data.email)
-        .single()
+        .single()) as any
 
-      if (adminError || !adminData || !adminData.is_active) {
+      const admin = adminData as { id: string; is_active: boolean; role: string } | null
+
+      if (adminError || !admin || !admin.is_active) {
         console.error('Admin check error:', adminError)
         setError('Access denied. Admin account required.')
         await supabase.auth.signOut()
         return
       }
 
-      console.log('Admin verified:', adminData.id)
+      console.log('Admin verified:', admin.id)
       router.push('/admin/dashboard')
       router.refresh()
     } catch (err) {
