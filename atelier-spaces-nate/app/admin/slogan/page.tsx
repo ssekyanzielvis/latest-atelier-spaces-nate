@@ -63,7 +63,7 @@ export default async function SloganAdminPage() {
 
             <div className="flex items-center gap-3 pt-4 border-t">
               <Link
-                href={`/admin/slogan/${sloganSection.id}/edit`}
+                href="/admin/slogan/edit"
                 className="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors"
               >
                 Edit Slogan

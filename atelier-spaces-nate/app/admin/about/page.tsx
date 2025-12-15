@@ -82,7 +82,7 @@ export default async function AboutAdminPage() {
 
             <div className="flex items-center gap-3 pt-4 border-t">
               <Link
-                href={`/admin/about/${aboutSection.id}/edit`}
+                href="/admin/about/edit"
                 className="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors"
               >
                 Edit About Section

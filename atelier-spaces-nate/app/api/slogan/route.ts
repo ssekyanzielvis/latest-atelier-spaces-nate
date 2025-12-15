@@ -56,3 +56,34 @@ export async function POST(request: Request) {
     )
   }
 }
+
+export async function PUT(request: Request) {
+  try {
+    const { searchParams } = new URL(request.url)
+    const id = searchParams.get('id')
+    
+    if (!id) {
+      return NextResponse.json({ error: 'ID is required' }, { status: 400 })
+    }
+
+    const body: any = await request.json()
+
+    const { data, error } = (await (supabase
+      .from('slogan_section') as any)
+      .update(body)
+      .eq('id', id)
+      .select()
+      .single()) as any
+
+    if (error) {
+      return NextResponse.json({ error: error.message }, { status: 500 })
+    }
+
+    return NextResponse.json(data)
+  } catch (error) {
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    )
+  }
+}
