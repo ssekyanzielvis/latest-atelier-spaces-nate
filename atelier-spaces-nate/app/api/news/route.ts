@@ -1,12 +1,22 @@
 import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase/server'
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
-    const { data, error } = await supabaseAdmin
+    const { searchParams } = new URL(request.url)
+    const id = searchParams.get('id')
+
+    let query = supabaseAdmin
       .from('news_articles')
       .select('*')
-      .order('published_date', { ascending: false })
+
+    if (id) {
+      query = query.eq('id', id).single()
+    } else {
+      query = query.order('published_date', { ascending: false })
+    }
+
+    const { data, error } = await query
 
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 })

@@ -47,14 +47,15 @@ export default function ImageUpload({ value, onChange, folder = 'general', label
       })
 
       if (!response.ok) {
-        throw new Error('Upload failed')
+        const errorData = await response.json()
+        throw new Error(errorData.error || `Upload failed with status ${response.status}`)
       }
 
       const { url } = await response.json()
       onChange(url)
     } catch (err) {
       console.error('Upload error:', err)
-      setError('Failed to upload image')
+      setError(err instanceof Error ? err.message : 'Failed to upload image')
     } finally {
       setIsUploading(false)
     }
