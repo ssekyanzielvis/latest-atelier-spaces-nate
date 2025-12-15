@@ -410,6 +410,41 @@ export interface Database {
           updated_at?: string
         }
       }
+      about_media: {
+        Row: {
+          id: string
+          title: string
+          caption: string
+          file_url: string
+          file_type: 'image' | 'video'
+          order_position: number
+          is_active: boolean
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          title: string
+          caption: string
+          file_url: string
+          file_type: 'image' | 'video'
+          order_position?: number
+          is_active?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          title?: string
+          caption?: string
+          file_url?: string
+          file_type?: 'image' | 'video'
+          order_position?: number
+          is_active?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+      }
       slogan_section: {
         Row: {
           id: string

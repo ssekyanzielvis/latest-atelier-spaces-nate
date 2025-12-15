@@ -12,6 +12,7 @@ type WorkCategory = Database['public']['Tables']['work_categories']['Row']
 type AboutSection = Database['public']['Tables']['about_section']['Row']
 type TeamMember = Database['public']['Tables']['team_members']['Row']
 type SloganSection = Database['public']['Tables']['slogan_section']['Row']
+type AboutMedia = Database['public']['Tables']['about_media']['Row']
 
 async function getHeroSlides(): Promise<HeroSlide[]> {
   const { data, error } = await supabaseAdmin
@@ -89,6 +90,26 @@ async function getAboutSection(): Promise<AboutSection | null> {
   }
 }
 
+async function getAboutMedia(): Promise<AboutMedia[]> {
+  try {
+    const { data, error } = await supabaseAdmin
+      .from('about_media')
+      .select('*')
+      .eq('is_active', true)
+      .order('order_position', { ascending: true })
+
+    if (error) {
+      console.error('Error fetching about media:', error)
+      return []
+    }
+
+    return data || []
+  } catch (err) {
+    console.error('Exception fetching about media:', err)
+    return []
+  }
+}
+
 async function getTeamMembers(): Promise<TeamMember[]> {
   const { data, error } = await supabaseAdmin
     .from('team_members')
@@ -119,11 +140,12 @@ async function getSloganSection(): Promise<SloganSection | null> {
 }
 
 export default async function HomePage() {
-  const [heroSlides, featuredWorks, workCategories, aboutSection, teamMembers, sloganSection] = await Promise.all([
+  const [heroSlides, featuredWorks, workCategories, aboutSection, aboutMedia, teamMembers, sloganSection] = await Promise.all([
     getHeroSlides(),
     getFeaturedWorks(),
     getWorkCategories(),
     getAboutSection(),
+    getAboutMedia(),
     getTeamMembers(),
     getSloganSection(),
   ])
@@ -192,6 +214,49 @@ export default async function HomePage() {
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* About Media Gallery Section */}
+      {aboutMedia.length > 0 && (
+        <section id="about-gallery" className="py-12 md:py-20 bg-white">
+          <div className="w-full px-4">
+            <div className="mb-10">
+              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">Gallery</h2>
+              <p className="text-gray-600 text-base md:text-lg">Explore our creative work and achievements</p>
+            </div>
+
+            {/* Gallery Grid - 2 Columns */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {aboutMedia.map((media) => (
+                <div key={media.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300">
+                  {/* Media Container */}
+                  <div className="relative w-full h-64 bg-gray-100">
+                    {media.file_type === 'image' ? (
+                      <Image
+                        src={media.file_url}
+                        alt={media.title}
+                        fill
+                        className="object-cover hover:scale-105 transition-transform duration-300"
+                      />
+                    ) : (
+                      <video
+                        src={media.file_url}
+                        controls
+                        className="w-full h-full object-cover"
+                      />
+                    )}
+                  </div>
+
+                  {/* Caption Section */}
+                  <div className="p-5 md:p-6">
+                    <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-2">{media.title}</h3>
+                    <p className="text-gray-600 text-sm md:text-base leading-relaxed">{media.caption}</p>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </section>
