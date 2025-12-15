@@ -239,6 +239,7 @@ export default async function HomePage() {
                         src={media.file_url}
                         alt={media.title}
                         fill
+                        unoptimized
                         className="object-cover hover:scale-105 transition-transform duration-300"
                       />
                     ) : (
