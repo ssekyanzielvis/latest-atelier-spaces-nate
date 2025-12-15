@@ -150,6 +150,16 @@ export default async function AdminDashboard() {
                 </CardContent>
               </Card>
             </Link>
+            <Link href="/admin/about-media">
+              <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full">
+                <CardHeader>
+                  <CardTitle className="text-base">About Gallery</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground">Manage images and videos</p>
+                </CardContent>
+              </Card>
+            </Link>
             <Link href="/admin/slogan">
               <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full">
                 <CardHeader>
