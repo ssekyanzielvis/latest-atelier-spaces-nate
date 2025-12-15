@@ -112,11 +112,11 @@ export default function EditAboutMediaPage() {
 
         // Delete old file if it exists
         try {
-          const oldFilePath = formData.file_url.split('about-media/')[1]
-          if (oldFilePath) {
+          const oldFileName = formData.file_url.split('/').pop()
+          if (oldFileName) {
             await supabase.storage
               .from('about-media')
-              .remove([`about-media/${oldFilePath}`])
+              .remove([oldFileName])
           }
         } catch (err) {
           console.error('Error deleting old file:', err)
@@ -124,11 +124,10 @@ export default function EditAboutMediaPage() {
 
         // Upload new file
         const fileName = `${Date.now()}-${file.name.replace(/\s+/g, '-')}`
-        const uploadPath = `about-media/${fileName}`
 
         const { data: uploadData, error: uploadError } = await supabase.storage
           .from('about-media')
-          .upload(uploadPath, file)
+          .upload(fileName, file)
 
         if (uploadError) {
           throw new Error(uploadError.message || 'Failed to upload file')
@@ -139,7 +138,7 @@ export default function EditAboutMediaPage() {
         // Get public URL
         const { data: urlData } = supabase.storage
           .from('about-media')
-          .getPublicUrl(uploadPath)
+          .getPublicUrl(fileName)
 
         fileUrl = urlData?.publicUrl || formData.file_url
       }

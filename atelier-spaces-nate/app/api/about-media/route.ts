@@ -210,11 +210,10 @@ export async function DELETE(request: NextRequest) {
     // Delete file from storage if it exists
     if (mediaItem?.file_url) {
       try {
-        const bucket = 'about-media'
-        const filePath = mediaItem.file_url.split(`${bucket}/`)[1]
+        const fileName = mediaItem.file_url.split('/').pop()
         
-        if (filePath) {
-          await supabaseAdmin.storage.from(bucket).remove([filePath])
+        if (fileName) {
+          await supabaseAdmin.storage.from('about-media').remove([fileName])
         }
       } catch (err) {
         console.error('Error deleting storage file:', err)

@@ -67,11 +67,10 @@ export default function AddAboutMediaPage() {
 
       // Upload file to Supabase Storage
       const fileName = `${Date.now()}-${file.name.replace(/\s+/g, '-')}`
-      const uploadPath = `about-media/${fileName}`
 
       const { data: uploadData, error: uploadError } = await supabase.storage
         .from('about-media')
-        .upload(uploadPath, file)
+        .upload(fileName, file)
 
       if (uploadError) {
         console.error('Upload error:', uploadError)
@@ -83,7 +82,7 @@ export default function AddAboutMediaPage() {
       // Get public URL
       const { data: urlData } = supabase.storage
         .from('about-media')
-        .getPublicUrl(uploadPath)
+        .getPublicUrl(fileName)
 
       const fileUrl = urlData?.publicUrl
 
