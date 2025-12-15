@@ -4,15 +4,16 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from 'next/navigation'
-import { signIn } from 'next-auth/react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { z } from 'zod'
+import { createSupabaseAuthClient } from '@/lib/supabase/auth'
+import Link from 'next/link'
 
 const loginSchema = z.object({
-  username: z.string().min(1, 'Username is required'),
-  password: z.string().min(1, 'Password is required'),
+  email: z.string().email('Invalid email address'),
+  password: z.string().min(6, 'Password must be at least 6 characters'),
 })
 
 type LoginFormData = z.infer<typeof loginSchema>
@@ -35,21 +36,38 @@ export default function AdminLoginPage() {
     setError(null)
 
     try {
-      console.log('Attempting login with username:', data.username)
+      const supabase = createSupabaseAuthClient()
 
-      const result = await signIn('credentials', {
-        username: data.username,
+      console.log('Attempting login with email:', data.email)
+
+      const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+        email: data.email,
         password: data.password,
-        redirect: false,
       })
 
-      console.log('SignIn result:', result)
-
-      if (!result?.ok) {
-        setError(result?.error || 'Invalid username or password')
+      if (authError || !authData.user) {
+        console.error('Auth error:', authError)
+        setError(authError?.message || 'Invalid email or password')
         return
       }
 
+      console.log('Login successful for user:', authData.user.id)
+
+      // Verify user is an admin in the admins table
+      const { data: adminData, error: adminError } = await supabase
+        .from('admins')
+        .select('id, is_active, role')
+        .eq('email', data.email)
+        .single()
+
+      if (adminError || !adminData || !adminData.is_active) {
+        console.error('Admin check error:', adminError)
+        setError('Access denied. Admin account required.')
+        await supabase.auth.signOut()
+        return
+      }
+
+      console.log('Admin verified:', adminData.id)
       router.push('/admin/dashboard')
       router.refresh()
     } catch (err) {
@@ -77,18 +95,18 @@ export default function AdminLoginPage() {
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
             <div className="space-y-2">
-              <Label htmlFor="username" className="text-sm font-semibold text-gray-700">Username</Label>
+              <Label htmlFor="email" className="text-sm font-semibold text-gray-700">Email</Label>
               <Input
-                id="username"
-                type="text"
-                {...register('username')}
-                placeholder="Enter your username"
+                id="email"
+                type="email"
+                {...register('email')}
+                placeholder="Enter your email"
                 className="h-12 text-base border-gray-300 focus:border-black focus:ring-black"
-                autoComplete="username"
+                autoComplete="email"
               />
-              {errors.username && (
+              {errors.email && (
                 <p className="text-sm text-red-600 mt-1.5 flex items-center gap-1">
-                  <span>⚠</span> {errors.username.message}
+                  <span>⚠</span> {errors.email.message}
                 </p>
               )}
             </div>
@@ -131,7 +149,7 @@ export default function AdminLoginPage() {
           </form>
         </div>
 
-        <p className="text-center text-sm text-muted-foreground mt-4">
+        <p className="text-center text-sm text-gray-600 mt-4">
           Protected area - Authorized personnel only
         </p>
       </div>

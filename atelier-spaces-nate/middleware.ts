@@ -9,12 +9,11 @@ export function middleware(request: NextRequest) {
     return NextResponse.next()
   }
 
-  // Check for NextAuth session token in cookies
-  const sessionToken = request.cookies.get('next-auth.session-token')?.value ||
-                       request.cookies.get('__Secure-next-auth.session-token')?.value
+  // Check for Supabase auth token in cookies
+  const authToken = request.cookies.get('sb-access-token')?.value
 
-  // Redirect to login if no session for admin routes
-  if (!sessionToken && pathname.startsWith('/admin') && pathname !== '/admin/login') {
+  // Redirect to login if no auth token for admin routes
+  if (!authToken && pathname.startsWith('/admin') && pathname !== '/admin/login') {
     const redirectUrl = request.nextUrl.clone()
     redirectUrl.pathname = '/admin/login'
     return NextResponse.redirect(redirectUrl)
