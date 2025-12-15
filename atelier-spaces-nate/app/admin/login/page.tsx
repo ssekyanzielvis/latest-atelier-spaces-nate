@@ -70,11 +70,43 @@ export default function AdminLoginPage() {
       }
 
       console.log('Admin verified:', admin.id)
-      router.push('/admin/dashboard')
-      router.refresh()
+      
+      // Get current session to verify it's set
+      const { data: sessionData } = await supabase.auth.getSession()
+      console.log('Session after login:', sessionData?.session?.user?.id)
+      console.log('Auth token:', sessionData?.session?.access_token?.substring(0, 20) + '...')
+      
+      // Check cookies in browser
+      console.log('Document cookies:', document.cookie.substring(0, 100))
+      
+      // Wait a moment for session to be established and cookies to be set
+      await new Promise(resolve => setTimeout(resolve, 800))
+      
+      console.log('Redirecting to dashboard...')
+      console.log('Before router.push - pathname:', window.location.pathname)
+      
+      try {
+        router.push('/admin/dashboard')
+        console.log('router.push called successfully')
+      } catch (routerErr) {
+        console.error('router.push error:', routerErr)
+      }
+      
+      try {
+        router.refresh()
+        console.log('router.refresh called successfully')
+      } catch (refreshErr) {
+        console.error('router.refresh error:', refreshErr)
+      }
+      
+      console.log('After redirect - pathname:', window.location.pathname)
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'An error occurred. Please try again.'
-      console.error('Login error:', errorMessage, err)
+      console.error('[CATCH ERROR]', errorMessage)
+      console.error('[FULL ERROR OBJECT]', err)
+      if (err instanceof Error) {
+        console.error('[ERROR STACK]', err.stack)
+      }
       setError(errorMessage)
     } finally {
       setIsLoading(false)
