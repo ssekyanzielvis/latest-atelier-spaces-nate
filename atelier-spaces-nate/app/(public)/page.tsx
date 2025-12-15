@@ -229,18 +229,18 @@ export default async function HomePage() {
             </div>
 
             {/* Gallery Grid - 2 Columns */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {aboutMedia.map((media) => (
-                <div key={media.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300">
+                <div key={media.id}>
                   {/* Media Container */}
-                  <div className="relative w-full h-64 bg-gray-100">
+                  <div className="relative w-full h-64 bg-gray-100 rounded-lg overflow-hidden mb-4">
                     {media.file_type === 'image' ? (
                       <Image
                         src={media.file_url}
                         alt={media.title}
                         fill
                         unoptimized
-                        className="object-cover hover:scale-105 transition-transform duration-300"
+                        className="object-cover"
                       />
                     ) : (
                       <video
@@ -252,7 +252,7 @@ export default async function HomePage() {
                   </div>
 
                   {/* Caption Section */}
-                  <div className="p-5 md:p-6">
+                  <div>
                     <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-2">{media.title}</h3>
                     <p className="text-gray-600 text-sm md:text-base leading-relaxed">{media.caption}</p>
                   </div>
