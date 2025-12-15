@@ -35,7 +35,6 @@ async function getFeaturedWorks(): Promise<Work[]> {
     .select('*')
     .eq('featured', true)
     .order('created_at', { ascending: false })
-    .limit(6)
 
   if (error) {
     console.error('Error fetching featured works:', error)
@@ -271,39 +270,48 @@ export default async function HomePage() {
               <h2 className="text-3xl md:text-4xl font-bold text-gray-900">Featured Works</h2>
               <p className="text-gray-600 mt-2">Explore our outstanding creative projects</p>
             </div>
-            <Link 
-              href="/works"
-              className="px-6 py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors"
-            >
-              View All Works
-            </Link>
           </div>
 
           {featuredWorks.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {featuredWorks.map((work) => (
-                <Link 
-                  key={work.id} 
-                  href={`/works/${work.slug}`}
-                  className="group block bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-all duration-300"
-                >
-                  <div className="relative h-64 md:h-80 overflow-hidden">
-                    <Image
-                      src={work.image}
-                      alt={work.title}
-                      fill
-                      className="object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
-                  </div>
-                  <div className="p-6">
-                    <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-gray-700 transition-colors">
-                      {work.title}
-                    </h3>
-                    <p className="text-gray-600 line-clamp-2">{work.description}</p>
-                  </div>
-                </Link>
-              ))}
-            </div>
+            <>
+              {/* Display first 3 works in 2-column grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                {featuredWorks.slice(0, 3).map((work) => (
+                  <Link 
+                    key={work.id} 
+                    href={`/works/${work.slug}`}
+                    className="group block bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-all duration-300"
+                  >
+                    <div className="relative h-64 md:h-80 overflow-hidden">
+                      <Image
+                        src={work.image}
+                        alt={work.title}
+                        fill
+                        className="object-cover group-hover:scale-105 transition-transform duration-300"
+                      />
+                    </div>
+                    <div className="p-6">
+                      <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-gray-700 transition-colors">
+                        {work.title}
+                      </h3>
+                      <p className="text-gray-600 line-clamp-2">{work.description}</p>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+
+              {/* View More button - only show if there are more than 3 works */}
+              {featuredWorks.length > 3 && (
+                <div className="flex justify-center">
+                  <Link 
+                    href="/works"
+                    className="px-8 py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors font-medium"
+                  >
+                    View More Works ({featuredWorks.length - 3} more)
+                  </Link>
+                </div>
+              )}
+            </>
           ) : (
             <div className="text-center py-12 text-gray-500">
               <p>No featured works available at the moment.</p>
