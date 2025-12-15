@@ -25,6 +25,8 @@ export async function POST(request: Request) {
   try {
     const body: any = await request.json()
 
+    console.log('Creating hero slide with data:', body)
+
     const { data, error } = await supabaseAdmin
       .from('hero_slides')
       .insert(body)
@@ -32,13 +34,16 @@ export async function POST(request: Request) {
       .single()
 
     if (error) {
+      console.error('Error creating hero slide:', error)
       return NextResponse.json({ error: error.message }, { status: 500 })
     }
 
+    console.log('Hero slide created successfully:', data)
     return NextResponse.json(data, { status: 201 })
   } catch (error) {
+    console.error('Exception in hero slides POST:', error)
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: error instanceof Error ? error.message : 'Internal server error' },
       { status: 500 }
     )
   }

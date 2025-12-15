@@ -41,11 +41,17 @@ export default function NewHeroSlidePage() {
     setError(null)
 
     try {
+      if (!imageUrl) {
+        throw new Error('Please upload an image first')
+      }
+
       const submitData = {
         ...data,
         image: imageUrl,
-        order_position: data.order_position ? parseInt(data.order_position) : undefined,
+        order_position: data.order_position ? parseInt(data.order_position) : 1,
       }
+
+      console.log('Submitting hero slide:', submitData)
 
       const response = await fetch('/api/hero-slides', {
         method: 'POST',
@@ -55,15 +61,20 @@ export default function NewHeroSlidePage() {
         body: JSON.stringify(submitData),
       })
 
+      const result = await response.json()
+
       if (!response.ok) {
-        const result = await response.json()
-        throw new Error(result.error || 'Failed to create hero slide')
+        console.error('Failed response:', result)
+        throw new Error(result.error || `Failed to create hero slide (${response.status})`)
       }
 
+      console.log('Hero slide created successfully:', result)
       router.push('/admin/hero-slides')
       router.refresh()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred')
+      const errorMessage = err instanceof Error ? err.message : 'An error occurred'
+      console.error('Error in onSubmit:', errorMessage)
+      setError(errorMessage)
     } finally {
       setIsSubmitting(false)
     }

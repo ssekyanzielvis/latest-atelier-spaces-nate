@@ -6,17 +6,22 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url)
     const id = searchParams.get('id')
 
-    let query = supabaseAdmin
-      .from('news_articles')
-      .select('*')
+    let response
 
     if (id) {
-      query = query.eq('id', id).single()
+      response = await supabaseAdmin
+        .from('news_articles')
+        .select('*')
+        .eq('id', id)
+        .single()
     } else {
-      query = query.order('published_date', { ascending: false })
+      response = await supabaseAdmin
+        .from('news_articles')
+        .select('*')
+        .order('published_date', { ascending: false })
     }
 
-    const { data, error } = await query
+    const { data, error } = response
 
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 })
