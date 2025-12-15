@@ -58,7 +58,7 @@ export default function NewsList({ news }: NewsListProps) {
                 </td>
                 <td className="px-6 py-4">
                   <div className="flex items-center justify-end gap-2">
-                    <Link href={`/news/${article.slug}`} target="_blank">
+                    <Link href={`/admin/news/${article.id}/view`}>
                       <Button variant="outline" size="sm" className="gap-1">
                         <FiEye size={14} />
                       </Button>

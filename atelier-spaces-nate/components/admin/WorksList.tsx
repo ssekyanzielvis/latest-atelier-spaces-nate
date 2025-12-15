@@ -26,7 +26,7 @@ export default function WorksList({ works }: WorksListProps) {
             <h3 className="font-semibold text-gray-900">{work.title}</h3>
             <p className="text-sm text-gray-600 mt-1 line-clamp-2">{work.description}</p>
             <div className="flex items-center gap-2 mt-4">
-              <Link href={`/works/${work.slug}`} target="_blank">
+              <Link href={`/admin/works/${work.id}/view`}>
                 <Button variant="outline" size="sm" className="gap-1">
                   <FiEye size={14} />
                 </Button>

@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { FiEdit } from 'react-icons/fi'
+import { FiEdit, FiEye } from 'react-icons/fi'
 import DeleteButton from './DeleteButton'
 import { HeroSlide } from '@/types'
 
@@ -42,6 +42,11 @@ export default function HeroSlidesList({ slides }: HeroSlidesListProps) {
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
+                  <Link href={`/admin/hero-slides/${slide.id}/view`}>
+                    <Button variant="outline" size="sm" className="gap-1">
+                      <FiEye size={14} />
+                    </Button>
+                  </Link>
                   <Link href={`/admin/hero-slides/${slide.id}/edit`}>
                     <Button variant="outline" size="sm" className="gap-1">
                       <FiEdit size={14} />

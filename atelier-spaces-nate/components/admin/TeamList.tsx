@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { FiEdit } from 'react-icons/fi'
+import { FiEdit, FiEye } from 'react-icons/fi'
 import DeleteButton from './DeleteButton'
 import { TeamMember } from '@/types'
 
@@ -29,6 +29,11 @@ export default function TeamList({ teamMembers }: TeamListProps) {
               <p className="text-sm text-gray-500 mt-3 line-clamp-2">{member.bio}</p>
             )}
             <div className="flex items-center gap-2 mt-4">
+              <Link href={`/admin/team/${member.id}/view`}>
+                <Button variant="outline" size="sm" className="gap-1">
+                  <FiEye size={14} />
+                </Button>
+              </Link>
               <Link href={`/admin/team/${member.id}/edit`} className="flex-1">
                 <Button variant="outline" size="sm" className="w-full gap-1">
                   <FiEdit size={14} />

@@ -63,6 +63,12 @@ export default async function SloganAdminPage() {
 
             <div className="flex items-center gap-3 pt-4 border-t">
               <Link
+                href="/admin/slogan/view"
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                View
+              </Link>
+              <Link
                 href="/admin/slogan/edit"
                 className="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors"
               >

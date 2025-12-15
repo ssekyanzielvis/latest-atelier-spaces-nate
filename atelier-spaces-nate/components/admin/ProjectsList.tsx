@@ -71,7 +71,7 @@ export default function ProjectsList({ projects }: ProjectsListProps) {
                 </td>
                 <td className="px-6 py-4">
                   <div className="flex items-center justify-end gap-2">
-                    <Link href={`/projects/${project.slug}`} target="_blank">
+                    <Link href={`/admin/projects/${project.id}/view`}>
                       <Button variant="outline" size="sm" className="gap-1">
                         <FiEye size={14} />
                       </Button>
