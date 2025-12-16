@@ -61,11 +61,13 @@ export default function NewHeroSlidePage() {
         body: JSON.stringify(submitData),
       })
 
+      console.log('Response status:', response.status)
       const result = await response.json()
+      console.log('Response data:', result)
 
       if (!response.ok) {
         console.error('Failed response:', result)
-        throw new Error(result.error || `Failed to create hero slide (${response.status})`)
+        throw new Error(result.error || `Failed to create hero slide (Status: ${response.status})`)
       }
 
       console.log('Hero slide created successfully:', result)
@@ -73,7 +75,7 @@ export default function NewHeroSlidePage() {
       router.refresh()
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'An error occurred'
-      console.error('Error in onSubmit:', errorMessage)
+      console.error('Error in onSubmit:', errorMessage, err)
       setError(errorMessage)
     } finally {
       setIsSubmitting(false)
