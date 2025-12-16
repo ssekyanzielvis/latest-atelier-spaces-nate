@@ -35,22 +35,19 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Image URL is required' }, { status: 400 })
     }
 
-    // Prepare the insert data
-    const insertData = {
-      title: body.title,
-      subtitle: body.subtitle || null,
-      image: body.image,
-      cta_text: body.cta_text || null,
-      cta_link: body.cta_link || null,
-      order_position: body.order_position || 1,
-      is_active: body.is_active !== false, // Default to true
-    }
-
-    console.log('Insert data:', insertData)
+    console.log('Insert data:', body)
 
     const { data, error } = await supabaseAdmin
       .from('hero_slides')
-      .insert([insertData])
+      .insert({
+        title: body.title,
+        subtitle: body.subtitle || null,
+        image: body.image,
+        cta_text: body.cta_text || null,
+        cta_link: body.cta_link || null,
+        order_position: body.order_position || 1,
+        is_active: body.is_active !== false,
+      } as any)
       .select()
       .single()
 
