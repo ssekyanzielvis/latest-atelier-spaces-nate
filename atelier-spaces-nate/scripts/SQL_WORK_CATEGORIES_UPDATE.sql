@@ -16,14 +16,31 @@ CREATE INDEX idx_work_categories_order ON work_categories(order_position);
 -- 3. Enable RLS if not already enabled
 ALTER TABLE work_categories ENABLE ROW LEVEL SECURITY;
 
--- 4. Create RLS policies for work_categories
+-- 4. Drop existing policies if they exist
+DROP POLICY IF EXISTS "Allow public read active categories" ON work_categories;
+DROP POLICY IF EXISTS "Allow admin all operations" ON work_categories;
+
+-- 5. Create RLS policies for work_categories
 -- Allow anyone to read active categories
 CREATE POLICY "Allow public read active categories" ON work_categories
 FOR SELECT USING (is_active = true);
 
--- Allow authenticated admins to perform all operations
-CREATE POLICY "Allow admin all operations" ON work_categories
-USING (true);
+-- Allow authenticated admins to read all categories
+CREATE POLICY "Allow authenticated read all categories" ON work_categories
+FOR SELECT USING (auth.role() = 'authenticated_user');
+
+-- Allow authenticated admins to insert categories
+CREATE POLICY "Allow authenticated insert categories" ON work_categories
+FOR INSERT WITH CHECK (auth.role() = 'authenticated_user');
+
+-- Allow authenticated admins to update categories
+CREATE POLICY "Allow authenticated update categories" ON work_categories
+FOR UPDATE USING (auth.role() = 'authenticated_user')
+WITH CHECK (auth.role() = 'authenticated_user');
+
+-- Allow authenticated admins to delete categories
+CREATE POLICY "Allow authenticated delete categories" ON work_categories
+FOR DELETE USING (auth.role() = 'authenticated_user');
 
 -- 5. Storage bucket policies for work-categories bucket
 -- Allow public read access to category cover images

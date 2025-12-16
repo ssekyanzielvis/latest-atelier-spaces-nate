@@ -14,7 +14,7 @@ async function getStats() {
       worksResult,
       teamResult,
       collaborationsResult,
-      categoriesResult,
+      workCategoriesResult,
       heroSlidesResult,
     ] = await Promise.all([
       supabaseAdmin.from('projects').select('*', { count: 'exact', head: true }),
@@ -22,7 +22,7 @@ async function getStats() {
       supabaseAdmin.from('works').select('*', { count: 'exact', head: true }),
       supabaseAdmin.from('team_members').select('*', { count: 'exact', head: true }),
       supabaseAdmin.from('collaborations').select('*', { count: 'exact', head: true }),
-      supabaseAdmin.from('categories').select('*', { count: 'exact', head: true }),
+      supabaseAdmin.from('work_categories').select('*', { count: 'exact', head: true }),
       supabaseAdmin.from('hero_slides').select('*', { count: 'exact', head: true }),
     ])
 
@@ -32,7 +32,7 @@ async function getStats() {
       works: worksResult.count || 0,
       team: teamResult.count || 0,
       collaborations: collaborationsResult.count || 0,
-      categories: categoriesResult.count || 0,
+      workCategories: workCategoriesResult.count || 0,
       heroSlides: heroSlidesResult.count || 0,
     }
   } catch (error) {
@@ -43,7 +43,7 @@ async function getStats() {
       works: 0,
       team: 0,
       collaborations: 0,
-      categories: 0,
+      workCategories: 0,
       heroSlides: 0,
     }
   }
@@ -57,8 +57,9 @@ export default async function AdminDashboard() {
     { title: 'Works', value: stats.works, icon: FiImage, href: '/admin/works' },
     { title: 'News', value: stats.news, icon: FiFileText, href: '/admin/news' },
     { title: 'Team', value: stats.team, icon: FiUsers, href: '/admin/team' },
+    { title: 'Collaborations', value: stats.collaborations, icon: FiMessageSquare, href: '/admin/collaborations' },
+    { title: 'Work Categories', value: stats.workCategories, icon: FiTag, href: '/admin/work-categories' },
     { title: 'Hero Slides', value: stats.heroSlides, icon: FiLayers, href: '/admin/hero-slides' },
-    { title: 'Categories', value: stats.categories, icon: FiTag, href: '/admin/categories' },
   ]
 
   return (
@@ -105,10 +106,10 @@ export default async function AdminDashboard() {
               { title: 'New Work', href: '/admin/works/new', icon: FiImage },
               { title: 'New Article', href: '/admin/news/new', icon: FiFileText },
               { title: 'New Member', href: '/admin/team/new', icon: FiUsers },
-              { title: 'About Section', href: '/admin/about', icon: FiInfo },
+              { title: 'Work Categories', href: '/admin/work-categories', icon: FiTag },
               { title: 'About Gallery', href: '/admin/about-media', icon: FiImage },
+              { title: 'About Section', href: '/admin/about', icon: FiInfo },
               { title: 'Hero Slides', href: '/admin/hero-slides', icon: FiSliders },
-              { title: 'Slogan', href: '/admin/slogan', icon: FiLayout },
             ].map((action) => {
               const Icon = action.icon
               return (

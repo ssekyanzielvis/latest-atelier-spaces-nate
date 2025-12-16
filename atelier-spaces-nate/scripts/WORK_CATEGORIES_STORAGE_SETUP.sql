@@ -15,6 +15,12 @@ INSERT INTO storage.buckets (id, name, public)
 VALUES ('work-categories', 'work-categories', true)
 ON CONFLICT DO NOTHING;
 
+-- Drop existing policies if they exist
+DROP POLICY IF EXISTS "Allow public read work-categories" ON storage.objects;
+DROP POLICY IF EXISTS "Allow authenticated upload to work-categories" ON storage.objects;
+DROP POLICY IF EXISTS "Allow authenticated update work-categories" ON storage.objects;
+DROP POLICY IF EXISTS "Allow authenticated delete work-categories" ON storage.objects;
+
 -- Policy 2: Allow public read objects in work-categories bucket
 CREATE POLICY "Allow public read work-categories" ON storage.objects
 FOR SELECT
@@ -23,30 +29,18 @@ USING (bucket_id = 'work-categories');
 -- Policy 3: Allow authenticated users to upload
 CREATE POLICY "Allow authenticated upload to work-categories" ON storage.objects
 FOR INSERT
-WITH CHECK (
-  bucket_id = 'work-categories'
-  AND auth.role() = 'authenticated_user'
-);
+WITH CHECK (bucket_id = 'work-categories');
 
 -- Policy 4: Allow authenticated users to update
 CREATE POLICY "Allow authenticated update work-categories" ON storage.objects
 FOR UPDATE
-USING (
-  bucket_id = 'work-categories'
-  AND auth.role() = 'authenticated_user'
-)
-WITH CHECK (
-  bucket_id = 'work-categories'
-  AND auth.role() = 'authenticated_user'
-);
+USING (bucket_id = 'work-categories')
+WITH CHECK (bucket_id = 'work-categories');
 
 -- Policy 5: Allow authenticated users to delete
 CREATE POLICY "Allow authenticated delete work-categories" ON storage.objects
 FOR DELETE
-USING (
-  bucket_id = 'work-categories'
-  AND auth.role() = 'authenticated_user'
-);
+USING (bucket_id = 'work-categories');
 
 -- Bucket Configuration
 -- Max file size: 100 MB
