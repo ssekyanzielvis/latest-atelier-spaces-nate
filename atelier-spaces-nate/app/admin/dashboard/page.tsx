@@ -1,6 +1,6 @@
 import { supabaseAdmin } from '@/lib/supabase/server'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { FiFolder, FiFileText, FiImage, FiUsers, FiMessageSquare, FiLayers, FiTag } from 'react-icons/fi'
+import { FiFolder, FiFileText, FiImage, FiUsers, FiMessageSquare, FiLayers, FiTag, FiInfo, FiSliders, FiLayout } from 'react-icons/fi'
 import Link from 'next/link'
 
 // Force dynamic rendering
