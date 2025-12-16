@@ -32,14 +32,19 @@ export async function POST(request: Request) {
       .single()
 
     if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 })
+      console.error('Works POST error:', error)
+      return NextResponse.json(
+        { error: error.message || 'Failed to create work' },
+        { status: 400 }
+      )
     }
 
     return NextResponse.json(data, { status: 201 })
   } catch (error) {
-    console.error('POST works error:', error)
+    console.error('Works POST exception:', error)
+    const errorMessage = error instanceof Error ? error.message : 'Internal server error'
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Internal server error' },
+      { error: errorMessage },
       { status: 500 }
     )
   }

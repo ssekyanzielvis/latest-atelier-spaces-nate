@@ -32,13 +32,19 @@ export async function POST(request: Request) {
       .single()
 
     if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 })
+      console.error('Projects POST error:', error)
+      return NextResponse.json(
+        { error: error.message || 'Failed to create project' },
+        { status: 400 }
+      )
     }
 
     return NextResponse.json(data, { status: 201 })
   } catch (error) {
+    console.error('Projects POST exception:', error)
+    const errorMessage = error instanceof Error ? error.message : 'Internal server error'
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: errorMessage },
       { status: 500 }
     )
   }

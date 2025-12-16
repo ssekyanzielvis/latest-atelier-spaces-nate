@@ -34,6 +34,7 @@ export default function NewNewsPage() {
     resolver: zodResolver(newsSchema),
     defaultValues: {
       featured: false,
+      published_date: new Date().toISOString().split('T')[0],
     },
   })
 

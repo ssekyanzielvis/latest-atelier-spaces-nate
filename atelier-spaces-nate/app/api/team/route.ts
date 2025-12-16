@@ -44,7 +44,10 @@ export async function POST(request: Request) {
 
     if (error) {
       console.error('Database error:', error)
-      return NextResponse.json({ error: error.message }, { status: 500 })
+      return NextResponse.json(
+        { error: error.message || 'Failed to create team member' },
+        { status: 400 }
+      )
     }
 
     console.log('Team member created successfully:', data)
