@@ -40,9 +40,9 @@ export async function POST(request: Request) {
   try {
     const body: any = await request.json()
 
-    const { data, error } = await (supabaseAdmin
+    const { data, error } = await supabaseAdmin
       .from('news_articles')
-      .insert(body as any) as any)
+      .insert([body])
       .select()
       .single()
 

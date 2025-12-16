@@ -36,11 +36,11 @@ export async function POST(request: Request) {
       )
     }
 
-    const { data, error } = await (supabaseAdmin
+    const { data, error } = await supabaseAdmin
       .from('team_members')
-      .insert(body as any)
+      .insert([body])
       .select()
-      .single() as any)
+      .single()
 
     if (error) {
       console.error('Database error:', error)

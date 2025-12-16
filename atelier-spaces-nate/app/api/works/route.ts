@@ -25,9 +25,9 @@ export async function POST(request: Request) {
   try {
     const body: any = await request.json()
 
-    const { data, error } = await (supabaseAdmin
+    const { data, error } = await supabaseAdmin
       .from('works')
-      .insert(body as any) as any)
+      .insert([body])
       .select()
       .single()
 
@@ -37,8 +37,9 @@ export async function POST(request: Request) {
 
     return NextResponse.json(data, { status: 201 })
   } catch (error) {
+    console.error('POST works error:', error)
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: error instanceof Error ? error.message : 'Internal server error' },
       { status: 500 }
     )
   }
