@@ -6,48 +6,29 @@ export default function Footer() {
 
   return (
     <footer className="bg-gray-900 text-white">
-      <div className="container mx-auto px-4 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 lg:gap-16">
-          {/* About Section */}
+      {/* Main Footer */}
+      <div className="w-full px-4 md:px-6 py-16 md:py-20">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 md:gap-12">
+          {/* Brand Section */}
           <div className="space-y-4">
-            <h3 className="text-2xl font-bold">Atelier Spaces Nate</h3>
+            <h3 className="text-xl font-bold text-white">ATELIER</h3>
             <p className="text-gray-400 text-sm leading-relaxed">
               A research-led design studio working with form, systems, and cultural intelligence, rooted in African contexts.
             </p>
           </div>
 
-          {/* Quick Links */}
+          {/* Navigation Links */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold">Quick Links</h3>
-            <ul className="space-y-3">
+            <h4 className="text-sm font-semibold text-white uppercase tracking-wide">Explore</h4>
+            <ul className="space-y-2.5">
               <li>
-                <Link href="/#featured-works" className="text-gray-400 hover:text-white text-sm transition-colors">
-                  Featured Works
+                <Link href="/" className="text-gray-400 hover:text-white text-sm transition-colors">
+                  Home
                 </Link>
               </li>
               <li>
                 <Link href="/works" className="text-gray-400 hover:text-white text-sm transition-colors">
-                  All Works
-                </Link>
-              </li>
-              <li>
-                <Link href="/#work-categories" className="text-gray-400 hover:text-white text-sm transition-colors">
-                  Work Categories
-                </Link>
-              </li>
-              <li>
-                <Link href="/#about" className="text-gray-400 hover:text-white text-sm transition-colors">
-                  About Us
-                </Link>
-              </li>
-              <li>
-                <Link href="/#team" className="text-gray-400 hover:text-white text-sm transition-colors">
-                  Our Team
-                </Link>
-              </li>
-              <li>
-                <Link href="/team" className="text-gray-400 hover:text-white text-sm transition-colors">
-                  All Team Members
+                  Works
                 </Link>
               </li>
               <li>
@@ -58,6 +39,23 @@ export default function Footer() {
               <li>
                 <Link href="/news" className="text-gray-400 hover:text-white text-sm transition-colors">
                   News
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Company Links */}
+          <div className="space-y-4">
+            <h4 className="text-sm font-semibold text-white uppercase tracking-wide">Company</h4>
+            <ul className="space-y-2.5">
+              <li>
+                <Link href="/#about" className="text-gray-400 hover:text-white text-sm transition-colors">
+                  About
+                </Link>
+              </li>
+              <li>
+                <Link href="/team" className="text-gray-400 hover:text-white text-sm transition-colors">
+                  Team
                 </Link>
               </li>
               <li>
@@ -75,33 +73,40 @@ export default function Footer() {
 
           {/* Connect Section */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold">Connect</h3>
-            <div className="space-y-3">
-              <a href="mailto:contact@atelierspacesnate.com" className="text-gray-400 hover:text-white text-sm transition-colors block">
-                contact@atelierspacesnate.com
+            <h4 className="text-sm font-semibold text-white uppercase tracking-wide">Connect</h4>
+            <p className="text-gray-400 text-sm">
+              Get in touch with us to discuss your next project.
+            </p>
+            <a href="mailto:contact@atelierspacesnate.com" className="text-white hover:text-gray-300 text-sm font-medium transition-colors inline-block">
+              contact@atelierspacesnate.com
+            </a>
+            <div className="flex gap-4 pt-3">
+              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors" aria-label="Instagram">
+                <FiInstagram size={18} />
               </a>
-              <div className="flex gap-4 pt-2">
-                <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors" aria-label="Instagram">
-                  <FiInstagram size={20} />
-                </a>
-                <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors" aria-label="Twitter">
-                  <FiTwitter size={20} />
-                </a>
-                <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors" aria-label="LinkedIn">
-                  <FiLinkedin size={20} />
-                </a>
-                <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors" aria-label="Facebook">
-                  <FiFacebook size={20} />
-                </a>
-              </div>
+              <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors" aria-label="Twitter">
+                <FiTwitter size={18} />
+              </a>
+              <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors" aria-label="LinkedIn">
+                <FiLinkedin size={18} />
+              </a>
             </div>
           </div>
         </div>
+      </div>
 
-        <div className="mt-12 pt-8 border-t border-gray-800 text-center">
-          <p className="text-gray-500 text-sm">
-            © {currentYear} Atelier Spaces Nate. All rights reserved.
-          </p>
+      {/* Bottom Bar */}
+      <div className="border-t border-gray-800">
+        <div className="w-full px-4 md:px-6 py-6">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+            <p className="text-gray-500 text-xs">
+              © {currentYear} Atelier Spaces Nate. All rights reserved.
+            </p>
+            <div className="flex gap-6 text-xs text-gray-500">
+              <a href="#" className="hover:text-gray-300 transition-colors">Privacy Policy</a>
+              <a href="#" className="hover:text-gray-300 transition-colors">Terms of Service</a>
+            </div>
+          </div>
         </div>
       </div>
     </footer>

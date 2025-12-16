@@ -46,16 +46,18 @@ export default function AdminSidebar() {
   }
 
   return (
-    <aside className="w-64 bg-gradient-to-b from-gray-900 via-gray-800 to-gray-900 text-white min-h-screen flex flex-col shadow-2xl">
-      <div className="p-6 border-b border-white/10">
-        <Link href="/admin/dashboard" className="block hover:opacity-80 transition-opacity">
-          <h2 className="text-2xl font-bold tracking-tight">ATELIER</h2>
-          <p className="text-sm text-gray-400 mt-1">Admin Panel</p>
+    <aside className="w-64 bg-gray-900 text-white min-h-screen flex flex-col shadow-xl border-r border-gray-800">
+      {/* Logo Section */}
+      <div className="p-6 border-b border-gray-800">
+        <Link href="/admin/dashboard" className="block hover:opacity-90 transition-opacity">
+          <h2 className="text-2xl font-bold tracking-tight text-white">ATELIER</h2>
+          <p className="text-xs text-gray-500 mt-1.5 uppercase tracking-wide">Admin Portal</p>
         </Link>
       </div>
 
-      <nav className="flex-1 p-4 overflow-y-auto">
-        <ul className="space-y-1.5">
+      {/* Navigation */}
+      <nav className="flex-1 px-3 py-6 overflow-y-auto">
+        <ul className="space-y-1">
           {navItems.map((item) => {
             const Icon = item.icon
             const isActive = pathname === item.href || pathname?.startsWith(item.href + '/')
@@ -64,14 +66,14 @@ export default function AdminSidebar() {
               <li key={item.href}>
                 <Link
                   href={item.href}
-                  className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 font-medium ${
+                  className={`flex items-center gap-3 px-4 py-2.5 rounded-md transition-all duration-200 font-medium text-sm ${
                     isActive
-                      ? 'bg-white text-gray-900 shadow-lg scale-105'
-                      : 'text-gray-300 hover:bg-white/10 hover:text-white hover:translate-x-1'
+                      ? 'bg-white text-gray-900 shadow-md'
+                      : 'text-gray-400 hover:bg-gray-800 hover:text-white'
                   }`}
                 >
-                  <Icon size={20} className="flex-shrink-0" />
-                  <span className="text-sm">{item.label}</span>
+                  <Icon size={18} className="flex-shrink-0" />
+                  <span>{item.label}</span>
                 </Link>
               </li>
             )
@@ -79,12 +81,13 @@ export default function AdminSidebar() {
         </ul>
       </nav>
 
-      <div className="p-4 border-t border-white/10">
+      {/* Footer Section */}
+      <div className="p-3 border-t border-gray-800">
         <button
           onClick={handleLogout}
-          className="flex items-center gap-3 px-4 py-3 w-full text-gray-300 hover:bg-red-500/20 hover:text-red-400 rounded-lg transition-all duration-200 font-medium text-sm"
+          className="flex items-center gap-3 px-4 py-2.5 w-full text-gray-400 hover:bg-gray-800/50 hover:text-gray-200 rounded-md transition-all duration-200 font-medium text-sm"
         >
-          <FiLogOut size={20} className="flex-shrink-0" />
+          <FiLogOut size={18} className="flex-shrink-0" />
           <span>Logout</span>
         </button>
       </div>
