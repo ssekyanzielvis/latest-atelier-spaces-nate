@@ -361,20 +361,29 @@ export default async function HomePage() {
           </div>
 
           {workCategories.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {workCategories.map((category) => (
                 <Link
                   key={category.id}
-                  href={`/works/category/${category.slug}`}
-                  className="group relative h-64 rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300"
+                  href={`/works?category=${category.slug}`}
+                  className="group relative h-80 rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300"
                 >
+                  {category.cover_image && (
+                    <ImageWithError
+                      src={category.cover_image}
+                      alt={category.name}
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform duration-300"
+                      errorMessage="Failed to load category image"
+                    />
+                  )}
                   <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/40 to-black/80"></div>
-                  <div className="absolute inset-0 flex flex-col justify-end p-6">
-                    <h3 className="text-2xl font-bold text-white mb-2 group-hover:scale-105 transition-transform">
+                  <div className="absolute inset-0 flex flex-col justify-end p-8">
+                    <h3 className="text-3xl font-bold text-white mb-3 group-hover:scale-105 transition-transform">
                       {category.name}
                     </h3>
                     {category.description && (
-                      <p className="text-white/90 text-sm line-clamp-2">
+                      <p className="text-white/90 text-base line-clamp-3">
                         {category.description}
                       </p>
                     )}
