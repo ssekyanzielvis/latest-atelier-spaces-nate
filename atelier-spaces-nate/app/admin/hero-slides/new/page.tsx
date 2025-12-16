@@ -28,9 +28,11 @@ export default function NewHeroSlidePage() {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    watch,
+    formState: { errors, isValid },
   } = useForm<HeroSlideFormData>({
     resolver: zodResolver(heroSlideSchema),
+    mode: 'onChange',
     defaultValues: {
       is_active: true,
     },
@@ -137,8 +139,10 @@ export default function NewHeroSlidePage() {
             folder="hero-slides"
             label="Upload Hero Slide Image"
           />
-          {!imageUrl && errors.image && (
-            <p className="mt-1 text-sm text-red-600">{errors.image.message}</p>
+          {!imageUrl && (
+            <p className="mt-2 text-sm text-amber-600 bg-amber-50 p-2 rounded">
+              ⚠️ Image is required to create a hero slide
+            </p>
           )}
           <p className="mt-1 text-xs text-gray-500">High-quality image - will fill entire screen width</p>
         </div>
@@ -205,6 +209,7 @@ export default function NewHeroSlidePage() {
             type="submit"
             disabled={isSubmitting || !imageUrl}
             className="px-6 py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+            title={!imageUrl ? 'Please upload an image first' : isSubmitting ? 'Creating slide...' : 'Create slide'}
           >
             {isSubmitting ? 'Creating...' : 'Add Hero Slide'}
           </button>
