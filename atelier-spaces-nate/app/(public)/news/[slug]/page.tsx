@@ -1,6 +1,6 @@
 export const revalidate = 0
 
-import Image from 'next/image'
+import ImageWithError from '@/components/ImageWithError'
 import { notFound } from 'next/navigation'
 import { supabaseAdmin } from '@/lib/supabase/server'
 import { NewsArticle } from '@/types'
@@ -68,12 +68,13 @@ export default async function NewsDetailPage({ params }: { params: Promise<{ slu
 
           {/* Featured Image */}
           <div className="relative aspect-video overflow-hidden rounded-lg mb-8">
-            <Image
+            <ImageWithError
               src={article.image}
               alt={article.title}
               fill
               className="object-cover"
               priority
+              errorMessage="Failed to load article image"
             />
           </div>
 

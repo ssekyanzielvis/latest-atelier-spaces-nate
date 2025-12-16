@@ -1,6 +1,6 @@
 export const revalidate = 0
 
-import Image from 'next/image'
+import ImageWithError from '@/components/ImageWithError'
 import { notFound } from 'next/navigation'
 import { supabaseAdmin } from '@/lib/supabase/server'
 import { Project } from '@/types'
@@ -62,12 +62,13 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
       <div className="container mx-auto px-4">
         {/* Hero Image */}
         <div className="relative aspect-[21/9] overflow-hidden rounded-lg mb-8">
-          <Image
+          <ImageWithError
             src={project.image}
             alt={project.title}
             fill
             className="object-cover"
             priority
+            errorMessage="Failed to load project image"
           />
         </div>
 
@@ -86,11 +87,12 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {galleryImages.map((image, index) => (
                     <div key={index} className="relative aspect-video overflow-hidden rounded-lg">
-                      <Image
+                      <ImageWithError
                         src={image}
                         alt={`${project.title} gallery ${index + 1}`}
                         fill
                         className="object-cover"
+                        errorMessage="Failed to load gallery image"
                       />
                     </div>
                   ))}

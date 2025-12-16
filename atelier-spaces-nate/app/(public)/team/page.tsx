@@ -1,4 +1,4 @@
-import Image from 'next/image'
+import ImageWithError from '@/components/ImageWithError'
 import { supabaseAdmin } from '@/lib/supabase/server'
 import { TeamMember } from '@/types'
 import { FiMail, FiLinkedin, FiTwitter } from 'react-icons/fi'
@@ -58,11 +58,12 @@ export default async function TeamPage() {
             {teamMembers.map((member) => (
               <div key={member.id} className="group">
                 <div className="relative aspect-square overflow-hidden rounded-lg bg-muted mb-4">
-                  <Image
+                  <ImageWithError
                     src={member.image}
                     alt={member.name}
                     fill
                     className="object-cover grayscale group-hover:grayscale-0 transition-all duration-300"
+                    errorMessage="Failed to load team member image"
                   />
                 </div>
                 <h3 className="font-semibold text-xl">{member.name}</h3>

@@ -1,6 +1,6 @@
 'use client'
 
-import Image from 'next/image'
+import ImageWithError from '@/components/ImageWithError'
 import Link from 'next/link'
 import { Project } from '@/types'
 import { useEffect } from 'react'
@@ -23,12 +23,12 @@ export default function ProjectCard({ project }: ProjectCardProps) {
       <div className="relative aspect-[4/3] overflow-hidden rounded-lg bg-muted">
         {project.image ? (
           <>
-            <Image
+            <ImageWithError
               src={project.image}
               alt={project.title}
               fill
               className="object-cover transition-transform duration-300 group-hover:scale-105"
-              onError={(e) => console.error(`Failed to load image for project "${project.title}"`, project.image)}
+              errorMessage="Failed to load project image"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
               <div className="absolute bottom-0 left-0 right-0 p-4">

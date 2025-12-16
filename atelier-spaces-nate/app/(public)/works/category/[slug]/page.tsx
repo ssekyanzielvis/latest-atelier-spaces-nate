@@ -3,7 +3,7 @@ export const revalidate = 0
 import { supabaseAdmin } from '@/lib/supabase/server'
 import { Database } from '@/types/database'
 import Link from 'next/link'
-import Image from 'next/image'
+import ImageWithError from '@/components/ImageWithError'
 import { notFound } from 'next/navigation'
 
 type Work = Database['public']['Tables']['works']['Row']
@@ -86,11 +86,12 @@ export default async function CategoryPage({ params }: { params: { slug: string 
                   className="group bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-all duration-300"
                 >
                   <div className="relative h-64 overflow-hidden">
-                    <Image
+                    <ImageWithError
                       src={work.image}
                       alt={work.title}
                       fill
                       className="object-cover group-hover:scale-105 transition-transform duration-300"
+                      errorMessage="Failed to load work image"
                     />
                   </div>
                   <div className="p-6">

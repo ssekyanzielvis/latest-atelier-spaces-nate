@@ -1,6 +1,6 @@
 'use client'
 
-import Image from 'next/image'
+import ImageWithError from '@/components/ImageWithError'
 import Link from 'next/link'
 import { NewsArticle } from '@/types'
 import { formatDate } from '@/lib/utils'
@@ -23,12 +23,12 @@ export default function NewsCard({ article }: NewsCardProps) {
     <Link href={`/news/${article.slug}`} className="group">
       <div className="relative aspect-[16/9] overflow-hidden rounded-lg bg-muted">
         {article.image ? (
-          <Image
+          <ImageWithError
             src={article.image}
             alt={article.title}
             fill
             className="object-cover transition-transform duration-300 group-hover:scale-105"
-            onError={(e) => console.error(`Failed to load image for article "${article.title}"`, article.image)}
+            errorMessage="Failed to load article image"
           />
         ) : (
           <div className="w-full h-full bg-gray-300 flex items-center justify-center">

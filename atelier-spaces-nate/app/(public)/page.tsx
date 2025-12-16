@@ -1,8 +1,8 @@
 import Link from 'next/link'
 import { supabaseAdmin } from '@/lib/supabase/server'
 import HeroSection from '@/components/public/HeroSection'
+import ImageWithError from '@/components/ImageWithError'
 import { Database } from '@/types/database'
-import Image from 'next/image'
 
 export const revalidate = 0
 
@@ -165,11 +165,12 @@ export default async function HomePage() {
                 {/* Image Section - Full Width at Top */}
                 {aboutSection.image && (
                   <div className="relative w-full h-64 md:h-80 lg:h-96">
-                    <Image
+                    <ImageWithError
                       src={aboutSection.image}
                       alt="About Atelier Spaces Nate"
                       fill
                       className="object-cover"
+                      errorMessage="Failed to load about image"
                     />
                   </div>
                 )}
@@ -234,12 +235,13 @@ export default async function HomePage() {
                   {/* Media Container */}
                   <div className="relative w-full h-64 bg-gray-100 rounded-lg overflow-hidden mb-4">
                     {media.file_type === 'image' ? (
-                      <Image
+                      <ImageWithError
                         src={media.file_url}
                         alt={media.title}
                         fill
                         unoptimized
                         className="object-cover"
+                        errorMessage="Failed to load gallery image"
                       />
                     ) : (
                       <video
@@ -283,11 +285,12 @@ export default async function HomePage() {
                     className="group block bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-all duration-300"
                   >
                     <div className="relative h-64 md:h-80 overflow-hidden">
-                      <Image
+                      <ImageWithError
                         src={work.image}
                         alt={work.title}
                         fill
                         className="object-cover group-hover:scale-105 transition-transform duration-300"
+                        errorMessage="Failed to load work image"
                       />
                     </div>
                     <div className="p-6">
@@ -401,11 +404,12 @@ export default async function HomePage() {
                 {teamMembers.map((member: TeamMember) => (
                   <div key={member.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow">
                     <div className="relative h-64">
-                      <Image
+                      <ImageWithError
                         src={member.image}
                         alt={member.name}
                         fill
                         className="object-cover"
+                        errorMessage="Failed to load team member image"
                       />
                     </div>
                     <div className="p-6">

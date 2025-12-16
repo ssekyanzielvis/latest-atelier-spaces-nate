@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import Image from 'next/image'
+import ImageWithError from '@/components/ImageWithError'
 import Link from 'next/link'
 import { HeroSlide } from '@/types'
 import { FiChevronLeft, FiChevronRight } from 'react-icons/fi'
@@ -51,12 +51,13 @@ export default function HeroSection({ slides }: HeroSectionProps) {
             index === currentSlide ? 'opacity-100' : 'opacity-0'
           }`}
         >
-          <Image
+          <ImageWithError
             src={slide.image}
             alt={slide.title}
             fill
             className="object-cover"
             priority={index === 0}
+            errorMessage="Failed to load hero slide"
           />
           <div className="absolute inset-0 bg-black/40" />
           

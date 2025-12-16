@@ -1,6 +1,6 @@
 import { supabaseAdmin } from '@/lib/supabase/server'
 import { Work } from '@/types'
-import Image from 'next/image'
+import ImageWithError from '@/components/ImageWithError'
 import Link from 'next/link'
 
 export const revalidate = 0
@@ -48,11 +48,12 @@ export default async function WorksPage() {
             {works.map((work) => (
               <Link key={work.id} href={`/works/${work.slug}`} className="group">
                 <div className="relative aspect-square overflow-hidden rounded-lg bg-muted">
-                  <Image
+                  <ImageWithError
                     src={work.image}
                     alt={work.title}
                     fill
                     className="object-cover transition-transform duration-300 group-hover:scale-105"
+                    errorMessage="Failed to load work image"
                   />
                 </div>
                 <div className="mt-3">
