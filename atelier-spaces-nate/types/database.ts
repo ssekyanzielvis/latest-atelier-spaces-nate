@@ -261,21 +261,33 @@ export interface Database {
           name: string
           description: string | null
           slug: string
+          cover_image: string | null
+          order_position: number
+          is_active: boolean
           created_at: string
+          updated_at: string
         }
         Insert: {
           id?: string
           name: string
           description?: string | null
           slug: string
+          cover_image?: string | null
+          order_position?: number
+          is_active?: boolean
           created_at?: string
+          updated_at?: string
         }
         Update: {
           id?: string
           name?: string
           description?: string | null
           slug?: string
+          cover_image?: string | null
+          order_position?: number
+          is_active?: boolean
           created_at?: string
+          updated_at?: string
         }
       }
       works: {
