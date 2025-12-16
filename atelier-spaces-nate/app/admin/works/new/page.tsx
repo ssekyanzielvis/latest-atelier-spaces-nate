@@ -188,6 +188,75 @@ export default function NewWorkPage() {
               Feature this work on homepage
             </label>
           </div>
+
+          <div className="md:col-span-2">
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Category
+            </label>
+            <input
+              id="category_id"
+              type="text"
+              {...register('category_id')}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
+              placeholder="Enter category ID (optional)"
+            />
+            <p className="mt-1 text-xs text-gray-500">Select which category this work belongs to</p>
+          </div>
+
+          <div className="md:col-span-2 border-t pt-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Gallery Images (Optional)</h3>
+            <p className="text-sm text-gray-600 mb-4">Add up to 4 additional images to showcase your work from different angles</p>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Gallery Image 1
+                </label>
+                <ImageUpload
+                  value={undefined}
+                  folder="works"
+                  onChange={(url: string) => setValue('gallery_image_1', url)}
+                  label="Upload Gallery Image 1"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Gallery Image 2
+                </label>
+                <ImageUpload
+                  value={undefined}
+                  folder="works"
+                  onChange={(url: string) => setValue('gallery_image_2', url)}
+                  label="Upload Gallery Image 2"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Gallery Image 3
+                </label>
+                <ImageUpload
+                  value={undefined}
+                  folder="works"
+                  onChange={(url: string) => setValue('gallery_image_3', url)}
+                  label="Upload Gallery Image 3"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Gallery Image 4
+                </label>
+                <ImageUpload
+                  value={undefined}
+                  folder="works"
+                  onChange={(url: string) => setValue('gallery_image_4', url)}
+                  label="Upload Gallery Image 4"
+                />
+              </div>
+            </div>
+          </div>
         </div>
 
         <div className="flex items-center gap-4 pt-4 border-t">
