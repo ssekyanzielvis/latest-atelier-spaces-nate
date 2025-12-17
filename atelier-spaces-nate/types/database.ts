@@ -77,60 +77,51 @@ export interface Database {
         Row: {
           id: string
           title: string
-          description: string
-          category_id: string | null
-          image: string
-          client: string | null
-          location: string | null
-          year: number | null
-          area: number | null
-          status: string | null
-          featured: boolean
           slug: string
-          gallery_image_1: string | null
-          gallery_image_2: string | null
-          gallery_image_3: string | null
-          gallery_image_4: string | null
+          location: string
+          description: string
+          client: string | null
+          year: number | null
+          designer: string | null
+          duration: string | null
+          image: string
+          other_info: string | null
+          featured: boolean
+          is_published: boolean
           created_at: string
           updated_at: string
         }
         Insert: {
           id?: string
           title: string
-          description: string
-          category_id?: string | null
-          image: string
-          client?: string | null
-          location?: string | null
-          year?: number | null
-          area?: number | null
-          status?: string | null
-          featured?: boolean
           slug: string
-          gallery_image_1?: string | null
-          gallery_image_2?: string | null
-          gallery_image_3?: string | null
-          gallery_image_4?: string | null
+          location: string
+          description: string
+          client?: string | null
+          year?: number | null
+          designer?: string | null
+          duration?: string | null
+          image: string
+          other_info?: string | null
+          featured?: boolean
+          is_published?: boolean
           created_at?: string
           updated_at?: string
         }
         Update: {
           id?: string
           title?: string
-          description?: string
-          category_id?: string | null
-          image?: string
-          client?: string | null
-          location?: string | null
-          year?: number | null
-          area?: number | null
-          status?: string | null
-          featured?: boolean
           slug?: string
-          gallery_image_1?: string | null
-          gallery_image_2?: string | null
-          gallery_image_3?: string | null
-          gallery_image_4?: string | null
+          location?: string
+          description?: string
+          client?: string | null
+          year?: number | null
+          designer?: string | null
+          duration?: string | null
+          image?: string
+          other_info?: string | null
+          featured?: boolean
+          is_published?: boolean
           created_at?: string
           updated_at?: string
         }

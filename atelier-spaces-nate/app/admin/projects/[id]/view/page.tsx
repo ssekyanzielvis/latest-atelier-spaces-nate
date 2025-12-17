@@ -112,11 +112,11 @@ export default function ViewProjectPage() {
                 </div>
               )}
 
-              {project.status && (
+              {project.is_published && (
                 <div>
-                  <h3 className="text-sm font-semibold text-gray-500 uppercase mb-2">Status</h3>
-                  <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
-                    {project.status}
+                  <h3 className="text-sm font-semibold text-gray-500 uppercase mb-2">Published</h3>
+                  <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                    ✓ Published
                   </span>
                 </div>
               )}
@@ -131,10 +131,17 @@ export default function ViewProjectPage() {
               </div>
             )}
 
-            {project.area && (
+            {project.designer && (
               <div>
-                <h3 className="text-sm font-semibold text-gray-500 uppercase mb-1">Area</h3>
-                <p className="text-gray-900">{project.area} m²</p>
+                <h3 className="text-sm font-semibold text-gray-500 uppercase mb-1">Designer</h3>
+                <p className="text-gray-900">{project.designer}</p>
+              </div>
+            )}
+
+            {project.duration && (
+              <div>
+                <h3 className="text-sm font-semibold text-gray-500 uppercase mb-1">Duration</h3>
+                <p className="text-gray-900">{project.duration}</p>
               </div>
             )}
 
@@ -151,24 +158,10 @@ export default function ViewProjectPage() {
             </div>
           </div>
 
-          {/* Gallery */}
-          {(project.gallery_image_1 || project.gallery_image_2 || project.gallery_image_3 || project.gallery_image_4) && (
+          {project.other_info && (
             <div className="pt-4 border-t">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Gallery</h3>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                {project.gallery_image_1 && (
-                  <img src={project.gallery_image_1} alt="Gallery 1" className="w-full h-48 object-cover rounded-lg" />
-                )}
-                {project.gallery_image_2 && (
-                  <img src={project.gallery_image_2} alt="Gallery 2" className="w-full h-48 object-cover rounded-lg" />
-                )}
-                {project.gallery_image_3 && (
-                  <img src={project.gallery_image_3} alt="Gallery 3" className="w-full h-48 object-cover rounded-lg" />
-                )}
-                {project.gallery_image_4 && (
-                  <img src={project.gallery_image_4} alt="Gallery 4" className="w-full h-48 object-cover rounded-lg" />
-                )}
-              </div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Additional Information</h3>
+              <p className="text-gray-700 whitespace-pre-wrap">{project.other_info}</p>
             </div>
           )}
         </div>

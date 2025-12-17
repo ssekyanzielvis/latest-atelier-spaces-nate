@@ -10,19 +10,16 @@ import ImageUpload from '@/components/admin/ImageUpload'
 const projectSchema = z.object({
   title: z.string().min(1, 'Title is required'),
   slug: z.string().min(1, 'Slug is required'),
-  description: z.string().min(1, 'Description is required'),
-  image: z.string().min(1, 'Main image is required'),
+  location: z.string().min(1, 'Location is required'),
+  description: z.string().min(10, 'Description must be at least 10 characters'),
   client: z.string().optional(),
-  location: z.string().optional(),
   year: z.string().optional(),
-  area: z.string().optional(),
-  category_id: z.string().optional(),
-  status: z.string().optional(),
+  designer: z.string().optional(),
+  duration: z.string().optional(),
+  image: z.string().min(1, 'Project image is required'),
+  other_info: z.string().optional(),
   featured: z.boolean().optional(),
-  gallery_image_1: z.string().optional(),
-  gallery_image_2: z.string().optional(),
-  gallery_image_3: z.string().optional(),
-  gallery_image_4: z.string().optional(),
+  is_published: z.boolean().optional(),
 })
 
 type ProjectFormData = z.infer<typeof projectSchema>
@@ -31,16 +28,19 @@ export default function NewProjectPage() {
   const router = useRouter()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [imageUrl, setImageUrl] = useState('')
 
   const {
     register,
     handleSubmit,
-    setValue,
+    watch,
     formState: { errors },
   } = useForm<ProjectFormData>({
     resolver: zodResolver(projectSchema),
+    mode: 'onChange',
     defaultValues: {
       featured: false,
+      is_published: true,
     },
   })
 
@@ -49,12 +49,17 @@ export default function NewProjectPage() {
     setError(null)
 
     try {
-      // Convert string numbers to actual numbers
+      if (!imageUrl) {
+        throw new Error('Please upload a project image first')
+      }
+
       const submitData = {
         ...data,
-        year: data.year ? parseInt(data.year) : undefined,
-        area: data.area ? parseFloat(data.area) : undefined,
+        image: imageUrl,
+        year: data.year ? parseInt(data.year) : null,
       }
+
+      console.log('Submitting project:', submitData)
 
       const response = await fetch('/api/projects', {
         method: 'POST',
@@ -64,15 +69,19 @@ export default function NewProjectPage() {
         body: JSON.stringify(submitData),
       })
 
+      const result = await response.json()
+
       if (!response.ok) {
-        const result = await response.json()
-        throw new Error(result.error || 'Failed to create project')
+        throw new Error(result.error || `Failed to create project (Status: ${response.status})`)
       }
 
+      console.log('Project created successfully')
       router.push('/admin/projects')
       router.refresh()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred')
+      const errorMessage = err instanceof Error ? err.message : 'An error occurred'
+      console.error('Error:', errorMessage, err)
+      setError(errorMessage)
     } finally {
       setIsSubmitting(false)
     }
@@ -82,7 +91,7 @@ export default function NewProjectPage() {
     <div className="max-w-4xl mx-auto">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900">Create New Project</h1>
-        <p className="text-gray-600 mt-2">Add a new architectural project</p>
+        <p className="text-gray-600 mt-2">Add a new architectural project to your portfolio</p>
       </div>
 
       {error && (
@@ -92,8 +101,9 @@ export default function NewProjectPage() {
       )}
 
       <form onSubmit={handleSubmit(onSubmit)} className="bg-white rounded-lg shadow-sm border border-gray-200 p-8 space-y-6">
+        {/* Title and Slug */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="md:col-span-2">
+          <div>
             <label htmlFor="title" className="block text-sm font-semibold text-gray-700 mb-2">
               Project Title *
             </label>
@@ -102,159 +112,180 @@ export default function NewProjectPage() {
               type="text"
               {...register('title')}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
-              placeholder="Enter project title"
+              placeholder="Modern Residential Complex"
             />
-            {errors.title && (
-              <p className="mt-1 text-sm text-red-600">{errors.title.message}</p>
-            )}
+            {errors.title && <p className="mt-1 text-sm text-red-600">{errors.title.message}</p>}
           </div>
 
-          <div className="md:col-span-2">
+          <div>
             <label htmlFor="slug" className="block text-sm font-semibold text-gray-700 mb-2">
-              Slug * <span className="text-gray-500 font-normal">(URL-friendly version)</span>
+              Slug * <span className="text-gray-500 font-normal">(URL-friendly)</span>
             </label>
             <input
               id="slug"
               type="text"
               {...register('slug')}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
-              placeholder="project-title"
+              placeholder="modern-residential-complex"
             />
-            {errors.slug && (
-              <p className="mt-1 text-sm text-red-600">{errors.slug.message}</p>
-            )}
+            {errors.slug && <p className="mt-1 text-sm text-red-600">{errors.slug.message}</p>}
           </div>
+        </div>
 
-          <div className="md:col-span-2">
-            <label htmlFor="description" className="block text-sm font-semibold text-gray-700 mb-2">
-              Description *
-            </label>
-            <textarea
-              id="description"
-              {...register('description')}
-              rows={4}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
-              placeholder="Describe your project - tell the story, explain design choices, mention challenges and solutions"
-            />
-            {errors.description && (
-              <p className="mt-1 text-sm text-red-600">{errors.description.message}</p>
-            )}
-          </div>
+        {/* Location */}
+        <div>
+          <label htmlFor="location" className="block text-sm font-semibold text-gray-700 mb-2">
+            Location *
+          </label>
+          <input
+            id="location"
+            type="text"
+            {...register('location')}
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
+            placeholder="Nairobi, Kenya"
+          />
+          {errors.location && <p className="mt-1 text-sm text-red-600">{errors.location.message}</p>}
+        </div>
 
-          <div className="md:col-span-2">
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Main Project Image * <span className="text-gray-500 font-normal">(1920x1080 recommended)</span>
-            </label>
-            <ImageUpload
-              folder="projects"
-              onChange={(url: string) => setValue('image', url)}
-            />
-            {errors.image && (
-              <p className="mt-1 text-sm text-red-600">{errors.image.message}</p>
-            )}
-          </div>
+        {/* Description */}
+        <div>
+          <label htmlFor="description" className="block text-sm font-semibold text-gray-700 mb-2">
+            Description *
+          </label>
+          <textarea
+            id="description"
+            {...register('description')}
+            rows={5}
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
+            placeholder="Detailed project description including design concept, materials used, and key features..."
+          />
+          {errors.description && <p className="mt-1 text-sm text-red-600">{errors.description.message}</p>}
+        </div>
 
+        {/* Project Details Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label htmlFor="client" className="block text-sm font-semibold text-gray-700 mb-2">
-              Client
+              Client Name
             </label>
             <input
               id="client"
               type="text"
               {...register('client')}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
-              placeholder="Client name"
-            />
-          </div>
-
-          <div>
-            <label htmlFor="location" className="block text-sm font-semibold text-gray-700 mb-2">
-              Location
-            </label>
-            <input
-              id="location"
-              type="text"
-              {...register('location')}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
-              placeholder="Project location"
+              placeholder="Client or Developer Name"
             />
           </div>
 
           <div>
             <label htmlFor="year" className="block text-sm font-semibold text-gray-700 mb-2">
-              Year
+              Year of Initiation
             </label>
             <input
               id="year"
               type="number"
-              {...register('year', { valueAsNumber: true })}
+              {...register('year')}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
               placeholder="2024"
             />
           </div>
 
           <div>
-            <label htmlFor="area" className="block text-sm font-semibold text-gray-700 mb-2">
-              Area <span className="text-gray-500 font-normal">(square meters)</span>
+            <label htmlFor="designer" className="block text-sm font-semibold text-gray-700 mb-2">
+              Project Designer
             </label>
             <input
-              id="area"
-              type="number"
-              {...register('area', { valueAsNumber: true })}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
-              placeholder="450"
-            />
-          </div>
-
-          <div>
-            <label htmlFor="category_id" className="block text-sm font-semibold text-gray-700 mb-2">
-              Category
-            </label>
-            <input
-              id="category_id"
+              id="designer"
               type="text"
-              {...register('category_id')}
+              {...register('designer')}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
-              placeholder="e.g., Residential, Commercial"
+              placeholder="Designer or Team Name"
             />
           </div>
 
           <div>
-            <label htmlFor="status" className="block text-sm font-semibold text-gray-700 mb-2">
-              Status
+            <label htmlFor="duration" className="block text-sm font-semibold text-gray-700 mb-2">
+              Project Duration
             </label>
-            <select
-              id="status"
-              {...register('status')}
+            <input
+              id="duration"
+              type="text"
+              {...register('duration')}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
-            >
-              <option value="">Select status</option>
-              <option value="Completed">Completed</option>
-              <option value="Ongoing">Ongoing</option>
-              <option value="Proposed">Proposed</option>
-            </select>
-          </div>
-
-          <div>
-            <label htmlFor="status" className="block text-sm font-semibold text-gray-700 mb-2">
-              Status *
-            </label>
-            <select
-              id="status"
-              {...register('status')}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
-            >
-              <option value="draft">Draft</option>
-              <option value="published">Published</option>
-            </select>
+              placeholder="e.g., 18 months, 2 years"
+            />
           </div>
         </div>
 
+        {/* Project Image */}
+        <div>
+          <label className="block text-sm font-semibold text-gray-700 mb-2">
+            Project Image *
+          </label>
+          <ImageUpload
+            value={imageUrl}
+            onChange={setImageUrl}
+            folder="projects"
+            label="Upload Project Image"
+          />
+          {!imageUrl && (
+            <p className="mt-2 text-sm text-amber-600 bg-amber-50 p-2 rounded">
+              ⚠️ Project image is required
+            </p>
+          )}
+        </div>
+
+        {/* Other Info */}
+        <div>
+          <label htmlFor="other_info" className="block text-sm font-semibold text-gray-700 mb-2">
+            Additional Information <span className="text-gray-500 font-normal">(Optional)</span>
+          </label>
+          <textarea
+            id="other_info"
+            {...register('other_info')}
+            rows={3}
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
+            placeholder="Any additional information about the project..."
+          />
+        </div>
+
+        {/* Publication Settings */}
+        <div className="border-t pt-6 space-y-4">
+          <h3 className="text-lg font-semibold text-gray-900">Publication Settings</h3>
+          
+          <div className="flex items-center gap-3">
+            <input
+              id="featured"
+              type="checkbox"
+              {...register('featured')}
+              className="w-4 h-4 border-gray-300 rounded focus:ring-2 focus:ring-black"
+            />
+            <label htmlFor="featured" className="text-sm font-medium text-gray-700">
+              Feature this project on homepage
+            </label>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <input
+              id="is_published"
+              type="checkbox"
+              {...register('is_published')}
+              defaultChecked
+              className="w-4 h-4 border-gray-300 rounded focus:ring-2 focus:ring-black"
+            />
+            <label htmlFor="is_published" className="text-sm font-medium text-gray-700">
+              Publish this project
+            </label>
+          </div>
+        </div>
+
+        {/* Submit Buttons */}
         <div className="flex items-center gap-4 pt-4 border-t">
           <button
             type="submit"
-            disabled={isSubmitting}
+            disabled={isSubmitting || !imageUrl}
             className="px-6 py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+            title={!imageUrl ? 'Please upload an image first' : ''}
           >
             {isSubmitting ? 'Creating...' : 'Create Project'}
           </button>

@@ -6,27 +6,27 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import ImageUpload from '@/components/admin/ImageUpload'
-import { createSupabaseAuthClient } from '@/lib/supabase/auth'
 
 const projectSchema = z.object({
   title: z.string().min(1, 'Title is required'),
   slug: z.string().min(1, 'Slug is required'),
-  description: z.string().min(1, 'Description is required'),
-  image: z.string().min(1, 'Main image is required'),
+  location: z.string().min(1, 'Location is required'),
+  description: z.string().min(10, 'Description must be at least 10 characters'),
   client: z.string().optional(),
-  location: z.string().optional(),
   year: z.string().optional(),
-  area: z.string().optional(),
-  category_id: z.string().optional(),
-  status: z.string().optional(),
+  designer: z.string().optional(),
+  duration: z.string().optional(),
+  image: z.string().min(1, 'Project image is required'),
+  other_info: z.string().optional(),
   featured: z.boolean().optional(),
-  gallery_image_1: z.string().optional(),
-  gallery_image_2: z.string().optional(),
-  gallery_image_3: z.string().optional(),
-  gallery_image_4: z.string().optional(),
+  is_published: z.boolean().optional(),
 })
 
 type ProjectFormData = z.infer<typeof projectSchema>
+
+interface Project extends ProjectFormData {
+  id: string
+}
 
 export default function EditProjectPage() {
   const router = useRouter()
@@ -36,17 +36,16 @@ export default function EditProjectPage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
+  const [imageUrl, setImageUrl] = useState('')
 
   const {
     register,
     handleSubmit,
-    setValue,
+    watch,
     formState: { errors },
   } = useForm<ProjectFormData>({
     resolver: zodResolver(projectSchema),
-    defaultValues: {
-      featured: false,
-    },
+    mode: 'onChange',
   })
 
   // Fetch project data
@@ -54,25 +53,34 @@ export default function EditProjectPage() {
     const fetchProject = async () => {
       try {
         setIsLoading(true)
-        const supabase = createSupabaseAuthClient()
-        const { data, error } = await supabase
-          .from('projects')
-          .select('*')
-          .eq('id', projectId)
-          .single()
+        const response = await fetch(`/api/projects?id=${projectId}`)
+        const result = await response.json()
 
-        if (error || !data) {
+        if (!response.ok || !result.data) {
           setError('Project not found')
           return
         }
 
-        // Populate form with project data
-        Object.keys(data).forEach((key) => {
-          const value = (data as any)[key]
-          if (value !== null && value !== undefined) {
-            setValue(key as keyof ProjectFormData, value)
+        const project = result.data as Project
+        
+        // Pre-fill form fields using watch to get current values
+        Object.keys(project).forEach((key) => {
+          if (key !== 'id') {
+            const input = document.querySelector(`[name="${key}"]`) as HTMLInputElement | null
+            if (input) {
+              if (input.type === 'checkbox') {
+                input.checked = (project as any)[key]
+              } else {
+                input.value = (project as any)[key] || ''
+              }
+            }
           }
         })
+
+        // Set image URL
+        if (project.image) {
+          setImageUrl(project.image)
+        }
       } catch (err) {
         setError('Failed to load project')
         console.error('Error loading project:', err)
@@ -82,7 +90,7 @@ export default function EditProjectPage() {
     }
 
     fetchProject()
-  }, [projectId, setValue])
+  }, [projectId])
 
   const onSubmit = async (data: ProjectFormData) => {
     setIsSubmitting(true)
@@ -90,11 +98,17 @@ export default function EditProjectPage() {
     setSuccess(false)
 
     try {
+      if (!imageUrl) {
+        throw new Error('Please upload a project image first')
+      }
+
       const submitData = {
         ...data,
-        year: data.year ? parseInt(data.year) : undefined,
-        area: data.area ? parseFloat(data.area) : undefined,
+        image: imageUrl,
+        year: data.year ? parseInt(data.year) : null,
       }
+
+      console.log('Updating project:', submitData)
 
       const response = await fetch(`/api/projects?id=${projectId}`, {
         method: 'PUT',
@@ -104,18 +118,22 @@ export default function EditProjectPage() {
         body: JSON.stringify(submitData),
       })
 
+      const result = await response.json()
+
       if (!response.ok) {
-        const result = await response.json()
-        throw new Error(result.error || 'Failed to update project')
+        throw new Error(result.error || `Failed to update project (Status: ${response.status})`)
       }
 
+      console.log('Project updated successfully')
       setSuccess(true)
       setTimeout(() => {
         router.push('/admin/projects')
         router.refresh()
       }, 1500)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred')
+      const errorMessage = err instanceof Error ? err.message : 'An error occurred'
+      console.error('Error:', errorMessage, err)
+      setError(errorMessage)
     } finally {
       setIsSubmitting(false)
     }
@@ -154,8 +172,9 @@ export default function EditProjectPage() {
       )}
 
       <form onSubmit={handleSubmit(onSubmit)} className="bg-white rounded-lg shadow-sm border border-gray-200 p-8 space-y-6">
+        {/* Title and Slug */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="md:col-span-2">
+          <div>
             <label htmlFor="title" className="block text-sm font-semibold text-gray-700 mb-2">
               Project Title *
             </label>
@@ -164,76 +183,74 @@ export default function EditProjectPage() {
               type="text"
               {...register('title')}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
-              placeholder="Enter project title"
+              placeholder="Project Title"
             />
             {errors.title && <p className="mt-1 text-sm text-red-600">{errors.title.message}</p>}
           </div>
 
-          <div className="md:col-span-2">
+          <div>
             <label htmlFor="slug" className="block text-sm font-semibold text-gray-700 mb-2">
-              Slug * <span className="text-gray-500 font-normal">(URL-friendly version)</span>
+              Slug * <span className="text-gray-500 font-normal">(URL-friendly)</span>
             </label>
             <input
               id="slug"
               type="text"
               {...register('slug')}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
-              placeholder="project-title"
+              placeholder="project-slug"
             />
             {errors.slug && <p className="mt-1 text-sm text-red-600">{errors.slug.message}</p>}
           </div>
+        </div>
 
-          <div className="md:col-span-2">
-            <label htmlFor="description" className="block text-sm font-semibold text-gray-700 mb-2">
-              Description *
-            </label>
-            <textarea
-              id="description"
-              {...register('description')}
-              rows={4}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
-              placeholder="Describe your project"
-            />
-            {errors.description && <p className="mt-1 text-sm text-red-600">{errors.description.message}</p>}
-          </div>
+        {/* Location */}
+        <div>
+          <label htmlFor="location" className="block text-sm font-semibold text-gray-700 mb-2">
+            Location *
+          </label>
+          <input
+            id="location"
+            type="text"
+            {...register('location')}
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
+            placeholder="Project Location"
+          />
+          {errors.location && <p className="mt-1 text-sm text-red-600">{errors.location.message}</p>}
+        </div>
 
-          <div className="md:col-span-2">
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Main Project Image * <span className="text-gray-500 font-normal">(1920x1080 recommended)</span>
-            </label>
-            <ImageUpload folder="projects" onChange={(url: string) => setValue('image', url)} />
-            {errors.image && <p className="mt-1 text-sm text-red-600">{errors.image.message}</p>}
-          </div>
+        {/* Description */}
+        <div>
+          <label htmlFor="description" className="block text-sm font-semibold text-gray-700 mb-2">
+            Description *
+          </label>
+          <textarea
+            id="description"
+            {...register('description')}
+            rows={5}
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
+            placeholder="Project Description"
+          />
+          {errors.description && <p className="mt-1 text-sm text-red-600">{errors.description.message}</p>}
+        </div>
 
+        {/* Project Details Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label htmlFor="client" className="block text-sm font-semibold text-gray-700 mb-2">
-              Client
+              Client Name
             </label>
             <input
               id="client"
               type="text"
               {...register('client')}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
-              placeholder="Client name"
-            />
-          </div>
-
-          <div>
-            <label htmlFor="location" className="block text-sm font-semibold text-gray-700 mb-2">
-              Location
-            </label>
-            <input
-              id="location"
-              type="text"
-              {...register('location')}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
-              placeholder="Project location"
+              placeholder="Client Name"
             />
           </div>
 
           <div>
             <label htmlFor="year" className="block text-sm font-semibold text-gray-700 mb-2">
-              Year
+              Year of Initiation
             </label>
             <input
               id="year"
@@ -245,67 +262,100 @@ export default function EditProjectPage() {
           </div>
 
           <div>
-            <label htmlFor="area" className="block text-sm font-semibold text-gray-700 mb-2">
-              Area <span className="text-gray-500 font-normal">(square meters)</span>
+            <label htmlFor="designer" className="block text-sm font-semibold text-gray-700 mb-2">
+              Project Designer
             </label>
             <input
-              id="area"
-              type="number"
-              step="0.01"
-              {...register('area')}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
-              placeholder="1000"
-            />
-          </div>
-
-          <div>
-            <label htmlFor="status" className="block text-sm font-semibold text-gray-700 mb-2">
-              Status
-            </label>
-            <select {...register('status')} className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent">
-              <option value="">Select status</option>
-              <option value="completed">Completed</option>
-              <option value="in-progress">In Progress</option>
-              <option value="proposed">Proposed</option>
-            </select>
-          </div>
-
-          <div>
-            <label htmlFor="category_id" className="block text-sm font-semibold text-gray-700 mb-2">
-              Category
-            </label>
-            <input
-              id="category_id"
+              id="designer"
               type="text"
-              {...register('category_id')}
+              {...register('designer')}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
-              placeholder="Category ID"
+              placeholder="Designer Name"
             />
+          </div>
+
+          <div>
+            <label htmlFor="duration" className="block text-sm font-semibold text-gray-700 mb-2">
+              Project Duration
+            </label>
+            <input
+              id="duration"
+              type="text"
+              {...register('duration')}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
+              placeholder="e.g., 18 months"
+            />
+          </div>
+        </div>
+
+        {/* Project Image */}
+        <div>
+          <label className="block text-sm font-semibold text-gray-700 mb-2">
+            Project Image *
+          </label>
+          <ImageUpload
+            value={imageUrl}
+            onChange={setImageUrl}
+            folder="projects"
+            label="Upload Project Image"
+          />
+          {!imageUrl && (
+            <p className="mt-2 text-sm text-amber-600 bg-amber-50 p-2 rounded">
+              ⚠️ Project image is required
+            </p>
+          )}
+        </div>
+
+        {/* Other Info */}
+        <div>
+          <label htmlFor="other_info" className="block text-sm font-semibold text-gray-700 mb-2">
+            Additional Information <span className="text-gray-500 font-normal">(Optional)</span>
+          </label>
+          <textarea
+            id="other_info"
+            {...register('other_info')}
+            rows={3}
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
+            placeholder="Additional project information..."
+          />
+        </div>
+
+        {/* Publication Settings */}
+        <div className="border-t pt-6 space-y-4">
+          <h3 className="text-lg font-semibold text-gray-900">Publication Settings</h3>
+          
+          <div className="flex items-center gap-3">
+            <input
+              id="featured"
+              type="checkbox"
+              {...register('featured')}
+              className="w-4 h-4 border-gray-300 rounded focus:ring-2 focus:ring-black"
+            />
+            <label htmlFor="featured" className="text-sm font-medium text-gray-700">
+              Feature this project on homepage
+            </label>
           </div>
 
           <div className="flex items-center gap-3">
-            <input id="featured" type="checkbox" {...register('featured')} className="w-4 h-4 border-gray-300 rounded focus:ring-2 focus:ring-black" />
-            <label htmlFor="featured" className="text-sm font-semibold text-gray-700">
-              Featured Project
+            <input
+              id="is_published"
+              type="checkbox"
+              {...register('is_published')}
+              className="w-4 h-4 border-gray-300 rounded focus:ring-2 focus:ring-black"
+            />
+            <label htmlFor="is_published" className="text-sm font-medium text-gray-700">
+              Publish this project
             </label>
           </div>
-
-          {/* Gallery Images */}
-          {[1, 2, 3, 4].map((num) => (
-            <div className="md:col-span-2" key={num}>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
-                Gallery Image {num} <span className="text-gray-500 font-normal">(Optional)</span>
-              </label>
-              <ImageUpload folder="projects" onChange={(url: string) => setValue(`gallery_image_${num}` as keyof ProjectFormData, url)} />
-            </div>
-          ))}
         </div>
 
+        {/* Submit Buttons */}
         <div className="flex items-center gap-4 pt-4 border-t">
           <button
             type="submit"
-            disabled={isSubmitting}
+            disabled={isSubmitting || !imageUrl}
             className="px-6 py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+            title={!imageUrl ? 'Please upload an image first' : ''}
           >
             {isSubmitting ? 'Updating...' : 'Update Project'}
           </button>

@@ -1,68 +1,133 @@
-import { supabaseAdmin } from '@/lib/supabase/server'
-import ProjectCard from '@/components/public/ProjectCard'
-import { Project } from '@/types'
+'use client'
 
-export const revalidate = 0
+import { useState, useEffect } from 'react'
+import Link from 'next/link'
+import ImageWithError from '@/components/ImageWithError'
 
-async function getProjects(): Promise<Project[]> {
-  try {
-    const { data, error } = await supabaseAdmin
-      .from('projects')
-      .select('*')
-      .order('created_at', { ascending: false })
+interface Project {
+  id: string
+  title: string
+  slug: string
+  location: string
+  description: string
+  image: string
+  year?: number
+  client?: string
+  designer?: string
+  featured?: boolean
+}
 
-    if (error) {
-      console.error('Error fetching projects:', error)
-      return []
+export default function ProjectsPage() {
+  const [projects, setProjects] = useState<Project[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        setIsLoading(true)
+        setError(null)
+
+        const response = await fetch('/api/projects?published=true')
+        const result = await response.json()
+
+        if (!response.ok) {
+          throw new Error(result.error || 'Failed to fetch projects')
+        }
+
+        setProjects(result.data || [])
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : 'An error occurred'
+        console.error('Error fetching projects:', errorMessage, err)
+        setError(errorMessage)
+      } finally {
+        setIsLoading(false)
+      }
     }
 
-    console.log('Fetched projects:', data)
-    if (data && data.length > 0) {
-      const first = data[0] as Project
-      console.log('First project:', {
-        id: first.id,
-        title: first.title,
-        hasImage: !!first.image,
-        image: first.image,
-      })
-    }
-    return (data as Project[]) || []
-  } catch (err) {
-    console.error('Exception fetching projects:', err)
-    return []
+    fetchProjects()
+  }, [])
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="animate-spin">
+          <svg className="w-12 h-12 text-black" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+        </div>
+      </div>
+    )
   }
-}
-
-export const metadata = {
-  title: 'Projects | Atelier',
-  description: 'Explore our architectural projects',
-}
-
-export default async function ProjectsPage() {
-  const projects = await getProjects()
 
   return (
-    <div className="py-12 md:py-20">
-      <div className="container mx-auto px-4">
-        <div className="mb-12">
+    <main className="bg-white min-h-screen">
+      {/* Page Header */}
+      <div className="bg-black text-white py-16 md:py-24">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">Our Projects</h1>
-          <p className="text-xl text-muted-foreground max-w-2xl">
-            Discover our portfolio of innovative architectural solutions
-          </p>
+          <p className="text-lg text-gray-300">Explore our latest architectural projects and designs</p>
         </div>
+      </div>
 
-        {projects.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {projects.map((project) => (
-              <ProjectCard key={project.id} project={project} />
-            ))}
+      {/* Projects Grid */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
+        {error && (
+          <div className="mb-8 p-4 bg-red-50 border border-red-200 rounded-lg text-center">
+            <p className="text-red-800">{error}</p>
+          </div>
+        )}
+
+        {projects.length === 0 ? (
+          <div className="text-center py-12">
+            <p className="text-gray-600 text-lg">No projects available at this time.</p>
           </div>
         ) : (
-          <div className="text-center py-20">
-            <p className="text-muted-foreground text-lg">No projects available at the moment.</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {projects.map((project) => (
+              <Link
+                key={project.id}
+                href={`/projects/${project.slug}`}
+                className="group overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300"
+              >
+                <div className="relative h-64 md:h-72 overflow-hidden bg-gray-200">
+                  <ImageWithError
+                    src={project.image}
+                    alt={project.title}
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                  {project.featured && (
+                    <div className="absolute top-4 right-4 bg-black text-white px-3 py-1 text-xs font-semibold rounded">
+                      Featured
+                    </div>
+                  )}
+                </div>
+                <div className="p-6">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2 group-hover:text-black transition-colors">
+                    {project.title}
+                  </h3>
+                  <p className="text-sm text-gray-600 mb-3">{project.location}</p>
+                  <p className="text-gray-700 text-sm line-clamp-2 mb-4">{project.description}</p>
+                  <div className="flex flex-wrap gap-2">
+                    {project.year && (
+                      <span className="text-xs bg-gray-100 text-gray-700 px-3 py-1 rounded">
+                        {project.year}
+                      </span>
+                    )}
+                    {project.client && (
+                      <span className="text-xs bg-gray-100 text-gray-700 px-3 py-1 rounded">
+                        {project.client}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </Link>
+            ))}
           </div>
         )}
       </div>
-    </div>
+    </main>
   )
 }

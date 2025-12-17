@@ -1,139 +1,169 @@
-export const revalidate = 0
+'use client'
 
+import { useState, useEffect } from 'react'
+import { useParams, useRouter } from 'next/navigation'
+import Link from 'next/link'
 import ImageWithError from '@/components/ImageWithError'
-import { notFound } from 'next/navigation'
-import { supabaseAdmin } from '@/lib/supabase/server'
-import { Project } from '@/types'
 
-async function getProject(slug: string): Promise<Project | null> {
-  try {
-    const { data, error } = await supabaseAdmin
-      .from('projects')
-      .select('*')
-      .eq('slug', slug)
-      .single()
-
-    if (error) {
-      console.error('Error fetching project:', error)
-      return null
-    }
-
-    console.log('Fetched project:', data)
-    return (data as Project) || null
-  } catch (err) {
-    console.error('Exception fetching project:', err)
-    return null
-  }
+interface Project {
+  id: string
+  title: string
+  slug: string
+  location: string
+  description: string
+  client?: string
+  year?: number
+  designer?: string
+  duration?: string
+  image: string
+  other_info?: string
+  is_published?: boolean
 }
 
-export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = await params
-  const project = await getProject(slug)
+export default function ProjectDetailPage() {
+  const params = useParams()
+  const router = useRouter()
+  const slug = params.slug as string
+  
+  const [project, setProject] = useState<Project | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
-  if (!project) {
-    return {
-      title: 'Project Not Found',
+  useEffect(() => {
+    const fetchProject = async () => {
+      try {
+        setIsLoading(true)
+        setError(null)
+
+        // First try to find by slug
+        const response = await fetch(`/api/projects?published=true`)
+        const result = await response.json()
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch projects')
+        }
+
+        const projects = result.data || []
+        const foundProject = projects.find((p: Project) => p.slug === slug)
+
+        if (!foundProject) {
+          setError('Project not found')
+          return
+        }
+
+        setProject(foundProject)
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : 'An error occurred'
+        console.error('Error fetching project:', errorMessage, err)
+        setError(errorMessage)
+      } finally {
+        setIsLoading(false)
+      }
     }
+
+    if (slug) {
+      fetchProject()
+    }
+  }, [slug])
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="animate-spin">
+          <svg className="w-12 h-12 text-black" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+        </div>
+      </div>
+    )
   }
 
-  return {
-    title: `${project.title} | Atelier Projects`,
-    description: project.description,
+  if (error || !project) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center max-w-md">
+          <h1 className="text-3xl font-bold text-gray-900 mb-4">Project Not Found</h1>
+          <p className="text-gray-600 mb-6">{error || 'The project you are looking for does not exist.'}</p>
+          <Link href="/projects" className="inline-block px-6 py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors">
+            Back to Projects
+          </Link>
+        </div>
+      </div>
+    )
   }
-}
-
-export default async function ProjectDetailPage({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = await params
-  const project = await getProject(slug)
-
-  if (!project) {
-    notFound()
-  }
-
-  const galleryImages = [
-    project.gallery_image_1,
-    project.gallery_image_2,
-    project.gallery_image_3,
-    project.gallery_image_4,
-  ].filter((img): img is string => !!img)
 
   return (
-    <div className="py-12 md:py-20">
-      <div className="container mx-auto px-4">
-        {/* Hero Image */}
-        <div className="relative aspect-[21/9] overflow-hidden rounded-lg mb-8">
-          <ImageWithError
-            src={project.image}
-            alt={project.title}
-            fill
-            className="object-cover"
-            priority
-            errorMessage="Failed to load project image"
-          />
-        </div>
+    <main className="bg-white min-h-screen">
+      {/* Hero Image */}
+      <div className="relative w-full h-96 md:h-[500px] overflow-hidden bg-gray-200">
+        <ImageWithError
+          src={project.image}
+          alt={project.title}
+          fill
+          priority
+          className="object-cover"
+        />
+      </div>
 
+      {/* Content */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
           {/* Main Content */}
           <div className="lg:col-span-2">
-            <h1 className="text-4xl md:text-5xl font-bold mb-6">{project.title}</h1>
-            <div className="prose max-w-none text-muted-foreground">
-              <p className="text-lg leading-relaxed">{project.description}</p>
+            <div className="mb-8">
+              <Link
+                href="/projects"
+                className="text-sm text-gray-600 hover:text-gray-900 mb-4 inline-block"
+              >
+                ← Back to Projects
+              </Link>
+              <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-2">{project.title}</h1>
+              <p className="text-lg text-gray-600">{project.location}</p>
             </div>
 
-            {/* Gallery */}
-            {galleryImages.length > 0 && (
-              <div className="mt-12">
-                <h2 className="text-2xl font-bold mb-6">Gallery</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {galleryImages.map((image, index) => (
-                    <div key={index} className="relative aspect-video overflow-hidden rounded-lg">
-                      <ImageWithError
-                        src={image}
-                        alt={`${project.title} gallery ${index + 1}`}
-                        fill
-                        className="object-cover"
-                        errorMessage="Failed to load gallery image"
-                      />
-                    </div>
-                  ))}
-                </div>
+            <div className="prose prose-lg max-w-none mb-12">
+              <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">{project.description}</p>
+            </div>
+
+            {project.other_info && (
+              <div className="bg-gray-50 p-6 md:p-8 rounded-lg mb-12">
+                <h2 className="text-2xl font-bold text-gray-900 mb-4">Additional Information</h2>
+                <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">{project.other_info}</p>
               </div>
             )}
           </div>
 
           {/* Sidebar */}
           <div>
-            <div className="bg-muted/30 rounded-lg p-6 sticky top-24">
-              <h3 className="text-lg font-semibold mb-4">Project Details</h3>
-              <dl className="space-y-4">
+            <div className="bg-gray-100 rounded-lg p-8 sticky top-20">
+              <h3 className="text-xl font-bold text-gray-900 mb-6">Project Details</h3>
+              <dl className="space-y-6">
                 {project.client && (
                   <div>
-                    <dt className="text-sm text-muted-foreground">Client</dt>
-                    <dd className="font-medium">{project.client}</dd>
+                    <dt className="text-sm font-semibold text-gray-600 uppercase tracking-wide">Client</dt>
+                    <dd className="mt-2 text-lg text-gray-900">{project.client}</dd>
                   </div>
                 )}
-                {project.location && (
-                  <div>
-                    <dt className="text-sm text-muted-foreground">Location</dt>
-                    <dd className="font-medium">{project.location}</dd>
-                  </div>
-                )}
+
                 {project.year && (
                   <div>
-                    <dt className="text-sm text-muted-foreground">Year</dt>
-                    <dd className="font-medium">{project.year}</dd>
+                    <dt className="text-sm font-semibold text-gray-600 uppercase tracking-wide">Year</dt>
+                    <dd className="mt-2 text-lg text-gray-900">{project.year}</dd>
                   </div>
                 )}
-                {project.area && (
+
+                {project.designer && (
                   <div>
-                    <dt className="text-sm text-muted-foreground">Area</dt>
-                    <dd className="font-medium">{project.area} m²</dd>
+                    <dt className="text-sm font-semibold text-gray-600 uppercase tracking-wide">Designer</dt>
+                    <dd className="mt-2 text-lg text-gray-900">{project.designer}</dd>
                   </div>
                 )}
-                {project.status && (
+
+                {project.duration && (
                   <div>
-                    <dt className="text-sm text-muted-foreground">Status</dt>
-                    <dd className="font-medium capitalize">{project.status}</dd>
+                    <dt className="text-sm font-semibold text-gray-600 uppercase tracking-wide">Duration</dt>
+                    <dd className="mt-2 text-lg text-gray-900">{project.duration}</dd>
                   </div>
                 )}
               </dl>
@@ -141,6 +171,6 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
           </div>
         </div>
       </div>
-    </div>
+    </main>
   )
 }

@@ -56,8 +56,8 @@ export default function ProjectsList({ projects }: ProjectsListProps) {
                 </td>
                 <td className="px-6 py-4 text-gray-700">{project.location}</td>
                 <td className="px-6 py-4">
-                  <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                    {project.status}
+                  <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                    {project.is_published ? '✓ Published' : 'Draft'}
                   </span>
                 </td>
                 <td className="px-6 py-4">
