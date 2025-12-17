@@ -49,8 +49,11 @@ export default function NewProjectPage() {
     setError(null)
 
     try {
+      // Validate image upload
       if (!imageUrl) {
-        throw new Error('Please upload a project image first')
+        setError('❌ Image Required: Please upload a project image before submitting')
+        setIsSubmitting(false)
+        return
       }
 
       const submitData = {
@@ -59,7 +62,7 @@ export default function NewProjectPage() {
         year: data.year ? parseInt(data.year) : null,
       }
 
-      console.log('Submitting project:', submitData)
+      console.log('🚀 Creating project:', { title: submitData.title, slug: submitData.slug })
 
       const response = await fetch('/api/projects', {
         method: 'POST',
@@ -69,18 +72,69 @@ export default function NewProjectPage() {
         body: JSON.stringify(submitData),
       })
 
-      const result = await response.json()
-
-      if (!response.ok) {
-        throw new Error(result.error || `Failed to create project (Status: ${response.status})`)
+      let result
+      try {
+        result = await response.json()
+      } catch (parseError) {
+        console.error('❌ Failed to parse response:', parseError)
+        throw new Error('Server returned invalid response. Please check your connection.')
       }
 
-      console.log('Project created successfully')
+      if (!response.ok) {
+        // Detailed error handling based on status code
+        let errorMessage = ''
+        
+        switch (response.status) {
+          case 400:
+            errorMessage = `❌ Validation Error: ${result.error || 'Invalid data provided'}`
+            break
+          case 401:
+            errorMessage = '❌ Authentication Error: Please log in again'
+            break
+          case 403:
+            errorMessage = '❌ Permission Denied: You don\'t have access to create projects'
+            break
+          case 409:
+            errorMessage = '❌ Duplicate Error: A project with this slug already exists'
+            break
+          case 500:
+            errorMessage = `❌ Server Error: ${result.error || 'Database error occurred. Check if table exists.'}`
+            break
+          default:
+            errorMessage = `❌ Error (${response.status}): ${result.error || 'Failed to create project'}`
+        }
+        
+        console.error('API Error:', {
+          status: response.status,
+          error: result.error,
+          details: result
+        })
+        
+        throw new Error(errorMessage)
+      }
+
+      console.log('✅ Project created successfully:', result.data?.id)
       router.push('/admin/projects')
       router.refresh()
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'An error occurred'
-      console.error('Error:', errorMessage, err)
+      let errorMessage = 'An unexpected error occurred'
+      
+      if (err instanceof Error) {
+        if (err.message.includes('Failed to fetch')) {
+          errorMessage = '❌ Network Error: Cannot connect to server. Check your internet connection.'
+        } else if (err.message.includes('NetworkError')) {
+          errorMessage = '❌ Network Error: Server is not responding. Try again later.'
+        } else {
+          errorMessage = err.message
+        }
+      }
+      
+      console.error('❌ Create project error:', {
+        error: err,
+        message: errorMessage,
+        timestamp: new Date().toISOString()
+      })
+      
       setError(errorMessage)
     } finally {
       setIsSubmitting(false)
@@ -95,8 +149,27 @@ export default function NewProjectPage() {
       </div>
 
       {error && (
-        <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-          <p className="text-red-800 text-sm">{error}</p>
+        <div className="mb-6 p-4 bg-red-50 border-l-4 border-red-500 rounded-lg shadow-sm">
+          <div className="flex items-start gap-3">
+            <div className="flex-shrink-0 mt-0.5">
+              <svg className="w-5 h-5 text-red-600" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+              </svg>
+            </div>
+            <div className="flex-1">
+              <h3 className="text-sm font-semibold text-red-800 mb-1">Failed to Create Project</h3>
+              <p className="text-sm text-red-700 whitespace-pre-wrap">{error}</p>
+              <div className="mt-3 text-xs text-red-600">
+                <p className="font-medium mb-1">Common solutions:</p>
+                <ul className="list-disc list-inside space-y-0.5 ml-2">
+                  <li>Make sure you're logged in as admin</li>
+                  <li>Check that projects table exists in database</li>
+                  <li>Verify storage bucket 'projects' is created</li>
+                  <li>Ensure all required fields are filled</li>
+                </ul>
+              </div>
+            </div>
+          </div>
         </div>
       )}
 

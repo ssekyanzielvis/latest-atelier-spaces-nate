@@ -99,7 +99,9 @@ export default function EditProjectPage() {
 
     try {
       if (!imageUrl) {
-        throw new Error('Please upload a project image first')
+        setError('❌ Image Required: Please upload a project image')
+        setIsSubmitting(false)
+        return
       }
 
       const submitData = {
@@ -108,7 +110,7 @@ export default function EditProjectPage() {
         year: data.year ? parseInt(data.year) : null,
       }
 
-      console.log('Updating project:', submitData)
+      console.log('🔄 Updating project:', projectId)
 
       const response = await fetch(`/api/projects?id=${projectId}`, {
         method: 'PUT',
@@ -118,21 +120,51 @@ export default function EditProjectPage() {
         body: JSON.stringify(submitData),
       })
 
-      const result = await response.json()
-
-      if (!response.ok) {
-        throw new Error(result.error || `Failed to update project (Status: ${response.status})`)
+      let result
+      try {
+        result = await response.json()
+      } catch (parseError) {
+        throw new Error('Server returned invalid response')
       }
 
-      console.log('Project updated successfully')
+      if (!response.ok) {
+        let errorMessage = ''
+        switch (response.status) {
+          case 400:
+            errorMessage = `❌ Validation Error: ${result.error || 'Invalid data'}`
+            break
+          case 401:
+            errorMessage = '❌ Authentication Error: Please log in again'
+            break
+          case 404:
+            errorMessage = '❌ Not Found: Project no longer exists'
+            break
+          case 500:
+            errorMessage = `❌ Server Error: ${result.error || 'Database error'}`
+            break
+          default:
+            errorMessage = `❌ Error (${response.status}): ${result.error || 'Update failed'}`
+        }
+        console.error('Update Error:', { status: response.status, error: result.error })
+        throw new Error(errorMessage)
+      }
+
+      console.log('✅ Project updated successfully')
       setSuccess(true)
       setTimeout(() => {
         router.push('/admin/projects')
         router.refresh()
       }, 1500)
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'An error occurred'
-      console.error('Error:', errorMessage, err)
+      let errorMessage = 'Update failed'
+      if (err instanceof Error) {
+        if (err.message.includes('Failed to fetch')) {
+          errorMessage = '❌ Network Error: Cannot connect to server'
+        } else {
+          errorMessage = err.message
+        }
+      }
+      console.error('❌ Update error:', { error: err, projectId })
       setError(errorMessage)
     } finally {
       setIsSubmitting(false)
@@ -160,14 +192,27 @@ export default function EditProjectPage() {
       </div>
 
       {error && (
-        <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-          <p className="text-red-800 text-sm">{error}</p>
+        <div className="mb-6 p-4 bg-red-50 border-l-4 border-red-500 rounded-lg shadow-sm">
+          <div className="flex items-start gap-3">
+            <svg className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+            </svg>
+            <div className="flex-1">
+              <h3 className="text-sm font-semibold text-red-800 mb-1">Failed to Update Project</h3>
+              <p className="text-sm text-red-700">{error}</p>
+            </div>
+          </div>
         </div>
       )}
 
       {success && (
-        <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
-          <p className="text-green-800 text-sm">✓ Project updated successfully. Redirecting...</p>
+        <div className="mb-6 p-4 bg-green-50 border-l-4 border-green-500 rounded-lg shadow-sm">
+          <div className="flex items-center gap-3">
+            <svg className="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+            </svg>
+            <p className="text-green-800 text-sm font-medium">✓ Project updated successfully. Redirecting...</p>
+          </div>
         </div>
       )}
 

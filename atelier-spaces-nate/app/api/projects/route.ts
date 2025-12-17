@@ -19,7 +19,7 @@ export async function GET(request: Request) {
         return NextResponse.json({ error: 'Project not found' }, { status: 404 })
       }
 
-      return NextResponse.json(data)
+      return NextResponse.json({ data })
     }
 
     // Get all projects or published only
@@ -35,7 +35,7 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: error.message }, { status: 500 })
     }
 
-    return NextResponse.json(data)
+    return NextResponse.json({ data })
   } catch (error) {
     console.error('Projects GET error:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
@@ -84,7 +84,7 @@ export async function POST(request: Request) {
     }
 
     console.log('Project created successfully')
-    return NextResponse.json(data, { status: 201 })
+    return NextResponse.json({ data }, { status: 201 })
   } catch (error) {
     console.error('Projects POST exception:', error)
     const errorMessage = error instanceof Error ? error.message : 'Internal server error'
@@ -118,7 +118,7 @@ export async function PUT(request: Request) {
     }
 
     console.log('Project updated successfully:', id)
-    return NextResponse.json(data)
+    return NextResponse.json({ data })
   } catch (error) {
     console.error('Projects PUT exception:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
@@ -147,7 +147,7 @@ export async function DELETE(request: Request) {
     }
 
     console.log('Project deleted successfully:', id)
-    return NextResponse.json({ success: true })
+    return NextResponse.json({ data: { success: true } })
   } catch (error) {
     console.error('Projects DELETE exception:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
