@@ -46,6 +46,27 @@ export default function NewProjectPage() {
     },
   })
 
+  const title = watch('title')
+
+  // Auto-generate slug from title
+  const generateSlug = (text: string) => {
+    return text
+      .toLowerCase()
+      .replace(/[^a-z0-9\s-]/g, '') // Remove special characters
+      .replace(/\s+/g, '-') // Replace spaces with hyphens
+      .replace(/-+/g, '-') // Replace multiple hyphens with single
+      .trim()
+  }
+
+  // Update slug when title changes
+  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newTitle = e.target.value
+    const newSlug = generateSlug(newTitle)
+    if (newSlug) {
+      setValue('slug', newSlug, { shouldValidate: true })
+    }
+  }
+
   const onSubmit = async (data: ProjectFormData) => {
     console.log('🎯 onSubmit called!')
     console.log('📋 Form data:', data)
@@ -109,7 +130,7 @@ export default function NewProjectPage() {
             errorMessage = '❌ Permission Denied: You don\'t have access to create projects'
             break
           case 409:
-            errorMessage = '❌ Duplicate Error: A project with this slug already exists'
+            errorMessage = `❌ Duplicate Slug Error: The slug "${submitData.slug}" is already used.\n\n💡 Solution: Modify the title slightly (e.g., add year or location) to generate a unique slug.`
             break
           case 500:
             errorMessage = `❌ Server Error: ${result.error || 'Database error occurred. Check if table exists.'}`
@@ -222,7 +243,9 @@ export default function NewProjectPage() {
             <input
               id="title"
               type="text"
-              {...register('title')}
+              {...register('title', {
+                onChange: handleTitleChange
+              })}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
               placeholder="Modern Residential Complex"
             />
@@ -231,16 +254,19 @@ export default function NewProjectPage() {
 
           <div>
             <label htmlFor="slug" className="block text-sm font-semibold text-gray-700 mb-2">
-              Slug * <span className="text-gray-500 font-normal">(URL-friendly)</span>
+              Slug * <span className="text-gray-500 font-normal">(Auto-generated)</span>
             </label>
             <input
               id="slug"
               type="text"
               {...register('slug')}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent bg-gray-50"
               placeholder="modern-residential-complex"
             />
             {errors.slug && <p className="mt-1 text-sm text-red-600">{errors.slug.message}</p>}
+            <p className="mt-1 text-xs text-gray-500">
+              💡 Auto-generated from title. Edit manually to make it unique if needed.
+            </p>
           </div>
         </div>
 
