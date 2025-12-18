@@ -78,9 +78,21 @@ export default async function WorkDetailPage({ params }: { params: Promise<{ slu
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
           {/* Main Content */}
           <div className="lg:col-span-2">
-            <h1 className="text-4xl md:text-5xl font-bold mb-6">{work.title}</h1>
-            <div className="prose max-w-none text-muted-foreground">
-              <p className="text-lg leading-relaxed">{work.description}</p>
+            <div className="mb-8">
+              <h1 className="text-4xl md:text-5xl font-bold mb-4">{work.title}</h1>
+              {work.featured && (
+                <span className="inline-block bg-black text-white px-4 py-1 rounded-full text-sm font-semibold">
+                  Featured Work
+                </span>
+              )}
+            </div>
+
+            {/* Description Section */}
+            <div className="mb-12">
+              <h2 className="text-2xl font-bold mb-4">About This Work</h2>
+              <div className="prose max-w-none">
+                <p className="text-lg leading-relaxed text-gray-700 whitespace-pre-line">{work.description}</p>
+              </div>
             </div>
 
             {/* Gallery */}
@@ -89,12 +101,12 @@ export default async function WorkDetailPage({ params }: { params: Promise<{ slu
                 <h2 className="text-2xl font-bold mb-6">Gallery</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {galleryImages.map((image, index) => (
-                    <div key={index} className="relative aspect-video overflow-hidden rounded-lg">
+                    <div key={index} className="relative aspect-video overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-shadow">
                       <ImageWithError
                         src={image}
                         alt={`${work.title} gallery ${index + 1}`}
                         fill
-                        className="object-cover"
+                        className="object-cover hover:scale-105 transition-transform duration-300"
                         errorMessage="Failed to load gallery image"
                       />
                     </div>
@@ -102,26 +114,81 @@ export default async function WorkDetailPage({ params }: { params: Promise<{ slu
                 </div>
               </div>
             )}
+
+            {/* Additional Information */}
+            <div className="mt-12 bg-gray-50 rounded-lg p-6">
+              <h2 className="text-xl font-bold mb-4">Work Information</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <p className="text-sm text-gray-600 mb-1">Work ID</p>
+                  <p className="font-medium text-gray-900">{work.id}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-600 mb-1">Slug</p>
+                  <p className="font-medium text-gray-900">{work.slug}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-600 mb-1">Created</p>
+                  <p className="font-medium text-gray-900">
+                    {new Date(work.created_at).toLocaleDateString('en-US', {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric'
+                    })}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-600 mb-1">Last Updated</p>
+                  <p className="font-medium text-gray-900">
+                    {new Date(work.updated_at).toLocaleDateString('en-US', {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric'
+                    })}
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Sidebar */}
           <div>
-            <div className="bg-gray-100 rounded-lg p-6 sticky top-24">
-              <h3 className="text-lg font-semibold mb-4">Work Details</h3>
-              <dl className="space-y-4">
+            <div className="bg-white border-2 border-gray-200 rounded-lg p-6 sticky top-24 shadow-sm">
+              <h3 className="text-xl font-bold mb-6 border-b pb-3">Project Details</h3>
+              <dl className="space-y-5">
                 {work.client && (
-                  <div>
-                    <dt className="text-sm text-gray-600">Client</dt>
-                    <dd className="font-medium">{work.client}</dd>
+                  <div className="border-l-4 border-black pl-4">
+                    <dt className="text-xs uppercase tracking-wide text-gray-600 font-semibold mb-1">Client</dt>
+                    <dd className="text-lg font-medium text-gray-900">{work.client}</dd>
                   </div>
                 )}
                 {work.year && (
-                  <div>
-                    <dt className="text-sm text-gray-600">Year</dt>
-                    <dd className="font-medium">{work.year}</dd>
+                  <div className="border-l-4 border-black pl-4">
+                    <dt className="text-xs uppercase tracking-wide text-gray-600 font-semibold mb-1">Year</dt>
+                    <dd className="text-lg font-medium text-gray-900">{work.year}</dd>
                   </div>
                 )}
+                {work.featured && (
+                  <div className="border-l-4 border-black pl-4">
+                    <dt className="text-xs uppercase tracking-wide text-gray-600 font-semibold mb-1">Status</dt>
+                    <dd className="text-lg font-medium text-gray-900">Featured</dd>
+                  </div>
+                )}
+                <div className="border-l-4 border-black pl-4">
+                  <dt className="text-xs uppercase tracking-wide text-gray-600 font-semibold mb-1">Gallery Images</dt>
+                  <dd className="text-lg font-medium text-gray-900">{galleryImages.length} {galleryImages.length === 1 ? 'Image' : 'Images'}</dd>
+                </div>
               </dl>
+
+              {/* Back Button */}
+              <div className="mt-8 pt-6 border-t">
+                <Link
+                  href="/works"
+                  className="block w-full text-center bg-black text-white py-3 rounded-lg hover:bg-gray-800 transition-colors font-medium"
+                >
+                  ← Back to All Works
+                </Link>
+              </div>
             </div>
           </div>
         </div>
