@@ -10,12 +10,14 @@ type Work = Database['public']['Tables']['works']['Row']
 
 async function getWork(slug: string): Promise<Work | null> {
   try {
-    console.log('🔍 Looking for work with slug:', slug)
+    // Decode the URL-encoded slug
+    const decodedSlug = decodeURIComponent(slug)
+    console.log('🔍 Looking for work with slug:', slug, '→ decoded:', decodedSlug)
     
     const { data, error } = await supabaseAdmin
       .from('works')
       .select('*')
-      .eq('slug', slug)
+      .eq('slug', decodedSlug)
       .maybeSingle()
 
     if (error) {

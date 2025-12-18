@@ -1,29 +1,30 @@
 -- Fix missing or incorrect slugs in works table
--- This script generates slugs from titles for any works that don't have proper slugs
+-- This script generates URL-friendly slugs from titles
 
--- First, let's see which works have issues
-SELECT id, title, slug, 
-  CASE 
-    WHEN slug IS NULL THEN 'Missing slug'
-    WHEN slug = '' THEN 'Empty slug'
-    ELSE 'Has slug'
-  END as slug_status
+-- First, let's see current slugs
+SELECT id, title, slug
 FROM works
 ORDER BY created_at DESC;
 
--- Update works with missing or empty slugs
--- This creates URL-friendly slugs from the title
+-- Update ALL works to have proper URL-friendly slugs
+-- This creates lowercase slugs with hyphens instead of spaces
+-- Removes special characters like — and other non-alphanumeric chars
 UPDATE works
 SET slug = LOWER(
-  REGEXP_REPLACE(
+  TRIM(
+    BOTH '-' FROM
     REGEXP_REPLACE(
-      REGEXP_REPLACE(title, '[^a-zA-Z0-9\s-]', '', 'g'),
-      '\s+', '-', 'g'
-    ),
-    '-+', '-', 'g'
+      REGEXP_REPLACE(
+        REGEXP_REPLACE(
+          REGEXP_REPLACE(title, '[—–-]', '-', 'g'),  -- Convert dashes/em-dashes to hyphens
+          '[^a-zA-Z0-9\s-]', '', 'g'  -- Remove special characters
+        ),
+        '\s+', '-', 'g'  -- Replace spaces with hyphens
+      ),
+      '-+', '-', 'g'  -- Replace multiple hyphens with single hyphen
+    )
   )
-)
-WHERE slug IS NULL OR slug = '';
+);
 
 -- Verify the update
 SELECT id, title, slug
