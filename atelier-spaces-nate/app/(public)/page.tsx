@@ -106,7 +106,7 @@ async function getAboutMedia(): Promise<AboutMedia[]> {
 
     console.log(`✅ Fetched ${data?.length || 0} active about media items`)
     if (data && data.length > 0) {
-      console.log('📸 Media items:', data.map(m => ({
+      console.log('📸 Media items:', data.map((m: AboutMedia) => ({
         id: m.id,
         title: m.title,
         type: m.file_type,
