@@ -91,6 +91,8 @@ async function getAboutSection(): Promise<AboutSection | null> {
 
 async function getAboutMedia(): Promise<AboutMedia[]> {
   try {
+    console.log('🔄 Fetching about media for homepage...')
+    
     const { data, error } = await supabaseAdmin
       .from('about_media')
       .select('*')
@@ -98,13 +100,23 @@ async function getAboutMedia(): Promise<AboutMedia[]> {
       .order('order_position', { ascending: true })
 
     if (error) {
-      console.error('Error fetching about media:', error)
+      console.error('❌ Error fetching about media:', error)
       return []
+    }
+
+    console.log(`✅ Fetched ${data?.length || 0} active about media items`)
+    if (data && data.length > 0) {
+      console.log('📸 Media items:', data.map(m => ({
+        id: m.id,
+        title: m.title,
+        type: m.file_type,
+        url: m.file_url
+      })))
     }
 
     return data || []
   } catch (err) {
-    console.error('Exception fetching about media:', err)
+    console.error('❌ Exception fetching about media:', err)
     return []
   }
 }
@@ -231,23 +243,28 @@ export default async function HomePage() {
             {/* Gallery Grid - 2 Columns */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {aboutMedia.map((media) => (
-                <div key={media.id}>
+                <div key={media.id} className="group">
                   {/* Media Container */}
-                  <div className="relative w-full h-64 bg-gray-100 rounded-lg overflow-hidden mb-4">
+                  <div className="relative w-full h-64 bg-gray-100 rounded-lg overflow-hidden mb-4 shadow-md hover:shadow-xl transition-shadow">
                     {media.file_type === 'image' ? (
                       <ImageWithError
                         src={media.file_url}
                         alt={media.title}
                         fill
                         unoptimized
-                        className="object-cover"
+                        className="object-cover group-hover:scale-105 transition-transform duration-300"
                         errorMessage="Failed to load gallery image"
+                        onError={() => console.error('❌ Failed to load gallery image:', media.file_url, 'for:', media.title)}
                       />
                     ) : (
                       <video
                         src={media.file_url}
                         controls
                         className="w-full h-full object-cover"
+                        onError={(e) => {
+                          console.error('❌ Failed to load gallery video:', media.file_url, 'for:', media.title)
+                          console.error('Video error:', e)
+                        }}
                       />
                     )}
                   </div>

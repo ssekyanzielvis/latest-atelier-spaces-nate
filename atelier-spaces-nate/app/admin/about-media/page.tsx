@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { FiEdit, FiTrash2, FiPlus, FiImage, FiVideo } from 'react-icons/fi'
+import ImageWithError from '@/components/ImageWithError'
 
 interface MediaItem {
   id: string
@@ -30,16 +31,24 @@ export default function AboutMediaListPage() {
     try {
       setLoading(true)
       setError(null)
+      console.log('🔄 Fetching about media items...')
+      
       const response = await fetch('/api/about-media')
       const data = await response.json()
+
+      console.log('📦 API Response:', { status: response.status, data })
 
       if (!response.ok) {
         throw new Error(data.error || 'Failed to fetch items')
       }
 
-      setItems(Array.isArray(data) ? data : [])
+      const items = Array.isArray(data) ? data : []
+      console.log(`✅ Loaded ${items.length} media items`)
+      setItems(items)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred')
+      const errorMsg = err instanceof Error ? err.message : 'An error occurred'
+      console.error('❌ Error fetching media items:', err)
+      setError(errorMsg)
       setItems([])
     } finally {
       setLoading(false)
@@ -114,15 +123,24 @@ export default function AboutMediaListPage() {
                 {/* Thumbnail */}
                 <div className="h-40 bg-gray-100 overflow-hidden flex items-center justify-center relative group">
                   {item.file_type === 'image' ? (
-                    <img
-                      src={item.file_url}
-                      alt={item.title}
-                      className="w-full h-full object-cover"
-                    />
+                    <div className="relative w-full h-full">
+                      <ImageWithError
+                        src={item.file_url}
+                        alt={item.title}
+                        fill
+                        className="object-cover"
+                        errorMessage="Image failed to load"
+                        onError={() => console.error('❌ Failed to load image:', item.file_url)}
+                      />
+                    </div>
                   ) : (
                     <video
                       src={item.file_url}
                       className="w-full h-full object-cover"
+                      onError={(e) => {
+                        console.error('❌ Failed to load video:', item.file_url)
+                        console.error('Video error:', e)
+                      }}
                     />
                   )}
                   <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
