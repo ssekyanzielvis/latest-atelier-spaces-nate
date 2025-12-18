@@ -19,7 +19,6 @@ const workSchema = z.object({
   gallery_image_3: z.string().optional(),
   gallery_image_4: z.string().optional(),
   featured: z.boolean().optional(),
-  is_published: z.boolean().optional(),
 })
 
 type WorkFormData = z.infer<typeof workSchema>
@@ -42,7 +41,6 @@ export default function EditWorkPage() {
     resolver: zodResolver(workSchema),
     defaultValues: {
       featured: false,
-      is_published: true,
     },
   })
 
@@ -209,19 +207,11 @@ export default function EditWorkPage() {
             </div>
           </div>
 
-          <div className="flex items-center gap-6">
-            <div className="flex items-center gap-3">
-              <input id="featured" type="checkbox" {...register('featured')} className="w-4 h-4 border-gray-300 rounded focus:ring-2 focus:ring-black" />
-              <label htmlFor="featured" className="text-sm font-semibold text-gray-700">
-                Featured Work
-              </label>
-            </div>
-            <div className="flex items-center gap-3">
-              <input id="is_published" type="checkbox" {...register('is_published')} className="w-4 h-4 border-gray-300 rounded focus:ring-2 focus:ring-black" />
-              <label htmlFor="is_published" className="text-sm font-semibold text-gray-700">
-                Publish
-              </label>
-            </div>
+          <div className="flex items-center gap-3">
+            <input id="featured" type="checkbox" {...register('featured')} className="w-4 h-4 border-gray-300 rounded focus:ring-2 focus:ring-black" />
+            <label htmlFor="featured" className="text-sm font-semibold text-gray-700">
+              Feature this work on homepage
+            </label>
           </div>
         </div>
 
