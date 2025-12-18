@@ -1,96 +1,73 @@
-'use client'
+export const revalidate = 0
 
-import { useState, useEffect } from 'react'
-import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { notFound } from 'next/navigation'
 import ImageWithError from '@/components/ImageWithError'
+import { supabaseAdmin } from '@/lib/supabase/server'
+import { Database } from '@/types/database'
 
-interface Project {
-  id: string
-  title: string
-  slug: string
-  location: string
-  description: string
-  client?: string
-  year?: number
-  designer?: string
-  duration?: string
-  image: string
-  other_info?: string
-  is_published?: boolean
+type Project = Database['public']['Tables']['projects']['Row']
+
+async function getProject(slug: string): Promise<Project | null> {
+  try {
+    // Decode the URL-encoded slug
+    const decodedSlug = decodeURIComponent(slug)
+    console.log('🔍 Looking for project with slug:', slug, '→ decoded:', decodedSlug)
+    
+    const { data, error } = await supabaseAdmin
+      .from('projects')
+      .select('*')
+      .eq('slug', decodedSlug)
+      .eq('is_published', true)
+      .maybeSingle()
+
+    if (error) {
+      console.error('❌ Error fetching project:', error)
+      return null
+    }
+
+    if (!data) {
+      console.error('❌ No project found with slug:', decodedSlug)
+      // Try to fetch all projects to see what slugs exist
+      const { data: allProjects } = await supabaseAdmin
+        .from('projects')
+        .select('id, title, slug')
+        .eq('is_published', true)
+        .limit(10)
+      console.log('Available projects:', allProjects)
+      return null
+    }
+
+    console.log('✅ Fetched project:', data)
+    return data as Project
+  } catch (err) {
+    console.error('❌ Exception fetching project:', err)
+    return null
+  }
 }
 
-export default function ProjectDetailPage() {
-  const params = useParams()
-  const router = useRouter()
-  const slug = params.slug as string
-  
-  const [project, setProject] = useState<Project | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params
+  const project = await getProject(slug)
 
-  useEffect(() => {
-    const fetchProject = async () => {
-      try {
-        setIsLoading(true)
-        setError(null)
-
-        // First try to find by slug
-        const response = await fetch(`/api/projects?published=true`)
-        const result = await response.json()
-
-        if (!response.ok) {
-          throw new Error('Failed to fetch projects')
-        }
-
-        const projects = result.data || []
-        const foundProject = projects.find((p: Project) => p.slug === slug)
-
-        if (!foundProject) {
-          setError('Project not found')
-          return
-        }
-
-        setProject(foundProject)
-      } catch (err) {
-        const errorMessage = err instanceof Error ? err.message : 'An error occurred'
-        console.error('Error fetching project:', errorMessage, err)
-        setError(errorMessage)
-      } finally {
-        setIsLoading(false)
-      }
+  if (!project) {
+    return {
+      title: 'Project Not Found',
     }
-
-    if (slug) {
-      fetchProject()
-    }
-  }, [slug])
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
-        <div className="animate-spin">
-          <svg className="w-12 h-12 text-black" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-          </svg>
-        </div>
-      </div>
-    )
   }
 
-  if (error || !project) {
-    return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
-        <div className="text-center max-w-md">
-          <h1 className="text-3xl font-bold text-gray-900 mb-4">Project Not Found</h1>
-          <p className="text-gray-600 mb-6">{error || 'The project you are looking for does not exist.'}</p>
-          <Link href="/projects" className="inline-block px-6 py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors">
-            Back to Projects
-          </Link>
-        </div>
-      </div>
-    )
+  return {
+    title: `${project.title} | Atelier Projects`,
+    description: project.description,
+  }
+}
+
+export default async function ProjectDetailPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params
+  const project = await getProject(slug)
+
+  if (!project) {
+    notFound()
   }
 
   return (
@@ -103,7 +80,13 @@ export default function ProjectDetailPage() {
           fill
           priority
           className="object-cover"
+          errorMessage="Failed to load project image"
         />
+        {project.featured && (
+          <div className="absolute top-6 right-6 bg-black text-white px-4 py-2 rounded-full text-sm font-semibold">
+            Featured Project
+          </div>
+        )}
       </div>
 
       {/* Content */}
@@ -114,59 +97,123 @@ export default function ProjectDetailPage() {
             <div className="mb-8">
               <Link
                 href="/projects"
-                className="text-sm text-gray-600 hover:text-gray-900 mb-4 inline-block"
+                className="inline-flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900 mb-6 transition-colors"
               >
-                ← Back to Projects
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+                Back to Projects
               </Link>
-              <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-2">{project.title}</h1>
-              <p className="text-lg text-gray-600">{project.location}</p>
+              <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-3">{project.title}</h1>
+              <p className="text-xl text-gray-600 flex items-center gap-2">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                {project.location}
+              </p>
             </div>
 
-            <div className="prose prose-lg max-w-none mb-12">
-              <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">{project.description}</p>
+            <div className="mb-12">
+              <h2 className="text-2xl font-bold text-gray-900 mb-4">About This Project</h2>
+              <div className="prose prose-lg max-w-none">
+                <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">{project.description}</p>
+              </div>
             </div>
 
             {project.other_info && (
-              <div className="bg-gray-50 p-6 md:p-8 rounded-lg mb-12">
+              <div className="bg-gray-50 p-6 md:p-8 rounded-lg">
                 <h2 className="text-2xl font-bold text-gray-900 mb-4">Additional Information</h2>
                 <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">{project.other_info}</p>
               </div>
             )}
+
+            {/* Project Information */}
+            <div className="mt-12 bg-gray-50 rounded-lg p-6">
+              <h2 className="text-xl font-bold mb-4">Project Information</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <p className="text-sm text-gray-600 mb-1">Project ID</p>
+                  <p className="font-medium text-gray-900">{project.id}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-600 mb-1">Slug</p>
+                  <p className="font-medium text-gray-900">{project.slug}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-600 mb-1">Created</p>
+                  <p className="font-medium text-gray-900">
+                    {new Date(project.created_at).toLocaleDateString('en-US', {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric'
+                    })}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-600 mb-1">Last Updated</p>
+                  <p className="font-medium text-gray-900">
+                    {new Date(project.updated_at).toLocaleDateString('en-US', {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric'
+                    })}
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Sidebar */}
           <div>
-            <div className="bg-gray-100 rounded-lg p-8 sticky top-20">
-              <h3 className="text-xl font-bold text-gray-900 mb-6">Project Details</h3>
-              <dl className="space-y-6">
+            <div className="bg-white border-2 border-gray-200 rounded-lg p-6 sticky top-24 shadow-sm">
+              <h3 className="text-xl font-bold mb-6 border-b pb-3">Project Details</h3>
+              <dl className="space-y-5">
                 {project.client && (
-                  <div>
-                    <dt className="text-sm font-semibold text-gray-600 uppercase tracking-wide">Client</dt>
-                    <dd className="mt-2 text-lg text-gray-900">{project.client}</dd>
+                  <div className="border-l-4 border-black pl-4">
+                    <dt className="text-xs uppercase tracking-wide text-gray-600 font-semibold mb-1">Client</dt>
+                    <dd className="text-lg font-medium text-gray-900">{project.client}</dd>
                   </div>
                 )}
 
                 {project.year && (
-                  <div>
-                    <dt className="text-sm font-semibold text-gray-600 uppercase tracking-wide">Year</dt>
-                    <dd className="mt-2 text-lg text-gray-900">{project.year}</dd>
+                  <div className="border-l-4 border-black pl-4">
+                    <dt className="text-xs uppercase tracking-wide text-gray-600 font-semibold mb-1">Year</dt>
+                    <dd className="text-lg font-medium text-gray-900">{project.year}</dd>
                   </div>
                 )}
 
                 {project.designer && (
-                  <div>
-                    <dt className="text-sm font-semibold text-gray-600 uppercase tracking-wide">Designer</dt>
-                    <dd className="mt-2 text-lg text-gray-900">{project.designer}</dd>
+                  <div className="border-l-4 border-black pl-4">
+                    <dt className="text-xs uppercase tracking-wide text-gray-600 font-semibold mb-1">Designer</dt>
+                    <dd className="text-lg font-medium text-gray-900">{project.designer}</dd>
                   </div>
                 )}
 
                 {project.duration && (
-                  <div>
-                    <dt className="text-sm font-semibold text-gray-600 uppercase tracking-wide">Duration</dt>
-                    <dd className="mt-2 text-lg text-gray-900">{project.duration}</dd>
+                  <div className="border-l-4 border-black pl-4">
+                    <dt className="text-xs uppercase tracking-wide text-gray-600 font-semibold mb-1">Duration</dt>
+                    <dd className="text-lg font-medium text-gray-900">{project.duration}</dd>
+                  </div>
+                )}
+
+                {project.featured && (
+                  <div className="border-l-4 border-black pl-4">
+                    <dt className="text-xs uppercase tracking-wide text-gray-600 font-semibold mb-1">Status</dt>
+                    <dd className="text-lg font-medium text-gray-900">Featured</dd>
                   </div>
                 )}
               </dl>
+
+              {/* Back Button */}
+              <div className="mt-8 pt-6 border-t">
+                <Link
+                  href="/projects"
+                  className="block w-full text-center bg-black text-white py-3 rounded-lg hover:bg-gray-800 transition-colors font-medium"
+                >
+                  ← Back to All Projects
+                </Link>
+              </div>
             </div>
           </div>
         </div>
