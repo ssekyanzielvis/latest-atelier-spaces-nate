@@ -73,10 +73,23 @@ export default async function WorksPage() {
                   <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-gray-700">
                     {work.title}
                   </h3>
-                  <p className="text-gray-600 line-clamp-2 mb-3">{work.description}</p>
-                  <div className="flex items-center justify-between text-sm text-gray-500">
-                    {work.client && <span>{work.client}</span>}
-                    {work.year && <span>{work.year}</span>}
+                  <p className="text-gray-600 line-clamp-2 mb-4">{work.description}</p>
+                  <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
+                    {work.client && <span className="font-medium">Client: {work.client}</span>}
+                    {work.year && <span className="font-medium">Year: {work.year}</span>}
+                  </div>
+                  <div className="flex items-center justify-between pt-4 border-t border-gray-200">
+                    <span className="text-sm text-gray-500">
+                      {work.gallery_image_1 || work.gallery_image_2 || work.gallery_image_3 || work.gallery_image_4 
+                        ? 'Gallery available' 
+                        : 'View details'}
+                    </span>
+                    <span className="text-black font-semibold group-hover:translate-x-1 transition-transform inline-flex items-center gap-1">
+                      View Details 
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </span>
                   </div>
                 </div>
               </Link>
