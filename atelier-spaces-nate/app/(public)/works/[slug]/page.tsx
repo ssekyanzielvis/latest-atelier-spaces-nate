@@ -10,21 +10,34 @@ type Work = Database['public']['Tables']['works']['Row']
 
 async function getWork(slug: string): Promise<Work | null> {
   try {
+    console.log('🔍 Looking for work with slug:', slug)
+    
     const { data, error } = await supabaseAdmin
       .from('works')
       .select('*')
       .eq('slug', slug)
-      .single()
+      .maybeSingle()
 
     if (error) {
-      console.error('Error fetching work:', error)
+      console.error('❌ Error fetching work:', error)
       return null
     }
 
-    console.log('Fetched work:', data)
+    if (!data) {
+      console.error('❌ No work found with slug:', slug)
+      // Try to fetch all works to see what slugs exist
+      const { data: allWorks } = await supabaseAdmin
+        .from('works')
+        .select('id, title, slug')
+        .limit(10)
+      console.log('Available works:', allWorks)
+      return null
+    }
+
+    console.log('✅ Fetched work:', data)
     return (data as Work) || null
   } catch (err) {
-    console.error('Exception fetching work:', err)
+    console.error('❌ Exception fetching work:', err)
     return null
   }
 }

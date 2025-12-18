@@ -297,7 +297,16 @@ export default async function HomePage() {
                       <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-gray-700 transition-colors">
                         {work.title}
                       </h3>
-                      <p className="text-gray-600 line-clamp-2">{work.description}</p>
+                      <p className="text-gray-600 line-clamp-2 mb-4">{work.description}</p>
+                      <div className="flex items-center justify-end pt-3 border-t border-gray-200">
+                        <span className="text-black font-semibold group-hover:translate-x-1 transition-transform inline-flex items-center gap-2 text-sm">
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                          </svg>
+                          View Full Details
+                        </span>
+                      </div>
                     </div>
                   </Link>
                 ))}
@@ -379,9 +388,15 @@ export default async function HomePage() {
                   )}
                   <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/40 to-black/80"></div>
                   <div className="absolute inset-0 flex flex-col justify-end p-8">
-                    <h3 className="text-3xl font-bold text-white mb-3 group-hover:scale-105 transition-transform">
-                      {category.name}
-                    </h3>
+                    <div className="flex items-center justify-between mb-3">
+                      <h3 className="text-3xl font-bold text-white group-hover:scale-105 transition-transform">
+                        {category.name}
+                      </h3>
+                      <svg className="w-8 h-8 text-white group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                      </svg>
+                    </div>
                     {category.description && (
                       <p className="text-white/90 text-base line-clamp-3">
                         {category.description}
@@ -425,8 +440,14 @@ export default async function HomePage() {
                       <h3 className="text-xl font-bold text-gray-900 mb-1">{member.name}</h3>
                       <p className="text-gray-600 font-medium mb-2">{member.position}</p>
                       {member.bio && (
-                        <p className="text-gray-600 text-sm line-clamp-3">{member.bio}</p>
+                        <p className="text-gray-600 text-sm line-clamp-3 mb-3">{member.bio}</p>
                       )}
+                      <div className="flex items-center justify-center pt-3 border-t border-gray-200 mt-3">
+                        <svg className="w-5 h-5 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                        </svg>
+                      </div>
                     </div>
                   </div>
                 ))}
