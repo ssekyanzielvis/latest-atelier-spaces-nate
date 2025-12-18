@@ -34,6 +34,7 @@ export default function NewProjectPage() {
     register,
     handleSubmit,
     watch,
+    setValue,
     formState: { errors },
   } = useForm<ProjectFormData>({
     resolver: zodResolver(projectSchema),
@@ -41,6 +42,7 @@ export default function NewProjectPage() {
     defaultValues: {
       featured: false,
       is_published: true,
+      image: '',
     },
   })
 
@@ -337,6 +339,8 @@ export default function NewProjectPage() {
             onChange={(url) => {
               console.log('🖼️ Image uploaded:', url)
               setImageUrl(url)
+              setValue('image', url, { shouldValidate: true })
+              console.log('✅ Form image field updated')
             }}
             folder="projects"
             label="Upload Project Image"
@@ -354,8 +358,11 @@ export default function NewProjectPage() {
               ✓ Image uploaded successfully
             </p>
           )}
-          {/* Hidden input to register with react-hook-form */}
-          <input type="hidden" {...register('image')} value={imageUrl} />
+          {errors.image && (
+            <p className="mt-2 text-sm text-red-600 bg-red-50 p-2 rounded">
+              {errors.image.message}
+            </p>
+          )}
         </div>
 
         {/* Other Info */}
