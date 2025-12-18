@@ -44,46 +44,72 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
+    console.log('🚀 POST /api/projects - Starting...')
+    
     const body: any = await request.json()
+    console.log('📦 Received body:', JSON.stringify(body, null, 2))
 
     // Validate required fields
     if (!body.title || !body.slug || !body.location || !body.description || !body.image) {
+      const missingFields = []
+      if (!body.title) missingFields.push('title')
+      if (!body.slug) missingFields.push('slug')
+      if (!body.location) missingFields.push('location')
+      if (!body.description) missingFields.push('description')
+      if (!body.image) missingFields.push('image')
+      
+      console.error('❌ Validation failed - Missing fields:', missingFields)
       return NextResponse.json(
-        { error: 'Missing required fields: title, slug, location, description, image' },
+        { error: `Missing required fields: ${missingFields.join(', ')}` },
         { status: 400 }
       )
     }
 
-    console.log('Creating project:', { title: body.title, slug: body.slug })
+    console.log('✅ Validation passed')
+    console.log('🔄 Inserting into Supabase...')
+
+    const insertData = {
+      title: body.title,
+      slug: body.slug,
+      location: body.location,
+      description: body.description,
+      client: body.client || null,
+      year: body.year ? parseInt(body.year) : null,
+      designer: body.designer || null,
+      duration: body.duration || null,
+      image: body.image,
+      other_info: body.other_info || null,
+      featured: body.featured || false,
+      is_published: body.is_published !== false,
+    }
+    
+    console.log('📝 Insert data:', JSON.stringify(insertData, null, 2))
 
     const { data, error } = await supabaseAdmin
       .from('projects')
-      .insert({
-        title: body.title,
-        slug: body.slug,
-        location: body.location,
-        description: body.description,
-        client: body.client || null,
-        year: body.year ? parseInt(body.year) : null,
-        designer: body.designer || null,
-        duration: body.duration || null,
-        image: body.image,
-        other_info: body.other_info || null,
-        featured: body.featured || false,
-        is_published: body.is_published !== false,
-      } as any)
+      .insert(insertData as any)
       .select()
       .single()
 
     if (error) {
-      console.error('Projects POST error:', error)
+      console.error('❌ Supabase error:', {
+        message: error.message,
+        details: error.details,
+        hint: error.hint,
+        code: error.code
+      })
       return NextResponse.json(
-        { error: error.message || 'Failed to create project' },
+        { 
+          error: error.message || 'Failed to create project',
+          details: error.details,
+          hint: error.hint,
+          code: error.code
+        },
         { status: 400 }
       )
     }
 
-    console.log('Project created successfully')
+    console.log('✅ Project created successfully')
     return NextResponse.json({ data }, { status: 201 })
   } catch (error) {
     console.error('Projects POST exception:', error)

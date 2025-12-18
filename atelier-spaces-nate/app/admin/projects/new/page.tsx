@@ -63,6 +63,7 @@ export default function NewProjectPage() {
       }
 
       console.log('🚀 Creating project:', { title: submitData.title, slug: submitData.slug })
+      console.log('📦 Full submit data:', submitData)
 
       const response = await fetch('/api/projects', {
         method: 'POST',
@@ -72,11 +73,15 @@ export default function NewProjectPage() {
         body: JSON.stringify(submitData),
       })
 
+      console.log('📡 Response status:', response.status, response.statusText)
+
       let result
       try {
         result = await response.json()
+        console.log('📥 Response data:', result)
       } catch (parseError) {
         console.error('❌ Failed to parse response:', parseError)
+        alert('Server returned invalid response. Check console for details.')
         throw new Error('Server returned invalid response. Please check your connection.')
       }
 
@@ -134,6 +139,9 @@ export default function NewProjectPage() {
         message: errorMessage,
         timestamp: new Date().toISOString()
       })
+      
+      // Show alert to ensure error is visible
+      alert(`Failed to create project: ${errorMessage}`)
       
       setError(errorMessage)
     } finally {

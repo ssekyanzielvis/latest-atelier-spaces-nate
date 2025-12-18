@@ -16,7 +16,8 @@ import {
   FiLayout,
   FiTag,
   FiLayers,
-  FiShield
+  FiShield,
+  FiX
 } from 'react-icons/fi'
 
 const navItems = [
@@ -35,7 +36,12 @@ const navItems = [
   { href: '/admin/admins', label: 'Admin Users', icon: FiShield },
 ]
 
-export default function AdminSidebar() {
+interface AdminSidebarProps {
+  isOpen: boolean
+  onClose: () => void
+}
+
+export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
   const pathname = usePathname()
   const router = useRouter()
 
@@ -46,13 +52,27 @@ export default function AdminSidebar() {
   }
 
   return (
-    <aside className="w-64 bg-gray-900 text-white min-h-screen flex flex-col shadow-xl border-r border-gray-800">
+    <aside className={`
+      fixed lg:static inset-y-0 left-0 z-30
+      w-64 bg-gray-900 text-white flex flex-col shadow-xl border-r border-gray-800
+      transform transition-transform duration-300 ease-in-out
+      ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+    `}>
       {/* Logo Section */}
-      <div className="p-6 border-b border-gray-800">
+      <div className="p-6 border-b border-gray-800 flex items-center justify-between">
         <Link href="/admin/dashboard" className="block hover:opacity-90 transition-opacity">
           <h2 className="text-2xl font-bold tracking-tight text-white">ATELIER</h2>
           <p className="text-xs text-gray-500 mt-1.5 uppercase tracking-wide">Admin Portal</p>
         </Link>
+        
+        {/* Close button for mobile */}
+        <button
+          onClick={onClose}
+          className="lg:hidden p-2 hover:bg-gray-800 rounded-md transition-colors"
+          aria-label="Close sidebar"
+        >
+          <FiX size={24} />
+        </button>
       </div>
 
       {/* Navigation */}
