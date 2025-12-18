@@ -24,13 +24,26 @@ export default function AdminProjectsPage() {
     try {
       setIsLoading(true)
       setError(null)
+      
+      console.log('🔄 Fetching projects...')
+      
       const response = await fetch('/api/projects')
-      if (!response.ok) throw new Error('Failed to fetch projects')
-      const data = await response.json()
-      setProjects(data || [])
+      
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ error: 'Failed to fetch' }))
+        throw new Error(errorData.error || `HTTP ${response.status}: Failed to fetch projects`)
+      }
+      
+      const result = await response.json()
+      // Handle both { data: [...] } and direct array formats
+      const data = result.data || result
+      
+      console.log('✅ Fetched projects:', data.length)
+      setProjects(Array.isArray(data) ? data : [])
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load projects')
-      console.error('Error fetching projects:', err)
+      const errorMessage = err instanceof Error ? err.message : 'Failed to load projects'
+      console.error('❌ Error fetching projects:', err)
+      setError(errorMessage)
     } finally {
       setIsLoading(false)
     }
@@ -39,16 +52,27 @@ export default function AdminProjectsPage() {
   const handleDelete = async (id: string) => {
     try {
       setIsDeleting(true)
+      setError(null)
+      
+      console.log('🗑️ Deleting project:', id)
+      
       const response = await fetch(`/api/projects?id=${id}`, {
         method: 'DELETE',
       })
 
-      if (!response.ok) throw new Error('Failed to delete project')
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ error: 'Failed to delete' }))
+        throw new Error(errorData.error || `Failed to delete project (HTTP ${response.status})`)
+      }
 
+      console.log('✅ Project deleted successfully')
       setProjects(projects.filter(p => p.id !== id))
       setDeleteConfirm(null)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to delete project')
+      const errorMessage = err instanceof Error ? err.message : 'Failed to delete project'
+      console.error('❌ Error deleting project:', err)
+      setError(errorMessage)
+      setDeleteConfirm(null)
     } finally {
       setIsDeleting(false)
     }
@@ -83,8 +107,33 @@ export default function AdminProjectsPage() {
       </div>
 
       {error && (
-        <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
-          <p className="text-red-800 text-sm">{error}</p>
+        <div className="bg-red-50 border-l-4 border-red-500 rounded-lg shadow-sm p-6">
+          <div className="flex items-start gap-3">
+            <svg className="w-6 h-6 text-red-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+            </svg>
+            <div className="flex-1">
+              <h3 className="text-lg font-semibold text-red-800 mb-2">Failed to Load Projects</h3>
+              <p className="text-sm text-red-700 mb-4">{error}</p>
+              
+              <div className="bg-white rounded p-4 mb-4">
+                <h4 className="font-semibold text-red-900 mb-2">Possible causes:</h4>
+                <ul className="list-disc list-inside text-sm text-red-800 space-y-1">
+                  <li>The <code className="bg-red-100 px-1 rounded">projects</code> table doesn't exist in Supabase</li>
+                  <li>RLS policies are blocking access</li>
+                  <li>Database connection issue</li>
+                  <li>Run <code className="bg-red-100 px-1 rounded">scripts/PROJECTS_COMPLETE_SETUP.sql</code> in Supabase</li>
+                </ul>
+              </div>
+
+              <button
+                onClick={fetchProjects}
+                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm font-medium"
+              >
+                Try Again
+              </button>
+            </div>
+          </div>
         </div>
       )}
 
