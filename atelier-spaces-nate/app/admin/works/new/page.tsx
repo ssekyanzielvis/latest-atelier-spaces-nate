@@ -12,7 +12,6 @@ const workSchema = z.object({
   slug: z.string().min(1, 'Slug is required'),
   description: z.string().min(1, 'Description is required'),
   image: z.string().min(1, 'Main image is required'),
-  category_id: z.string().optional(),
   year: z.string().optional(),
   client: z.string().optional(),
   featured: z.boolean().optional(),
@@ -187,20 +186,6 @@ export default function NewWorkPage() {
             <label htmlFor="featured" className="text-sm font-semibold text-gray-700">
               Feature this work on homepage
             </label>
-          </div>
-
-          <div className="md:col-span-2">
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Category
-            </label>
-            <input
-              id="category_id"
-              type="text"
-              {...register('category_id')}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
-              placeholder="Enter category ID (optional)"
-            />
-            <p className="mt-1 text-xs text-gray-500">Select which category this work belongs to</p>
           </div>
 
           <div className="md:col-span-2 border-t pt-6">

@@ -18,7 +18,6 @@ const workSchema = z.object({
   gallery_image_2: z.string().optional(),
   gallery_image_3: z.string().optional(),
   gallery_image_4: z.string().optional(),
-  category_id: z.string().optional(),
   featured: z.boolean().optional(),
   is_published: z.boolean().optional(),
 })
@@ -208,19 +207,6 @@ export default function EditWorkPage() {
                 </div>
               ))}
             </div>
-          </div>
-
-          <div>
-            <label htmlFor="category_id" className="block text-sm font-semibold text-gray-700 mb-2">
-              Category
-            </label>
-            <input
-              id="category_id"
-              type="text"
-              {...register('category_id')}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
-              placeholder="Category ID"
-            />
           </div>
 
           <div className="flex items-center gap-6">

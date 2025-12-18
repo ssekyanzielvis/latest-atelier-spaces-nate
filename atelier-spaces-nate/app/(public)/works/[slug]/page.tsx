@@ -29,30 +29,6 @@ async function getWork(slug: string): Promise<Work | null> {
   }
 }
 
-async function getRelatedWorks(categoryId: string | null, currentWorkId: string): Promise<Work[]> {
-  if (!categoryId) return []
-  
-  try {
-    const { data, error } = await supabaseAdmin
-      .from('works')
-      .select('*')
-      .eq('category_id', categoryId)
-      .neq('id', currentWorkId)
-      .limit(3)
-
-    if (error) {
-      console.error('Error fetching related works:', error)
-      return []
-    }
-
-    console.log('Fetched related works:', data)
-    return (data as Work[]) || []
-  } catch (err) {
-    console.error('Exception fetching related works:', err)
-    return []
-  }
-}
-
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
   const work = await getWork(slug)
@@ -76,8 +52,6 @@ export default async function WorkDetailPage({ params }: { params: Promise<{ slu
   if (!work) {
     notFound()
   }
-
-  const relatedWorks = await getRelatedWorks(work.category_id, work.id)
 
   const galleryImages = [
     work.gallery_image_1,
@@ -151,38 +125,6 @@ export default async function WorkDetailPage({ params }: { params: Promise<{ slu
             </div>
           </div>
         </div>
-
-        {/* Related Works */}
-        {relatedWorks.length > 0 && (
-          <div className="mt-20">
-            <h2 className="text-3xl font-bold mb-8">Related Works</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {relatedWorks.map((relatedWork) => (
-                <Link 
-                  key={relatedWork.id} 
-                  href={`/works/${relatedWork.slug}`}
-                  className="group bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-all duration-300"
-                >
-                  <div className="relative h-64 overflow-hidden">
-                    <ImageWithError
-                      src={relatedWork.image}
-                      alt={relatedWork.title}
-                      fill
-                      className="object-cover group-hover:scale-105 transition-transform duration-300"
-                      errorMessage="Failed to load related work image"
-                    />
-                  </div>
-                  <div className="p-6">
-                    <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-gray-700">
-                      {relatedWork.title}
-                    </h3>
-                    <p className="text-gray-600 line-clamp-2">{relatedWork.description}</p>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          </div>
-        )}
       </div>
     </div>
   )
