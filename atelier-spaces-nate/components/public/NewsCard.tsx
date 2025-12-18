@@ -42,8 +42,17 @@ export default function NewsCard({ article }: NewsCardProps) {
           {article.title}
         </h3>
         {article.excerpt && (
-          <p className="text-sm text-muted-foreground mt-2 line-clamp-2">{article.excerpt}</p>
+          <p className="text-sm text-muted-foreground mt-2 line-clamp-2 mb-3">{article.excerpt}</p>
         )}
+        <div className="flex items-center justify-end pt-3 border-t border-gray-200 mt-3">
+          <span className="text-black font-semibold group-hover:translate-x-1 transition-transform inline-flex items-center gap-2 text-sm">
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+            </svg>
+            View Full Details
+          </span>
+        </div>
       </div>
     </Link>
   )
