@@ -140,12 +140,14 @@ export default async function AdminGalleryPage() {
                         <Link
                           href={`/admin/gallery/${item.id}/edit`}
                           className="text-blue-600 hover:text-blue-900"
+                          title="Edit"
                         >
                           <FiEdit2 size={18} />
                         </Link>
                         <Link
                           href={`/admin/gallery/${item.id}/delete`}
                           className="text-red-600 hover:text-red-900"
+                          title="Delete"
                         >
                           <FiTrash2 size={18} />
                         </Link>
