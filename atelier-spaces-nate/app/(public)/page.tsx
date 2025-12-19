@@ -170,46 +170,32 @@ export default async function HomePage() {
       {/* Dynamic Images Section (Hero Slides) */}
       <HeroSection slides={heroSlides} />
 
-      {/* About Us Section - Visual Card with Overlay */}
-      {aboutSection && aboutSection.image && (
-        <section id="about" className="py-8 md:py-12">
+      {/* About Us Section */}
+      {aboutSection && (
+        <section id="about" className="py-12 md:py-16 bg-white">
           <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8">
-            <Link 
-              href="/about"
-              className="group relative block overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 h-[350px] md:h-[400px]"
-            >
-              {/* Full Background Image */}
-              <div className="absolute inset-0 w-full h-full">
-                <ImageWithError
-                  src={aboutSection.image}
-                  alt="About Atelier Spaces Nate"
-                  fill
-                  className="object-cover group-hover:scale-110 transition-transform duration-500"
-                  errorMessage="Failed to load about image"
-                />
-                {/* Gradient Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/60 to-transparent"></div>
+            <div className="max-w-4xl mx-auto">
+              <div className="text-center mb-8">
+                <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">About Us</h2>
+                <div className="w-20 h-1 bg-black mx-auto"></div>
               </div>
-
-              {/* Content Overlay */}
-              <div className="absolute inset-0 flex flex-col justify-end p-6 md:p-8 text-white z-10">
-                <h2 className="text-2xl md:text-3xl font-bold mb-3">
-                  {aboutSection.title}
-                </h2>
-                <p className="text-sm md:text-base text-gray-200 line-clamp-3 mb-4">
-                  {aboutSection.content}
+              <div className="prose prose-lg max-w-none">
+                <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">
+                  {(aboutSection as any).about || aboutSection.content}
                 </p>
-                <div className="flex items-center justify-end pt-3 border-t border-white/20">
-                  <span className="text-white font-semibold group-hover:translate-x-1 transition-transform inline-flex items-center gap-2 text-sm">
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                    </svg>
-                    Learn More
-                  </span>
-                </div>
               </div>
-            </Link>
+              <div className="mt-8 text-center">
+                <Link
+                  href="/about"
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors font-medium"
+                >
+                  Learn More About Us
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </Link>
+              </div>
+            </div>
           </div>
         </section>
       )}
