@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { FiUpload, FiCheck, FiX } from 'react-icons/fi'
 import ImageUpload from '@/components/admin/ImageUpload'
+import { showToast } from '@/components/ToastNotifications'
 
 export default function NewGalleryItemPage() {
   const router = useRouter()
@@ -68,9 +69,11 @@ export default function NewGalleryItemPage() {
       }
 
       console.log('✅ Gallery item created successfully:', result.id)
-      alert('Gallery item created successfully! ✨')
-      router.push('/admin/gallery')
-      router.refresh()
+      showToast('Gallery item created successfully! 🎉', 'success')
+      setTimeout(() => {
+        router.push('/admin/gallery')
+        router.refresh()
+      }, 1000)
     } catch (err: any) {
       console.error('❌ Error creating gallery item:', err)
       setError(err.message || 'An unexpected error occurred. Please try again.')

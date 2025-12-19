@@ -4,6 +4,7 @@ import { useState } from 'react'
 import '../globals.css'
 import AdminSidebar from '@/components/admin/Sidebar'
 import AdminHeader from '@/components/admin/AdminHeader'
+import ToastNotifications from '@/components/ToastNotifications'
 
 export default function AdminLayout({
   children,
@@ -13,9 +14,11 @@ export default function AdminLayout({
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
   return (
-    <div className="flex h-screen bg-gray-50 overflow-hidden">
-      {/* Sidebar */}
-      <AdminSidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+    <>
+      <ToastNotifications />
+      <div className="flex h-screen bg-gray-50 overflow-hidden">
+        {/* Sidebar */}
+        <AdminSidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden w-full">
@@ -37,6 +40,7 @@ export default function AdminLayout({
           onClick={() => setSidebarOpen(false)}
         />
       )}
-    </div>
+      </div>
+    </>
   )
 }
