@@ -5,28 +5,26 @@
 ALTER TABLE work_categories 
 ADD COLUMN IF NOT EXISTS media_type VARCHAR(20) DEFAULT 'image' CHECK (media_type IN ('image', 'video'));
 
--- 2. Rename cover_image to cover_media for clarity (optional but recommended)
--- First check if we need to rename
-DO $$ 
-BEGIN
-  IF EXISTS (
-    SELECT 1 FROM information_schema.columns 
-    WHERE table_name = 'work_categories' AND column_name = 'cover_image'
-  ) THEN
-    ALTER TABLE work_categories RENAME COLUMN cover_image TO cover_media;
-  END IF;
-END $$;
+-- 2. Add cover_media column (keep cover_image for backward compatibility)
+ALTER TABLE work_categories 
+ADD COLUMN IF NOT EXISTS cover_media VARCHAR(500);
 
--- 3. Update existing records to have media_type = 'image'
+-- 3. Copy existing cover_image data to cover_media if cover_media is empty
+UPDATE work_categories 
+SET cover_media = cover_image 
+WHERE cover_media IS NULL AND cover_image IS NOT NULL;
+
+-- 4. Update existing records to have media_type = 'image'
 UPDATE work_categories 
 SET media_type = 'image' 
 WHERE media_type IS NULL;
 
--- 4. Add comments
+-- 5. Add comments
+COMMENT ON COLUMN work_categories.cover_image IS 'URL to the cover image file (legacy field, use cover_media instead)';
 COMMENT ON COLUMN work_categories.cover_media IS 'URL to the cover media file (image or video)';
 COMMENT ON COLUMN work_categories.media_type IS 'Type of media: image or video';
 
--- 5. Create index on media_type
+-- 6. Create index on media_type
 CREATE INDEX IF NOT EXISTS idx_work_categories_media_type ON work_categories(media_type);
 
 -- Verify the changes
