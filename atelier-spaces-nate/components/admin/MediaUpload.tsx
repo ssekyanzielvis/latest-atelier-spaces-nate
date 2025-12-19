@@ -45,10 +45,10 @@ export default function MediaUpload({
       return
     }
 
-    // Validate file size (max 50MB for videos, 5MB for images)
-    const maxSize = isVideo ? 50 * 1024 * 1024 : 5 * 1024 * 1024
+    // Validate file size (max 100MB for videos, 10MB for images)
+    const maxSize = isVideo ? 100 * 1024 * 1024 : 10 * 1024 * 1024
     if (file.size > maxSize) {
-      setError(isVideo ? 'Video size must be less than 50MB' : 'Image size must be less than 5MB')
+      setError(isVideo ? 'Video size must be less than 100MB' : 'Image size must be less than 10MB')
       return
     }
 
@@ -88,7 +88,7 @@ export default function MediaUpload({
   }
 
   const acceptedTypes = acceptVideo 
-    ? 'image/jpeg,image/png,image/webp,image/gif,video/mp4,video/webm'
+    ? 'image/jpeg,image/png,image/webp,image/gif,video/mp4,video/webm,video/quicktime,video/x-msvideo,video/x-matroska'
     : 'image/jpeg,image/png,image/webp,image/gif'
 
   return (
@@ -133,7 +133,7 @@ export default function MediaUpload({
           <p className="text-sm text-muted-foreground mb-2">{label}</p>
           {acceptVideo && (
             <p className="text-xs text-gray-500 mb-4">
-              Supports images (JPG, PNG, WebP, GIF) and videos (MP4, WebM)
+              Supports images (JPG, PNG, WebP, GIF up to 10MB) and videos (MP4, WebM, MOV, AVI, MKV up to 100MB)
             </p>
           )}
           <Button

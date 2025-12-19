@@ -38,13 +38,12 @@ export default function Header() {
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center hover:opacity-90 transition-opacity">
-            <Image 
-              src="/images/logo.svg" 
+            <img 
+              src="/images/logo.png" 
               alt="Atelier Spaces Nate" 
-              width={160}
-              height={44}
-              priority
-              className="h-11 w-auto"
+              width="640"
+              height="200"
+              className="h-12 w-auto object-contain"
             />
           </Link>
 

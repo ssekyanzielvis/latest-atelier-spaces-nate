@@ -29,10 +29,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'File must be an image or video' }, { status: 400 })
     }
     
-    // Validate file size (50MB max for videos, 5MB max for images)
-    const maxSize = isVideo ? 50 * 1024 * 1024 : 5 * 1024 * 1024
+    // Validate file size (100MB max for videos, 10MB max for images)
+    const maxSize = isVideo ? 100 * 1024 * 1024 : 10 * 1024 * 1024
     if (file.size > maxSize) {
-      const maxSizeLabel = isVideo ? '50MB' : '5MB'
+      const maxSizeLabel = isVideo ? '100MB' : '10MB'
       return NextResponse.json({ error: `File too large (max ${maxSizeLabel})` }, { status: 400 })
     }
     
