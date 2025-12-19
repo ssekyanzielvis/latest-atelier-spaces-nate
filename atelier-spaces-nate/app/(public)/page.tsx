@@ -12,7 +12,7 @@ type WorkCategory = Database['public']['Tables']['work_categories']['Row']
 type AboutSection = Database['public']['Tables']['about_section']['Row']
 type TeamMember = Database['public']['Tables']['team_members']['Row']
 type SloganSection = Database['public']['Tables']['slogan_section']['Row']
-type AboutMedia = Database['public']['Tables']['about_media']['Row']
+
 
 async function getHeroSlides(): Promise<HeroSlide[]> {
   console.log('🔄 Fetching hero slides...')
@@ -93,37 +93,7 @@ async function getAboutSection(): Promise<AboutSection | null> {
   }
 }
 
-async function getAboutMedia(): Promise<AboutMedia[]> {
-  try {
-    console.log('🔄 Fetching about media for homepage...')
-    
-    const { data, error } = await supabaseAdmin
-      .from('about_media')
-      .select('*')
-      .eq('is_active', true)
-      .order('order_position', { ascending: true })
 
-    if (error) {
-      console.error('❌ Error fetching about media:', error)
-      return []
-    }
-
-    console.log(`✅ Fetched ${data?.length || 0} active about media items`)
-    if (data && data.length > 0) {
-      console.log('📸 Media items:', data.map((m: AboutMedia) => ({
-        id: m.id,
-        title: m.title,
-        type: m.file_type,
-        url: m.file_url
-      })))
-    }
-
-    return data || []
-  } catch (err) {
-    console.error('❌ Exception fetching about media:', err)
-    return []
-  }
-}
 
 async function getTeamMembers(): Promise<TeamMember[]> {
   const { data, error } = await supabaseAdmin
@@ -155,12 +125,11 @@ async function getSloganSection(): Promise<SloganSection | null> {
 }
 
 export default async function HomePage() {
-  const [heroSlides, featuredWorks, workCategories, aboutSection, aboutMedia, teamMembers, sloganSection] = await Promise.all([
+  const [heroSlides, featuredWorks, workCategories, aboutSection, teamMembers, sloganSection] = await Promise.all([
     getHeroSlides(),
     getFeaturedWorks(),
     getWorkCategories(),
     getAboutSection(),
-    getAboutMedia(),
     getTeamMembers(),
     getSloganSection(),
   ])
@@ -214,64 +183,34 @@ export default async function HomePage() {
         </section>
       )}
 
-      {/* About Media Gallery Section - Visual Cards */}
-      {aboutMedia.length > 0 && (
-        <section id="about-gallery" className="py-8 md:py-12 bg-gray-50">
-          <div className="w-full px-4">
-            <div className="mb-8">
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">Gallery</h2>
-            </div>
-
-            {/* Gallery Grid - 2 Columns with Overlay Design */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {aboutMedia.slice(0, 6).map((media) => (
-                <div 
-                  key={media.id} 
-                  className="group relative overflow-hidden rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300 h-[350px] cursor-pointer"
-                >
-                  {/* Full Background Media */}
-                  <div className="absolute inset-0 w-full h-full">
-                    {media.file_type === 'image' ? (
-                      <ImageWithError
-                        src={media.file_url}
-                        alt={media.title}
-                        fill
-                        unoptimized
-                        className="object-cover group-hover:scale-110 transition-transform duration-500"
-                        errorMessage="Failed to load gallery image"
-                      />
-                    ) : (
-                      <video
-                        src={media.file_url}
-                        className="w-full h-full object-cover"
-                        muted
-                        loop
-                      />
-                    )}
-                    {/* Gradient Overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent"></div>
-                  </div>
-
-                  {/* Content Overlay */}
-                  <div className="absolute inset-0 flex flex-col justify-end p-6 text-white z-10">
-                    <h3 className="text-xl md:text-2xl font-bold mb-2">{media.title}</h3>
-                    <p className="text-sm text-gray-200 line-clamp-2 mb-3">{media.caption}</p>
-                    <div className="flex items-center justify-end pt-3 border-t border-white/20">
-                      <span className="text-white font-semibold group-hover:translate-x-1 transition-transform inline-flex items-center gap-2 text-sm">
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                        </svg>
-                        View
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
+      {/* Gallery Preview Section - Link to Full Gallery */}
+      <section id="gallery-preview" className="py-8 md:py-12 bg-gray-50">
+        <div className="w-full px-4">
+          <div className="flex items-center justify-between mb-8">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900">Gallery</h2>
+            <Link 
+              href="/gallery"
+              className="text-sm md:text-base font-semibold text-blue-600 hover:text-blue-800 inline-flex items-center gap-2"
+            >
+              View All
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </Link>
           </div>
-        </section>
-      )}
+          <p className="text-gray-600 mb-6">Explore our creative works and achievements in our full gallery</p>
+          <Link 
+            href="/gallery"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+            </svg>
+            Visit Gallery
+          </Link>
+        </div>
+      </section>
 
       {/* Featured Works Section */}
       <section id="featured-works" className="py-8 md:py-12 bg-white">

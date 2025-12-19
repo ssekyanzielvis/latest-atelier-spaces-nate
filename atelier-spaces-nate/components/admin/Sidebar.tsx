@@ -30,7 +30,7 @@ const navItems = [
   { href: '/admin/categories', label: 'Categories', icon: FiTag },
   { href: '/admin/work-categories', label: 'Work Categories', icon: FiLayers },
   { href: '/admin/about', label: 'About', icon: FiInfo },
-  { href: '/admin/about-media', label: 'About Gallery', icon: FiImage },
+  { href: '/admin/gallery', label: 'Gallery', icon: FiImage },
   { href: '/admin/slogan', label: 'Slogan', icon: FiLayout },
   { href: '/admin/collaborations', label: 'Collaborations', icon: FiMessageSquare },
   { href: '/admin/admins', label: 'Admin Users', icon: FiShield },

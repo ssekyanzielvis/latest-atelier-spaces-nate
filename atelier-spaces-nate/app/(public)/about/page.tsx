@@ -5,7 +5,6 @@ import { Database } from '@/types/database'
 export const revalidate = 0
 
 type AboutSection = Database['public']['Tables']['about_section']['Row']
-type AboutMedia = Database['public']['Tables']['about_media']['Row']
 
 async function getAboutSection(): Promise<AboutSection | null> {
   try {
@@ -26,31 +25,10 @@ async function getAboutSection(): Promise<AboutSection | null> {
   }
 }
 
-async function getAboutMedia(): Promise<AboutMedia[]> {
-  try {
-    const { data, error } = await supabaseAdmin
-      .from('about_media')
-      .select('*')
-      .eq('is_active', true)
-      .order('order_position', { ascending: true })
 
-    if (error) {
-      console.error('Error fetching about media:', error)
-      return []
-    }
-
-    return data || []
-  } catch (err) {
-    console.error('Exception fetching about media:', err)
-    return []
-  }
-}
 
 export default async function AboutPage() {
-  const [aboutSection, aboutMedia] = await Promise.all([
-    getAboutSection(),
-    getAboutMedia(),
-  ])
+  const aboutSection = await getAboutSection()
 
   if (!aboutSection) {
     return (
@@ -153,40 +131,6 @@ export default async function AboutPage() {
             )}
           </div>
 
-          {/* About Media Gallery */}
-          {aboutMedia.length > 0 && (
-            <div className="mt-16">
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-8">Our Gallery</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {aboutMedia.map((media) => (
-                  <div key={media.id} className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-shadow">
-                    <div className="relative h-64">
-                      {media.file_type === 'image' ? (
-                        <ImageWithError
-                          src={media.file_url}
-                          alt={media.title}
-                          fill
-                          unoptimized
-                          className="object-cover"
-                          errorMessage="Failed to load gallery image"
-                        />
-                      ) : (
-                        <video
-                          src={media.file_url}
-                          controls
-                          className="w-full h-full object-cover"
-                        />
-                      )}
-                    </div>
-                    <div className="p-6">
-                      <h3 className="text-xl font-bold text-gray-900 mb-2">{media.title}</h3>
-                      <p className="text-gray-600 text-sm">{media.caption}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
         </div>
       </section>
     </div>
