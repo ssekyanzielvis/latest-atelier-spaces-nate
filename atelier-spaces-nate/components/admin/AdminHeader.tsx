@@ -60,9 +60,13 @@ export default function AdminHeader({ onMenuClick }: AdminHeaderProps) {
           <FiMenu size={24} className="text-gray-700" />
         </button>
         
-        <div className="flex-1 min-w-0">
-          <h1 className="text-base sm:text-lg font-semibold text-gray-900 truncate">Admin Dashboard</h1>
-          <p className="text-xs text-gray-500 mt-0.5 hidden sm:block">Manage your content</p>
+        <div className="flex-1 min-w-0 flex items-center gap-3">
+          <img 
+            src="/images/logo.png" 
+            alt="Atelier Spaces Nate" 
+            className="h-10 w-auto object-contain"
+          />
+          <p className="text-xs text-gray-500 mt-0.5 hidden sm:block">Admin Dashboard</p>
         </div>
 
         {/* Date and Time Display */}
