@@ -10,6 +10,8 @@ const STORAGE_BUCKETS = {
   ABOUT: 'about',
   SLOGAN: 'slogan',
   COLLABORATIONS: 'collaborations',
+  GALLERY: 'gallery',
+  WORK_CATEGORIES: 'work-categories',
 } as const
 
 // Map folder names to bucket names
@@ -22,25 +24,28 @@ const FOLDER_TO_BUCKET: Record<string, string> = {
   'about': STORAGE_BUCKETS.ABOUT,
   'slogan': STORAGE_BUCKETS.SLOGAN,
   'collaborations': STORAGE_BUCKETS.COLLABORATIONS,
+  'gallery': STORAGE_BUCKETS.GALLERY,
+  'work-categories': STORAGE_BUCKETS.WORK_CATEGORIES,
 }
 
-export async function uploadImage(file: File, folder: string = 'general'): Promise<string> {
+export async function uploadMedia(file: File, folder: string = 'general'): Promise<string> {
   const bucketName = FOLDER_TO_BUCKET[folder] || STORAGE_BUCKETS.COLLABORATIONS
   const fileExt = file.name.split('.').pop()
   const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`
 
-  console.log(`Uploading to bucket: ${bucketName}, file: ${fileName}`)
+  console.log(`Uploading to bucket: ${bucketName}, file: ${fileName}, type: ${file.type}`)
 
   const { data, error } = await supabaseAdmin.storage
     .from(bucketName)
     .upload(fileName, file, {
       cacheControl: '3600',
       upsert: false,
+      contentType: file.type,
     })
 
   if (error) {
     console.error(`Upload error to ${bucketName}:`, error)
-    throw new Error(`Failed to upload image: ${error.message}`)
+    throw new Error(`Failed to upload file: ${error.message}`)
   }
 
   console.log(`File uploaded successfully: ${data.path}`)
@@ -79,7 +84,10 @@ export async function deleteImage(url: string, folder: string = 'general'): Prom
   console.log(`File deleted successfully: ${filePath}`)
 }
 
+// Alias for backward compatibility
+export const uploadImage = uploadMedia
+
 export async function uploadMultipleImages(files: File[], folder: string = 'general'): Promise<string[]> {
-  const uploadPromises = files.map(file => uploadImage(file, folder))
+  const uploadPromises = files.map(file => uploadMedia(file, folder))
   return Promise.all(uploadPromises)
 }
