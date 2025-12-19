@@ -254,17 +254,12 @@ export default async function HomePage() {
                         unoptimized
                         className="object-cover group-hover:scale-105 transition-transform duration-300"
                         errorMessage="Failed to load gallery image"
-                        onError={() => console.error('❌ Failed to load gallery image:', media.file_url, 'for:', media.title)}
                       />
                     ) : (
                       <video
                         src={media.file_url}
                         controls
                         className="w-full h-full object-cover"
-                        onError={(e) => {
-                          console.error('❌ Failed to load gallery video:', media.file_url, 'for:', media.title)
-                          console.error('Video error:', e)
-                        }}
                       />
                     )}
                   </div>
