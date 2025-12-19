@@ -174,26 +174,15 @@ export default async function HomePage() {
       {aboutSection && (
         <section id="about" className="py-12 md:py-16 bg-white">
           <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8">
-            <div className="max-w-4xl mx-auto">
-              <div className="text-center mb-8">
-                <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">About Us</h2>
-                <div className="w-20 h-1 bg-black mx-auto"></div>
+            <div className="max-w-6xl mx-auto">
+              <div className="text-center mb-12">
+                <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">About Us</h2>
+                <div className="w-24 h-1 bg-black mx-auto"></div>
               </div>
-              <div className="prose prose-lg max-w-none">
-                <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">
+              <div className="prose prose-2xl max-w-none">
+                <p className="text-2xl md:text-3xl text-gray-700 leading-relaxed whitespace-pre-wrap text-center">
                   {(aboutSection as any).about || aboutSection.content}
                 </p>
-              </div>
-              <div className="mt-8 text-center">
-                <Link
-                  href="/about"
-                  className="inline-flex items-center gap-2 px-6 py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors font-medium"
-                >
-                  Learn More About Us
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                </Link>
               </div>
             </div>
           </div>
