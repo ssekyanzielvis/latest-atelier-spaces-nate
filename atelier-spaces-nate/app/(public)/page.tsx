@@ -358,16 +358,15 @@ export default async function HomePage() {
       {sloganSection && (
         <section 
           id="slogan" 
-          className="py-24 md:py-32 bg-gradient-to-br from-gray-900 via-gray-800 to-black relative overflow-hidden"
+          className="py-24 md:py-32 bg-white"
         >
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(255,255,255,0.05),transparent)]"></div>
-          <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8 relative z-10">
+          <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8">
             <div className="max-w-5xl mx-auto text-center">
-              <p className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6">
+              <p className="text-4xl md:text-5xl lg:text-6xl font-bold text-black leading-tight mb-6">
                 {(sloganSection as any).slogan || sloganSection.main_slogan}
               </p>
               {(sloganSection as any).founder_name && (
-                <p className="text-xl md:text-2xl text-white/80 font-light italic">
+                <p className="text-xl md:text-2xl text-gray-800 font-light italic">
                   — {(sloganSection as any).founder_name}
                 </p>
               )}
