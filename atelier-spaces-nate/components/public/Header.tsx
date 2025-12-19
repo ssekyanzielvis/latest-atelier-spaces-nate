@@ -1,11 +1,25 @@
 'use client'
 
 import Link from 'next/link'
-import { useState } from 'react'
-import { FiMenu, FiX } from 'react-icons/fi'
+import { useState, useEffect } from 'react'
+import { FiMenu, FiX, FiClock, FiCalendar } from 'react-icons/fi'
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [currentDateTime, setCurrentDateTime] = useState({ date: '', time: '' })
+
+  useEffect(() => {
+    const updateDateTime = () => {
+      const now = new Date()
+      setCurrentDateTime({
+        date: now.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' }),
+        time: now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
+      })
+    }
+    updateDateTime()
+    const interval = setInterval(updateDateTime, 1000)
+    return () => clearInterval(interval)
+  }, [])
 
   const navLinks = [
     { href: '/', label: 'Home' },
@@ -24,6 +38,18 @@ export default function Header() {
           <Link href="/" className="flex items-center hover:opacity-90 transition-opacity">
             <span className="text-2xl font-bold text-gray-900 tracking-tight">ATELIER</span>
           </Link>
+
+          {/* Date and Time Display - Hidden on Mobile */}
+          <div className="hidden lg:flex items-center gap-4 text-sm text-gray-700">
+            <div className="flex items-center gap-1.5">
+              <FiCalendar className="text-gray-500" size={16} />
+              <span className="font-medium">{currentDateTime.date}</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <FiClock className="text-gray-500" size={16} />
+              <span className="font-mono">{currentDateTime.time}</span>
+            </div>
+          </div>
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">

@@ -170,108 +170,101 @@ export default async function HomePage() {
       {/* Dynamic Images Section (Hero Slides) */}
       <HeroSection slides={heroSlides} />
 
-      {/* About Us Section - First Section */}
-      {aboutSection && (
-        <section id="about" className="py-12 md:py-20 bg-gradient-to-b from-white to-gray-50">
+      {/* About Us Section - Visual Card with Overlay */}
+      {aboutSection && aboutSection.image && (
+        <section id="about" className="py-8 md:py-12">
           <div className="w-full px-4">
-            {/* Card Container - Full Width */}
-            <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
-              {/* Single Column Layout: Image first, then content below */}
-              <div className="flex flex-col">
-                {/* Image Section - Full Width at Top */}
-                {aboutSection.image && (
-                  <div className="relative w-full h-64 md:h-80 lg:h-96">
-                    <ImageWithError
-                      src={aboutSection.image}
-                      alt="About Atelier Spaces Nate"
-                      fill
-                      className="object-cover"
-                      errorMessage="Failed to load about image"
-                    />
-                  </div>
-                )}
-                
-                {/* Content Section */}
-                <div className="p-6 md:p-10 lg:p-12">
-                  {/* Title */}
-                  <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
-                    {aboutSection.title}
-                  </h2>
-                  
-                  {/* Main Content */}
-                  <div className="space-y-6">
-                    <p className="text-base md:text-lg text-gray-700 leading-relaxed whitespace-pre-wrap">
-                      {aboutSection.content}
-                    </p>
-                    
-                    {/* Mission Statement */}
-                    {aboutSection.mission && (
-                      <div className="bg-gray-50 rounded-lg p-4 md:p-6 border-l-4 border-black">
-                        <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-2">Our Mission</h3>
-                        <p className="text-sm md:text-base text-gray-700 leading-relaxed whitespace-pre-wrap">{aboutSection.mission}</p>
-                      </div>
-                    )}
-                    
-                    {/* Vision Statement */}
-                    {aboutSection.vision && (
-                      <div className="bg-gray-50 rounded-lg p-4 md:p-6 border-l-4 border-black">
-                        <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-2">Our Vision</h3>
-                        <p className="text-sm md:text-base text-gray-700 leading-relaxed whitespace-pre-wrap">{aboutSection.vision}</p>
-                      </div>
-                    )}
-                    
-                    {/* Core Values */}
-                    {aboutSection.values && (
-                      <div className="bg-gray-50 rounded-lg p-4 md:p-6 border-l-4 border-black">
-                        <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-2">Core Values</h3>
-                        <p className="text-sm md:text-base text-gray-700 leading-relaxed whitespace-pre-wrap">{aboutSection.values}</p>
-                      </div>
-                    )}
-                  </div>
+            <Link 
+              href="/team"
+              className="group relative block overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 h-[350px] md:h-[400px]"
+            >
+              {/* Full Background Image */}
+              <div className="absolute inset-0 w-full h-full">
+                <ImageWithError
+                  src={aboutSection.image}
+                  alt="About Atelier Spaces Nate"
+                  fill
+                  className="object-cover group-hover:scale-110 transition-transform duration-500"
+                  errorMessage="Failed to load about image"
+                />
+                {/* Gradient Overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/60 to-transparent"></div>
+              </div>
+
+              {/* Content Overlay */}
+              <div className="absolute inset-0 flex flex-col justify-end p-6 md:p-8 text-white z-10">
+                <h2 className="text-2xl md:text-3xl font-bold mb-3">
+                  {aboutSection.title}
+                </h2>
+                <p className="text-sm md:text-base text-gray-200 line-clamp-3 mb-4">
+                  {aboutSection.content}
+                </p>
+                <div className="flex items-center justify-end pt-3 border-t border-white/20">
+                  <span className="text-white font-semibold group-hover:translate-x-1 transition-transform inline-flex items-center gap-2 text-sm">
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                    Learn More
+                  </span>
                 </div>
               </div>
-            </div>
+            </Link>
           </div>
         </section>
       )}
 
-      {/* About Media Gallery Section */}
+      {/* About Media Gallery Section - Visual Cards */}
       {aboutMedia.length > 0 && (
-        <section id="about-gallery" className="py-12 md:py-20 bg-white">
+        <section id="about-gallery" className="py-8 md:py-12 bg-gray-50">
           <div className="w-full px-4">
-            <div className="mb-10">
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">Gallery</h2>
-              <p className="text-gray-600 text-base md:text-lg">Explore our creative work and achievements</p>
+            <div className="mb-8">
+              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">Gallery</h2>
             </div>
 
-            {/* Gallery Grid - 2 Columns */}
+            {/* Gallery Grid - 2 Columns with Overlay Design */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {aboutMedia.map((media) => (
-                <div key={media.id} className="group">
-                  {/* Media Container */}
-                  <div className="relative w-full h-64 bg-gray-100 rounded-lg overflow-hidden mb-4 shadow-md hover:shadow-xl transition-shadow">
+              {aboutMedia.slice(0, 6).map((media) => (
+                <div 
+                  key={media.id} 
+                  className="group relative overflow-hidden rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300 h-[350px] cursor-pointer"
+                >
+                  {/* Full Background Media */}
+                  <div className="absolute inset-0 w-full h-full">
                     {media.file_type === 'image' ? (
                       <ImageWithError
                         src={media.file_url}
                         alt={media.title}
                         fill
                         unoptimized
-                        className="object-cover group-hover:scale-105 transition-transform duration-300"
+                        className="object-cover group-hover:scale-110 transition-transform duration-500"
                         errorMessage="Failed to load gallery image"
                       />
                     ) : (
                       <video
                         src={media.file_url}
-                        controls
                         className="w-full h-full object-cover"
+                        muted
+                        loop
                       />
                     )}
+                    {/* Gradient Overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent"></div>
                   </div>
 
-                  {/* Caption Section */}
-                  <div>
-                    <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-2">{media.title}</h3>
-                    <p className="text-gray-600 text-sm md:text-base leading-relaxed">{media.caption}</p>
+                  {/* Content Overlay */}
+                  <div className="absolute inset-0 flex flex-col justify-end p-6 text-white z-10">
+                    <h3 className="text-xl md:text-2xl font-bold mb-2">{media.title}</h3>
+                    <p className="text-sm text-gray-200 line-clamp-2 mb-3">{media.caption}</p>
+                    <div className="flex items-center justify-end pt-3 border-t border-white/20">
+                      <span className="text-white font-semibold group-hover:translate-x-1 transition-transform inline-flex items-center gap-2 text-sm">
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                        </svg>
+                        View
+                      </span>
+                    </div>
                   </div>
                 </div>
               ))}
@@ -281,12 +274,11 @@ export default async function HomePage() {
       )}
 
       {/* Featured Works Section */}
-      <section id="featured-works" className="py-16 md:py-24 bg-white">
+      <section id="featured-works" className="py-8 md:py-12 bg-white">
         <div className="w-full px-4">
-          <div className="flex items-center justify-between mb-12">
+          <div className="flex items-center justify-between mb-8">
             <div>
               <h2 className="text-3xl md:text-4xl font-bold text-gray-900">Featured Works</h2>
-              <p className="text-gray-600 mt-2">Explore our outstanding creative projects</p>
             </div>
           </div>
 
@@ -298,29 +290,34 @@ export default async function HomePage() {
                   <Link 
                     key={work.id} 
                     href={`/works/${work.slug}`}
-                    className="group block bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-all duration-300"
+                    className="group relative block overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-all duration-300 h-[400px] sm:h-[450px] md:h-[500px]"
                   >
-                    <div className="relative h-80 md:h-96 overflow-hidden">
+                    {/* Full Background Image */}
+                    <div className="absolute inset-0 w-full h-full">
                       <ImageWithError
                         src={work.image}
                         alt={work.title}
                         fill
-                        className="object-contain group-hover:scale-105 transition-transform duration-300"
+                        className="object-cover w-full h-full group-hover:scale-110 transition-transform duration-500"
                         errorMessage="Failed to load work image"
                       />
+                      {/* Gradient Overlay */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent"></div>
                     </div>
-                    <div className="p-6">
-                      <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-gray-700 transition-colors">
+
+                    {/* Content Overlay - Max 3 Lines */}
+                    <div className="absolute inset-0 flex flex-col justify-end p-6 text-white z-10">
+                      <h3 className="text-xl md:text-2xl font-bold mb-2 line-clamp-1 group-hover:text-gray-200 transition-colors">
                         {work.title}
                       </h3>
-                      <p className="text-gray-600 line-clamp-2 mb-4">{work.description}</p>
-                      <div className="flex items-center justify-end pt-3 border-t border-gray-200">
-                        <span className="text-black font-semibold group-hover:translate-x-1 transition-transform inline-flex items-center gap-2 text-sm">
+                      <p className="text-sm text-gray-300 line-clamp-2 mb-4">{work.description}</p>
+                      <div className="flex items-center justify-end pt-3 border-t border-white/20">
+                        <span className="text-white font-semibold group-hover:translate-x-1 transition-transform inline-flex items-center gap-2 text-sm">
                           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                           </svg>
-                          View Full Details
+                          View Details
                         </span>
                       </div>
                     </div>
@@ -378,11 +375,10 @@ export default async function HomePage() {
       )}
 
       {/* Other Works Section (Categories) */}
-      <section id="work-categories" className="py-16 md:py-24 bg-gray-50">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Other Works</h2>
-            <p className="text-gray-600 text-lg">Explore our diverse portfolio across different categories</p>
+      <section id="work-categories" className="py-8 md:py-12 bg-gray-50">
+        <div className="w-full px-4">
+          <div className="mb-8">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900">Other Works</h2>
           </div>
 
           {workCategories.length > 0 ? (
@@ -403,21 +399,24 @@ export default async function HomePage() {
                     />
                   )}
                   <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/40 to-black/80"></div>
-                  <div className="absolute inset-0 flex flex-col justify-end p-8">
-                    <div className="flex items-center justify-between mb-3">
-                      <h3 className="text-3xl font-bold text-white group-hover:scale-105 transition-transform">
-                        {category.name}
-                      </h3>
-                      <svg className="w-8 h-8 text-white group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                      </svg>
-                    </div>
+                  <div className="absolute inset-0 flex flex-col justify-end p-6 md:p-8">
+                    <h3 className="text-2xl md:text-3xl font-bold text-white mb-2 line-clamp-1 group-hover:scale-105 transition-transform">
+                      {category.name}
+                    </h3>
                     {category.description && (
-                      <p className="text-white/90 text-base line-clamp-3">
+                      <p className="text-white/90 text-sm md:text-base line-clamp-2 mb-3">
                         {category.description}
                       </p>
                     )}
+                    <div className="flex items-center justify-end pt-3 border-t border-white/20">
+                      <span className="text-white font-semibold group-hover:translate-x-1 transition-transform inline-flex items-center gap-2 text-sm">
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                        </svg>
+                        Explore
+                      </span>
+                    </div>
                   </div>
                 </Link>
               ))}
@@ -431,41 +430,52 @@ export default async function HomePage() {
       </section>
 
       {/* Our Team Section */}
-      <section id="team" className="py-16 md:py-24 bg-gray-50">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Our Team</h2>
-            <p className="text-gray-600 text-lg">Meet the creative minds behind our success</p>
+      <section id="team" className="py-8 md:py-12 bg-white">
+        <div className="w-full px-4">
+          <div className="mb-8">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900">Our Team</h2>
           </div>
 
           {teamMembers.length > 0 ? (
             <>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
                 {teamMembers.map((member: TeamMember) => (
-                  <div key={member.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow">
-                    <div className="relative h-64">
+                  <Link
+                    key={member.id}
+                    href="/team"
+                    className="group relative overflow-hidden rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300 h-[350px]"
+                  >
+                    {/* Full Background Image */}
+                    <div className="absolute inset-0 w-full h-full">
                       <ImageWithError
                         src={member.image}
                         alt={member.name}
                         fill
-                        className="object-cover"
+                        className="object-cover group-hover:scale-110 transition-transform duration-500"
                         errorMessage="Failed to load team member image"
                       />
+                      {/* Gradient Overlay */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/60 to-transparent"></div>
                     </div>
-                    <div className="p-6">
-                      <h3 className="text-xl font-bold text-gray-900 mb-1">{member.name}</h3>
-                      <p className="text-gray-600 font-medium mb-2">{member.position}</p>
+
+                    {/* Content Overlay - Max 3 Lines */}
+                    <div className="absolute inset-0 flex flex-col justify-end p-6 text-white z-10">
+                      <h3 className="text-xl font-bold mb-1 line-clamp-1">{member.name}</h3>
+                      <p className="text-sm text-gray-300 mb-2 line-clamp-1">{member.position}</p>
                       {member.bio && (
-                        <p className="text-gray-600 text-sm line-clamp-3 mb-3">{member.bio}</p>
+                        <p className="text-sm text-gray-200 line-clamp-1 mb-3">{member.bio}</p>
                       )}
-                      <div className="flex items-center justify-center pt-3 border-t border-gray-200 mt-3">
-                        <svg className="w-5 h-5 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                        </svg>
+                      <div className="flex items-center justify-end pt-3 border-t border-white/20">
+                        <span className="text-white font-semibold group-hover:translate-x-1 transition-transform inline-flex items-center gap-2 text-sm">
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                          </svg>
+                          View Profile
+                        </span>
                       </div>
                     </div>
-                  </div>
+                  </Link>
                 ))}
               </div>
               
@@ -487,16 +497,20 @@ export default async function HomePage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 md:py-24 bg-black text-white">
-        <div className="container mx-auto px-4 text-center">
+      <section className="py-12 md:py-16 bg-black text-white">
+        <div className="w-full px-4 text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">Ready to Start Your Project?</h2>
-          <p className="text-xl text-white/80 mb-8 max-w-2xl mx-auto">
+          <p className="text-lg text-white/80 mb-6 line-clamp-2">
             Let's collaborate to bring your creative vision to life
           </p>
           <Link 
             href="/collaborate"
-            className="inline-block px-8 py-3 bg-white text-black rounded-lg hover:bg-gray-100 transition-colors font-semibold"
+            className="inline-flex items-center gap-2 px-8 py-3 bg-white text-black rounded-lg hover:bg-gray-100 transition-colors font-semibold"
           >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+            </svg>
             Get In Touch
           </Link>
         </div>

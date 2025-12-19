@@ -1,6 +1,6 @@
 import { supabaseAdmin } from '@/lib/supabase/server'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { FiFolder, FiFileText, FiImage, FiUsers, FiMessageSquare, FiLayers, FiTag, FiInfo, FiSliders, FiLayout } from 'react-icons/fi'
+import { FiFolder, FiFileText, FiImage, FiUsers, FiMessageSquare, FiLayers, FiTag, FiInfo, FiSliders, FiLayout, FiTrendingUp, FiEye } from 'react-icons/fi'
 import Link from 'next/link'
 
 // Force dynamic rendering
@@ -49,8 +49,45 @@ async function getStats() {
   }
 }
 
+async function getAnalytics() {
+  try {
+    // Get total visits
+    const { count: totalVisits } = await supabaseAdmin
+      .from('site_analytics')
+      .select('*', { count: 'exact', head: true })
+
+    // Get today's visits
+    const today = new Date().toISOString().split('T')[0]
+    const { count: todayVisits } = await supabaseAdmin
+      .from('site_analytics')
+      .select('*', { count: 'exact', head: true })
+      .gte('created_at', `${today}T00:00:00`)
+
+    // Get unique visitors today
+    const { data: todayData } = await supabaseAdmin
+      .from('site_analytics')
+      .select('visitor_ip')
+      .gte('created_at', `${today}T00:00:00`)
+
+    const uniqueVisitorsToday = new Set(todayData?.map(d => d.visitor_ip)).size
+
+    return {
+      totalVisits: totalVisits || 0,
+      todayVisits: todayVisits || 0,
+      uniqueVisitorsToday: uniqueVisitorsToday || 0,
+    }
+  } catch (error) {
+    console.error('Error fetching analytics:', error)
+    return {
+      totalVisits: 0,
+      todayVisits: 0,
+      uniqueVisitorsToday: 0,
+    }
+  }
+}
+
 export default async function AdminDashboard() {
-  const stats = await getStats()
+  const [stats, analytics] = await Promise.all([getStats(), getAnalytics()])
 
   const statsCards = [
     { title: 'Projects', value: stats.projects, icon: FiFolder, href: '/admin/projects' },
@@ -68,6 +105,54 @@ export default async function AdminDashboard() {
       <div className="border-b border-gray-200 pb-6">
         <h1 className="text-3xl font-bold text-gray-900">Dashboard Overview</h1>
         <p className="text-gray-600 mt-2">Monitor and manage your website content</p>
+      </div>
+
+      {/* Website Analytics */}
+      <div>
+        <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+          <FiTrendingUp className="w-5 h-5" />
+          Website Analytics
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <Card className="border-blue-200 bg-blue-50">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-blue-900">
+                Total Visits
+              </CardTitle>
+              <FiEye className="h-5 w-5 text-blue-600" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-3xl font-bold text-blue-900">{analytics.totalVisits.toLocaleString()}</div>
+              <p className="text-xs text-blue-700 mt-1">All time visits</p>
+            </CardContent>
+          </Card>
+          
+          <Card className="border-green-200 bg-green-50">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-green-900">
+                Today's Visits
+              </CardTitle>
+              <FiTrendingUp className="h-5 w-5 text-green-600" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-3xl font-bold text-green-900">{analytics.todayVisits.toLocaleString()}</div>
+              <p className="text-xs text-green-700 mt-1">Visits today</p>
+            </CardContent>
+          </Card>
+          
+          <Card className="border-purple-200 bg-purple-50">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-purple-900">
+                Unique Visitors
+              </CardTitle>
+              <FiUsers className="h-5 w-5 text-purple-600" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-3xl font-bold text-purple-900">{analytics.uniqueVisitorsToday.toLocaleString()}</div>
+              <p className="text-xs text-purple-700 mt-1">Unique visitors today</p>
+            </CardContent>
+          </Card>
+        </div>
       </div>
 
       {/* Stats Grid */}
