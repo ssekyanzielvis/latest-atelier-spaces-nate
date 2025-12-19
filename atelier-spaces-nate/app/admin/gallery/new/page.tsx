@@ -42,6 +42,8 @@ export default function NewGalleryItemPage() {
     setIsSubmitting(true)
 
     try {
+      console.log('📤 Submitting gallery item...')
+      
       const response = await fetch('/api/gallery', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -51,15 +53,27 @@ export default function NewGalleryItemPage() {
       const result = await response.json()
 
       if (!response.ok) {
-        throw new Error(result.error || 'Failed to create gallery item')
+        console.error('❌ API error:', result)
+        
+        // Handle different error types
+        if (result.details && Array.isArray(result.details)) {
+          // Validation errors
+          throw new Error(`Validation failed: ${result.details.join(', ')}`)
+        } else if (result.details) {
+          // Database or other detailed errors
+          throw new Error(`${result.error}: ${result.details}`)
+        } else {
+          throw new Error(result.error || 'Failed to create gallery item')
+        }
       }
 
-      console.log('✅ Gallery item created successfully')
+      console.log('✅ Gallery item created successfully:', result.id)
+      alert('Gallery item created successfully! ✨')
       router.push('/admin/gallery')
       router.refresh()
     } catch (err: any) {
       console.error('❌ Error creating gallery item:', err)
-      setError(err.message || 'Failed to create gallery item')
+      setError(err.message || 'An unexpected error occurred. Please try again.')
       setIsSubmitting(false)
     }
   }
