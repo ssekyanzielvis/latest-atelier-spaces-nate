@@ -15,17 +15,21 @@ type SloganSection = Database['public']['Tables']['slogan_section']['Row']
 type AboutMedia = Database['public']['Tables']['about_media']['Row']
 
 async function getHeroSlides(): Promise<HeroSlide[]> {
+  console.log('🔄 Fetching hero slides...')
+  
   const { data, error } = await supabaseAdmin
     .from('hero_slides')
     .select('*')
-    .eq('is_active', true)
+    // Removed .eq('is_active', true) to show all slides
     .order('order_position', { ascending: true })
 
   if (error) {
-    console.error('Error fetching hero slides:', error)
+    console.error('❌ Error fetching hero slides:', error)
     return []
   }
 
+  console.log(`✅ Fetched ${data?.length || 0} hero slides`)
+  
   return data || []
 }
 
