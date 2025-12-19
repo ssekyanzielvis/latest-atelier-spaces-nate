@@ -21,14 +21,19 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'No file provided' }, { status: 400 })
     }
     
-    // Validate file type
-    if (!file.type.startsWith('image/')) {
-      return NextResponse.json({ error: 'File must be an image' }, { status: 400 })
+    // Validate file type (images and videos)
+    const isImage = file.type.startsWith('image/')
+    const isVideo = file.type.startsWith('video/')
+    
+    if (!isImage && !isVideo) {
+      return NextResponse.json({ error: 'File must be an image or video' }, { status: 400 })
     }
     
-    // Validate file size (5MB max)
-    if (file.size > 5 * 1024 * 1024) {
-      return NextResponse.json({ error: 'File too large (max 5MB)' }, { status: 400 })
+    // Validate file size (50MB max for videos, 5MB max for images)
+    const maxSize = isVideo ? 50 * 1024 * 1024 : 5 * 1024 * 1024
+    if (file.size > maxSize) {
+      const maxSizeLabel = isVideo ? '50MB' : '5MB'
+      return NextResponse.json({ error: `File too large (max ${maxSizeLabel})` }, { status: 400 })
     }
     
     const url = await uploadImage(file, folder)

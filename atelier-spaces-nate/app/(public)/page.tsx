@@ -17,7 +17,9 @@ type GalleryItem = {
   id: string
   title: string
   description: string | null
-  image_url: string
+  image_url?: string
+  media_url?: string
+  media_type?: 'image' | 'video'
   category: string | null
   order_position: number
   is_active: boolean
@@ -230,22 +232,42 @@ export default async function HomePage() {
 
           {galleryItems.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {galleryItems.map((item) => (
+              {galleryItems.map((item) => {
+                const mediaUrl = item.media_url || item.image_url || ''
+                return (
                 <div
                   key={item.id}
                   className="group relative overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 h-[300px]"
                 >
-                  {/* Gallery Image */}
+                  {/* Gallery Media */}
                   <div className="absolute inset-0 w-full h-full">
-                    <ImageWithError
-                      src={item.image_url}
-                      alt={item.title}
-                      fill
-                      className="object-cover group-hover:scale-110 transition-transform duration-500"
-                      errorMessage="Failed to load gallery image"
-                    />
-                    {/* Gradient Overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
+                    {item.media_type === 'video' ? (
+                      <>
+                        <video
+                          src={mediaUrl}
+                          className="w-full h-full object-cover"
+                          preload="metadata"
+                          muted
+                          playsInline
+                        >
+                          Your browser does not support the video tag.
+                        </video>
+                        {/* Gradient Overlay */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
+                      </>
+                    ) : (
+                      <>
+                        <ImageWithError
+                          src={mediaUrl}
+                          alt={item.title}
+                          fill
+                          className="object-cover group-hover:scale-110 transition-transform duration-500"
+                          errorMessage="Failed to load gallery image"
+                        />
+                        {/* Gradient Overlay */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
+                      </>
+                    )}
                   </div>
 
                   {/* Content Overlay */}
@@ -265,7 +287,7 @@ export default async function HomePage() {
                     )}
                   </div>
                 </div>
-              ))}
+              )})}
             </div>
           ) : (
             <div className="text-center py-12">

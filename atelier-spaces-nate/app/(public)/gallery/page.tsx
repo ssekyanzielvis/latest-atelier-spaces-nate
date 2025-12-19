@@ -87,13 +87,24 @@ export default async function GalleryPage() {
                           className="group bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300"
                         >
                           <div className="relative h-64 bg-gray-100 overflow-hidden">
-                            <Image
-                              src={item.image_url}
-                              alt={item.title}
-                              fill
-                              className="object-cover group-hover:scale-110 transition-transform duration-500"
-                              unoptimized
-                            />
+                            {item.media_type === 'video' ? (
+                              <video
+                                src={item.media_url || item.image_url}
+                                controls
+                                className="w-full h-full object-cover"
+                                preload="metadata"
+                              >
+                                Your browser does not support the video tag.
+                              </video>
+                            ) : (
+                              <Image
+                                src={item.media_url || item.image_url}
+                                alt={item.title}
+                                fill
+                                className="object-cover group-hover:scale-110 transition-transform duration-500"
+                                unoptimized
+                              />
+                            )}
                           </div>
                           <div className="p-6">
                             <h3 className="text-xl font-bold text-gray-900 mb-2">
@@ -127,13 +138,24 @@ export default async function GalleryPage() {
                         className="group bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300"
                       >
                         <div className="relative h-64 bg-gray-100 overflow-hidden">
-                          <Image
-                            src={item.image_url}
-                            alt={item.title}
-                            fill
-                            className="object-cover group-hover:scale-110 transition-transform duration-500"
-                            unoptimized
-                          />
+                          {item.media_type === 'video' ? (
+                            <video
+                              src={item.media_url || item.image_url}
+                              controls
+                              className="w-full h-full object-cover"
+                              preload="metadata"
+                            >
+                              Your browser does not support the video tag.
+                            </video>
+                          ) : (
+                            <Image
+                              src={item.media_url || item.image_url}
+                              alt={item.title}
+                              fill
+                              className="object-cover group-hover:scale-110 transition-transform duration-500"
+                              unoptimized
+                            />
+                          )}
                         </div>
                         <div className="p-6">
                           <h3 className="text-xl font-bold text-gray-900 mb-2">

@@ -54,7 +54,11 @@ export async function POST(request: Request) {
       )
     }
 
-    const { title, description, image_url, category, order_position, is_active } = body
+    const { title, description, media_url, image_url, media_type, category, order_position, is_active } = body
+
+    // Support both old (image_url) and new (media_url) field names for backward compatibility
+    const finalMediaUrl = media_url || image_url
+    const finalMediaType = media_type || 'image'
 
     // Comprehensive validation
     const errors: string[] = []
@@ -64,8 +68,11 @@ export async function POST(request: Request) {
     if (title && title.length > 255) {
       errors.push('Title must be 255 characters or less')
     }
-    if (!image_url || image_url.trim().length === 0) {
-      errors.push('Image URL is required')
+    if (!finalMediaUrl || finalMediaUrl.trim().length === 0) {
+      errors.push('Media URL is required')
+    }
+    if (media_type && !['image', 'video'].includes(media_type)) {
+      errors.push('Media type must be either "image" or "video"')
     }
     if (order_position !== undefined && (isNaN(order_position) || order_position < 0)) {
       errors.push('Order position must be a non-negative number')
@@ -86,7 +93,8 @@ export async function POST(request: Request) {
       .insert({
         title: title.trim(),
         description: description?.trim() || null,
-        image_url: image_url.trim(),
+        media_url: finalMediaUrl.trim(),
+        media_type: finalMediaType,
         category: category?.trim() || null,
         order_position: order_position || 0,
         is_active: is_active !== undefined ? is_active : true,
@@ -135,7 +143,11 @@ export async function PUT(request: Request) {
       )
     }
 
-    const { id, title, description, image_url, category, order_position, is_active } = body
+    const { id, title, description, media_url, image_url, media_type, category, order_position, is_active } = body
+
+    // Support both old (image_url) and new (media_url) field names for backward compatibility
+    const finalMediaUrl = media_url || image_url
+    const finalMediaType = media_type || 'image'
 
     if (!id) {
       return NextResponse.json(
@@ -151,7 +163,8 @@ export async function PUT(request: Request) {
       .update({
         title,
         description,
-        image_url,
+        media_url: finalMediaUrl,
+        media_type: finalMediaType,
         category,
         order_position,
         is_active,

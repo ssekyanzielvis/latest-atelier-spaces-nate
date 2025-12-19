@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { FiUpload, FiCheck, FiX } from 'react-icons/fi'
-import ImageUpload from '@/components/admin/ImageUpload'
+import MediaUpload from '@/components/admin/MediaUpload'
 import { showToast } from '@/components/ToastNotifications'
 
 export default function NewGalleryItemPage() {
@@ -13,15 +13,16 @@ export default function NewGalleryItemPage() {
   const [formData, setFormData] = useState({
     title: '',
     description: '',
-    image_url: '',
+    media_url: '',
+    media_type: 'image' as 'image' | 'video',
     category: '',
     order_position: 0,
     is_active: true,
   })
 
-  const handleImageUpload = (url: string) => {
-    console.log('🖼️ Image uploaded:', url)
-    setFormData(prev => ({ ...prev, image_url: url }))
+  const handleMediaUpload = (url: string, type: 'image' | 'video') => {
+    console.log('🎬 Media uploaded:', url, type)
+    setFormData(prev => ({ ...prev, media_url: url, media_type: type }))
     setError('')
   }
 
@@ -35,8 +36,8 @@ export default function NewGalleryItemPage() {
       return
     }
 
-    if (!formData.image_url) {
-      setError('Please upload an image')
+    if (!formData.media_url) {
+      setError('Please upload an image or video')
       return
     }
 
@@ -85,7 +86,7 @@ export default function NewGalleryItemPage() {
     <div className="max-w-3xl">
       <div className="mb-6">
         <h1 className="text-3xl font-bold text-gray-900">Add Gallery Item</h1>
-        <p className="text-gray-600 mt-1">Upload a new image to your gallery</p>
+        <p className="text-gray-600 mt-1">Upload a new image or video to your gallery</p>
       </div>
 
       {error && (
@@ -96,20 +97,22 @@ export default function NewGalleryItemPage() {
       )}
 
       <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 space-y-6">
-        {/* Image Upload */}
+        {/* Media Upload */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Image <span className="text-red-500">*</span>
+            Image or Video <span className="text-red-500">*</span>
           </label>
-          <ImageUpload
-            value={formData.image_url}
-            onChange={handleImageUpload}
+          <MediaUpload
+            value={formData.media_url}
+            mediaType={formData.media_type}
+            onChange={handleMediaUpload}
             folder="gallery"
+            acceptVideo={true}
           />
-          {formData.image_url && (
+          {formData.media_url && (
             <div className="mt-2 flex items-center gap-2 text-sm text-green-600">
               <FiCheck size={16} />
-              <span>Image uploaded successfully</span>
+              <span>{formData.media_type === 'video' ? 'Video' : 'Image'} uploaded successfully</span>
             </div>
           )}
         </div>
