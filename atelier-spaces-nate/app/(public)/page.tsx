@@ -383,24 +383,17 @@ export default async function HomePage() {
       {sloganSection && (
         <section 
           id="slogan" 
-          className="py-24 md:py-32 relative overflow-hidden"
-          style={{
-            backgroundImage: sloganSection.background_image 
-              ? `url(${sloganSection.background_image})` 
-              : 'linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-          }}
+          className="py-24 md:py-32 bg-gradient-to-br from-gray-900 via-gray-800 to-black relative overflow-hidden"
         >
-          <div className="absolute inset-0 bg-black/60"></div>
-          <div className="container mx-auto px-4 relative z-10">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(255,255,255,0.05),transparent)]"></div>
+          <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8 relative z-10">
             <div className="max-w-5xl mx-auto text-center">
               <p className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6">
-                {sloganSection.main_slogan}
+                {(sloganSection as any).slogan || sloganSection.main_slogan}
               </p>
-              {sloganSection.sub_slogan && (
-                <p className="text-xl md:text-2xl text-white/90 font-light">
-                  {sloganSection.sub_slogan}
+              {(sloganSection as any).founder_name && (
+                <p className="text-xl md:text-2xl text-white/80 font-light italic">
+                  — {(sloganSection as any).founder_name}
                 </p>
               )}
             </div>

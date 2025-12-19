@@ -78,25 +78,18 @@ export default function ViewSloganPage() {
       </div>
 
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-        {/* Background Image */}
-        {slogan.background_image && (
-          <div className="w-full h-96 overflow-hidden">
-            <img src={slogan.background_image} alt="Slogan background" className="w-full h-full object-cover" />
-          </div>
-        )}
-
         <div className="p-8 space-y-8">
-          {/* Main Slogan */}
+          {/* Slogan */}
           <div>
-            <h3 className="text-sm font-semibold text-gray-500 uppercase mb-3">Main Slogan</h3>
-            <p className="text-4xl font-bold text-gray-900">{slogan.main_slogan}</p>
+            <h3 className="text-sm font-semibold text-gray-500 uppercase mb-3">Slogan</h3>
+            <p className="text-4xl font-bold text-gray-900">{(slogan as any).slogan || slogan.main_slogan}</p>
           </div>
 
-          {/* Sub Slogan */}
-          {slogan.sub_slogan && (
+          {/* Founder Name */}
+          {(slogan as any).founder_name && (
             <div>
-              <h3 className="text-sm font-semibold text-gray-500 uppercase mb-3">Sub Slogan</h3>
-              <p className="text-xl text-gray-700">{slogan.sub_slogan}</p>
+              <h3 className="text-sm font-semibold text-gray-500 uppercase mb-3">Founder Name</h3>
+              <p className="text-xl text-gray-700">{(slogan as any).founder_name}</p>
             </div>
           )}
 

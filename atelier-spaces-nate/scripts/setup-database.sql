@@ -165,9 +165,8 @@ CREATE TABLE IF NOT EXISTS about_section (
 -- 10. Slogan Section Table (Singleton)
 CREATE TABLE IF NOT EXISTS slogan_section (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  main_slogan VARCHAR(200) NOT NULL,
-  sub_slogan TEXT,
-  background_image TEXT,
+  slogan TEXT NOT NULL,
+  founder_name VARCHAR(255),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 

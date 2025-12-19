@@ -5,12 +5,10 @@ import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import ImageUpload from '@/components/admin/ImageUpload'
 
 const sloganSchema = z.object({
-  main_slogan: z.string().min(1, 'Main slogan is required'),
-  sub_slogan: z.string().optional(),
-  background_image: z.string().optional(),
+  slogan: z.string().min(1, 'Slogan is required'),
+  founder_name: z.string().min(1, 'Founder name is required'),
 })
 
 type SloganFormData = z.infer<typeof sloganSchema>
@@ -19,7 +17,6 @@ export default function NewSloganPage() {
   const router = useRouter()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [imageUrl, setImageUrl] = useState('')
 
   const {
     register,
@@ -34,17 +31,12 @@ export default function NewSloganPage() {
     setError(null)
 
     try {
-      const submitData = {
-        ...data,
-        background_image: imageUrl || undefined,
-      }
-
       const response = await fetch('/api/slogan', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(submitData),
+        body: JSON.stringify(data),
       })
 
       if (!response.ok) {
@@ -65,7 +57,7 @@ export default function NewSloganPage() {
     <div className="max-w-4xl mx-auto">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900">Create Slogan Section</h1>
-        <p className="text-gray-600 mt-2">Add a prominent banner with your main slogan</p>
+        <p className="text-gray-600 mt-2">Add your company slogan and founder name</p>
       </div>
 
       {error && (
@@ -76,47 +68,35 @@ export default function NewSloganPage() {
 
       <form onSubmit={handleSubmit(onSubmit)} className="bg-white rounded-lg shadow-sm border border-gray-200 p-8 space-y-6">
         <div>
-          <label htmlFor="main_slogan" className="block text-sm font-semibold text-gray-700 mb-2">
-            Main Slogan * <span className="text-gray-500 font-normal">(3-8 words recommended)</span>
-          </label>
-          <input
-            id="main_slogan"
-            type="text"
-            {...register('main_slogan')}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
-            placeholder="Design That Transforms Spaces"
-          />
-          {errors.main_slogan && (
-            <p className="mt-1 text-sm text-red-600">{errors.main_slogan.message}</p>
-          )}
-          <p className="mt-1 text-xs text-gray-500">Bold, impactful statement - shows large on homepage</p>
-        </div>
-
-        <div>
-          <label htmlFor="sub_slogan" className="block text-sm font-semibold text-gray-700 mb-2">
-            Sub Slogan <span className="text-gray-500 font-normal">(Supporting text)</span>
+          <label htmlFor="slogan" className="block text-sm font-semibold text-gray-700 mb-2">
+            Slogan *
           </label>
           <textarea
-            id="sub_slogan"
-            {...register('sub_slogan')}
-            rows={2}
+            id="slogan"
+            {...register('slogan')}
+            rows={4}
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
-            placeholder="Creating architectural excellence across Uganda"
+            placeholder="Enter your slogan text"
           />
-          <p className="mt-1 text-xs text-gray-500">Elaborates on main slogan (1-2 sentences)</p>
+          {errors.slogan && (
+            <p className="mt-1 text-sm text-red-600">{errors.slogan.message}</p>
+          )}
         </div>
 
         <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-2">
-            Background Image <span className="text-gray-500 font-normal">(1920x600 recommended)</span>
+          <label htmlFor="founder_name" className="block text-sm font-semibold text-gray-700 mb-2">
+            Founder Name *
           </label>
-          <ImageUpload
-            value={imageUrl}
-            onChange={setImageUrl}
-            folder="slogan"
-            label="Upload Background Image"
+          <input
+            id="founder_name"
+            type="text"
+            {...register('founder_name')}
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
+            placeholder="Enter founder name"
           />
-          <p className="mt-1 text-xs text-gray-500">Full-width background - use image with neutral areas for text overlay</p>
+          {errors.founder_name && (
+            <p className="mt-1 text-sm text-red-600">{errors.founder_name.message}</p>
+          )}
         </div>
 
         <div className="flex items-center gap-4 pt-4 border-t">

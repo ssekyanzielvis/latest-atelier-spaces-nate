@@ -5,14 +5,12 @@ import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import ImageUpload from '@/components/admin/ImageUpload'
 import { createSupabaseAuthClient } from '@/lib/supabase/auth'
 import { SloganSection } from '@/types'
 
 const sloganSchema = z.object({
-  main_slogan: z.string().min(1, 'Main slogan text is required'),
-  sub_slogan: z.string().optional(),
-  background_image: z.string().min(1, 'Background image is required'),
+  slogan: z.string().min(1, 'Slogan text is required'),
+  founder_name: z.string().min(1, 'Founder name is required'),
 })
 
 type SloganFormData = z.infer<typeof sloganSchema>
@@ -121,7 +119,7 @@ export default function EditSloganPage() {
     <div className="max-w-4xl mx-auto">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900">Edit Slogan Section</h1>
-        <p className="text-gray-600 mt-2">Update your site slogan</p>
+        <p className="text-gray-600 mt-2">Update your site slogan and founder name</p>
       </div>
 
       {error && (
@@ -139,38 +137,31 @@ export default function EditSloganPage() {
       <form onSubmit={handleSubmit(onSubmit)} className="bg-white rounded-lg shadow-sm border border-gray-200 p-8 space-y-6">
         <div className="space-y-6">
           <div>
-            <label htmlFor="main_slogan" className="block text-sm font-semibold text-gray-700 mb-2">
-              Main Slogan Text *
+            <label htmlFor="slogan" className="block text-sm font-semibold text-gray-700 mb-2">
+              Slogan *
             </label>
             <textarea
-              id="main_slogan"
-              {...register('main_slogan')}
+              id="slogan"
+              {...register('slogan')}
               rows={4}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
-              placeholder="Enter your main slogan text"
+              placeholder="Enter your slogan text"
             />
-            {errors.main_slogan && <p className="mt-1 text-sm text-red-600">{errors.main_slogan.message}</p>}
+            {errors.slogan && <p className="mt-1 text-sm text-red-600">{errors.slogan.message}</p>}
           </div>
 
           <div>
-            <label htmlFor="sub_slogan" className="block text-sm font-semibold text-gray-700 mb-2">
-              Sub Slogan (Optional)
+            <label htmlFor="founder_name" className="block text-sm font-semibold text-gray-700 mb-2">
+              Founder Name *
             </label>
-            <textarea
-              id="sub_slogan"
-              {...register('sub_slogan')}
-              rows={2}
+            <input
+              type="text"
+              id="founder_name"
+              {...register('founder_name')}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
-              placeholder="Enter your sub slogan text (optional)"
+              placeholder="Enter founder name"
             />
-          </div>
-
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Background Image *
-            </label>
-            <ImageUpload folder="slogan" onChange={(url: string) => setValue('background_image', url)} />
-            {errors.background_image && <p className="mt-1 text-sm text-red-600">{errors.background_image.message}</p>}
+            {errors.founder_name && <p className="mt-1 text-sm text-red-600">{errors.founder_name.message}</p>}
           </div>
         </div>
 

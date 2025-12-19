@@ -90,13 +90,12 @@ CREATE TABLE IF NOT EXISTS about_section (
 
 -- =====================================================
 -- 6. SLOGAN SECTION TABLE (Slogan Section)
--- Displayed: Large enhanced text section on homepage
+-- Displayed: Large text section on homepage with slogan and founder name
 -- =====================================================
 CREATE TABLE IF NOT EXISTS slogan_section (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  main_slogan TEXT NOT NULL,
-  sub_slogan TEXT,
-  background_image TEXT, -- Background image URL
+  slogan TEXT NOT NULL,
+  founder_name VARCHAR(255),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
