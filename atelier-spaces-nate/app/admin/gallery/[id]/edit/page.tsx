@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { FiSave, FiX, FiCheck } from 'react-icons/fi'
-import ImageUpload from '@/components/admin/ImageUpload'
+import MediaUpload from '@/components/admin/MediaUpload'
 import { showToast } from '@/components/ToastNotifications'
 
 export default function EditGalleryItemPage({ params }: { params: Promise<{ id: string }> }) {
@@ -16,6 +16,8 @@ export default function EditGalleryItemPage({ params }: { params: Promise<{ id: 
     title: '',
     description: '',
     image_url: '',
+    media_url: '',
+    media_type: 'image' as 'image' | 'video',
     category: '',
     order_position: 0,
     is_active: true,
@@ -38,10 +40,13 @@ export default function EditGalleryItemPage({ params }: { params: Promise<{ id: 
       }
 
       const data = await response.json()
+      const mediaUrl = data.media_url || data.image_url || ''
       setFormData({
         title: data.title || '',
         description: data.description || '',
         image_url: data.image_url || '',
+        media_url: mediaUrl,
+        media_type: data.media_type || 'image',
         category: data.category || '',
         order_position: data.order_position || 0,
         is_active: data.is_active !== undefined ? data.is_active : true,
@@ -56,9 +61,9 @@ export default function EditGalleryItemPage({ params }: { params: Promise<{ id: 
     }
   }
 
-  const handleImageUpload = (url: string) => {
-    console.log('🖼️ Image updated:', url)
-    setFormData(prev => ({ ...prev, image_url: url }))
+  const handleMediaUpload = (url: string, type: 'image' | 'video') => {
+    console.log('🎬 Media updated:', url, type)
+    setFormData(prev => ({ ...prev, media_url: url, image_url: url, media_type: type }))
     setError('')
   }
 
@@ -73,9 +78,9 @@ export default function EditGalleryItemPage({ params }: { params: Promise<{ id: 
       return
     }
 
-    if (!formData.image_url) {
-      setError('Please upload an image')
-      showToast('Please upload an image', 'error')
+    if (!formData.media_url && !formData.image_url) {
+      setError('Please upload an image or video')
+      showToast('Please upload an image or video', 'error')
       return
     }
 
@@ -90,6 +95,8 @@ export default function EditGalleryItemPage({ params }: { params: Promise<{ id: 
         body: JSON.stringify({
           id: galleryId,
           ...formData,
+          media_url: formData.media_url || formData.image_url,
+          image_url: formData.media_url || formData.image_url,
         }),
       })
 
@@ -148,20 +155,22 @@ export default function EditGalleryItemPage({ params }: { params: Promise<{ id: 
       )}
 
       <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 space-y-6">
-        {/* Image Upload */}
+        {/* Media Upload */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Image <span className="text-red-500">*</span>
+            Image or Video <span className="text-red-500">*</span>
           </label>
-          <ImageUpload
-            value={formData.image_url}
-            onChange={handleImageUpload}
+          <MediaUpload
+            value={formData.media_url}
+            mediaType={formData.media_type}
+            onChange={handleMediaUpload}
             folder="gallery"
+            acceptVideo={true}
           />
-          {formData.image_url && (
+          {formData.media_url && (
             <div className="mt-2 flex items-center gap-2 text-sm text-green-600">
               <FiCheck size={16} />
-              <span>Image uploaded successfully</span>
+              <span>{formData.media_type === 'video' ? 'Video' : 'Image'} uploaded successfully</span>
             </div>
           )}
         </div>
