@@ -293,13 +293,15 @@ export default async function HomePage() {
 
           {featuredWorks.length > 0 ? (
             <>
-              {/* Display first 3 works in 2-column grid - Full Width */}
+              {/* Display first 3 works - First 2 in portrait, third in landscape */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-                {featuredWorks.slice(0, 3).map((work) => (
+                {featuredWorks.slice(0, 3).map((work, index) => (
                   <Link 
                     key={work.id} 
                     href={`/works/${work.slug}`}
-                    className="group relative block overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-all duration-300 h-[400px] sm:h-[450px] md:h-[500px]"
+                    className={`group relative block overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-all duration-300 ${
+                      index === 2 ? 'md:col-span-2 h-[350px] sm:h-[400px]' : 'h-[400px] sm:h-[450px] md:h-[500px]'
+                    }`}
                   >
                     {/* Full Background Image */}
                     <div className="absolute inset-0 w-full h-full">
