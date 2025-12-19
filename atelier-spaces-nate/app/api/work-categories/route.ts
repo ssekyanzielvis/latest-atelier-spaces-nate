@@ -63,12 +63,24 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { name, description, slug, cover_image, order_position = 0 } = body
+    const { name, description, slug, cover_image, cover_media, media_type, order_position = 0 } = body
+
+    // Support both old (cover_image) and new (cover_media) field names for backward compatibility
+    const finalCoverMedia = cover_media || cover_image
+    const finalMediaType = media_type || 'image'
 
     // Validate input
     if (!name || !slug) {
       return NextResponse.json(
         { error: 'Name and slug are required' },
+        { status: 400 }
+      )
+    }
+
+    // Validate media type
+    if (finalMediaType && !['image', 'video'].includes(finalMediaType)) {
+      return NextResponse.json(
+        { error: 'Invalid media type. Must be "image" or "video"' },
         { status: 400 }
       )
     }
@@ -83,7 +95,9 @@ export async function POST(request: NextRequest) {
         name,
         description: description || null,
         slug: finalSlug,
-        cover_image: cover_image || null,
+        cover_image: finalCoverMedia || null,
+        cover_media: finalCoverMedia || null,
+        media_type: finalMediaType,
         order_position,
         is_active: true,
       })
@@ -117,11 +131,19 @@ export async function POST(request: NextRequest) {
 export async function PATCH(request: NextRequest) {
   try {
     const body = await request.json()
-    const { id, name, description, slug, cover_image, order_position, is_active } = body
+    const { id, name, description, slug, cover_image, cover_media, media_type, order_position, is_active } = body
 
     if (!id) {
       return NextResponse.json(
         { error: 'Category ID is required' },
+        { status: 400 }
+      )
+    }
+
+    // Validate media type if provided
+    if (media_type && !['image', 'video'].includes(media_type)) {
+      return NextResponse.json(
+        { error: 'Invalid media type. Must be "image" or "video"' },
         { status: 400 }
       )
     }
@@ -134,7 +156,15 @@ export async function PATCH(request: NextRequest) {
     if (name !== undefined) updateData.name = name
     if (description !== undefined) updateData.description = description
     if (slug !== undefined) updateData.slug = slug
-    if (cover_image !== undefined) updateData.cover_image = cover_image
+    if (cover_image !== undefined) {
+      updateData.cover_image = cover_image
+      updateData.cover_media = cover_image
+    }
+    if (cover_media !== undefined) {
+      updateData.cover_media = cover_media
+      updateData.cover_image = cover_media
+    }
+    if (media_type !== undefined) updateData.media_type = media_type
     if (order_position !== undefined) updateData.order_position = order_position
     if (is_active !== undefined) updateData.is_active = is_active
 
@@ -192,18 +222,19 @@ export async function DELETE(request: NextRequest) {
       )
     }
 
-    // Delete cover image from storage if it exists
-    if (category && (category as any).cover_image) {
+    // Delete cover media from storage if it exists
+    const coverMediaUrl = (category as any).cover_media || (category as any).cover_image
+    if (category && coverMediaUrl) {
       try {
-        const fileName = (category as any).cover_image.split('/').pop()
+        const fileName = coverMediaUrl.split('/').pop()
         if (fileName) {
           await supabaseAdmin.storage
             .from('work-categories')
             .remove([fileName])
         }
       } catch (storageError) {
-        console.error('Error deleting cover image:', storageError)
-        // Continue with deletion even if image delete fails
+        console.error('Error deleting cover media:', storageError)
+        // Continue with deletion even if media delete fails
       }
     }
 

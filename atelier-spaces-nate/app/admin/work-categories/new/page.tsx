@@ -2,40 +2,27 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { supabase } from '@/lib/supabase/client'
-import { FiUpload, FiX } from 'react-icons/fi'
+import MediaUpload from '@/components/admin/MediaUpload'
+import { FiUpload } from 'react-icons/fi'
 
 export default function NewWorkCategoryPage() {
   const router = useRouter()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [file, setFile] = useState<File | null>(null)
-  const [preview, setPreview] = useState<string | null>(null)
 
   const [formData, setFormData] = useState({
     name: '',
     slug: '',
     description: '',
+    cover_media: '',
+    media_type: 'image' as 'image' | 'video',
     order_position: 0,
   })
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFile = e.target.files?.[0]
-    if (!selectedFile) return
-
-    if (!selectedFile.type.startsWith('image/')) {
-      setError('Please select an image file')
-      return
-    }
-
-    setFile(selectedFile)
-
-    // Generate preview
-    const reader = new FileReader()
-    reader.onload = (event) => {
-      setPreview(event.target?.result as string)
-    }
-    reader.readAsDataURL(selectedFile)
+  const handleMediaUpload = (url: string, type: 'image' | 'video') => {
+    console.log('🎬 Media uploaded:', url, type)
+    setFormData(prev => ({ ...prev, cover_media: url, media_type: type }))
+    setError(null)
   }
 
   const handleInputChange = (
@@ -79,39 +66,6 @@ export default function NewWorkCategoryPage() {
         throw new Error('Slug is required')
       }
 
-      let coverImageUrl: string | null = null
-
-      // Upload cover image if provided
-      if (file) {
-        console.log('Uploading cover image:', { name: file.name, size: file.size, type: file.type })
-
-        const fileName = `${Date.now()}-${file.name.replace(/\s+/g, '-')}`
-
-        const { data: uploadData, error: uploadError } = await supabase.storage
-          .from('work-categories')
-          .upload(fileName, file)
-
-        if (uploadError) {
-          console.error('Upload error:', uploadError)
-          throw new Error(uploadError.message || 'Failed to upload cover image')
-        }
-
-        console.log('File uploaded successfully:', uploadData)
-
-        // Get public URL
-        const { data: urlData } = supabase.storage
-          .from('work-categories')
-          .getPublicUrl(fileName)
-
-        coverImageUrl = urlData?.publicUrl
-
-        if (!coverImageUrl) {
-          throw new Error('Failed to get cover image URL')
-        }
-
-        console.log('Cover image URL:', coverImageUrl)
-      }
-
       // Create category
       const response = await fetch('/api/work-categories', {
         method: 'POST',
@@ -122,7 +76,9 @@ export default function NewWorkCategoryPage() {
           name: formData.name,
           slug: formData.slug,
           description: formData.description || null,
-          cover_image: coverImageUrl,
+          cover_media: formData.cover_media,
+          cover_image: formData.cover_media,
+          media_type: formData.media_type,
           order_position: formData.order_position,
         }),
       })
@@ -148,7 +104,7 @@ export default function NewWorkCategoryPage() {
     <div className="max-w-2xl mx-auto">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900">Create Work Category</h1>
-        <p className="text-gray-600 mt-2">Add a new work category with cover image</p>
+        <p className="text-gray-600 mt-2">Add a new work category with cover image or video</p>
       </div>
 
       {error && (
@@ -206,42 +162,18 @@ export default function NewWorkCategoryPage() {
           />
         </div>
 
-        {/* Cover Image */}
+        {/* Cover Media */}
         <div>
           <label className="block text-sm font-semibold text-gray-700 mb-3">
-            Cover Image
+            Cover Image or Video
           </label>
-          {preview ? (
-            <div className="relative bg-gray-100 rounded-lg overflow-hidden mb-4">
-              <img src={preview} alt="Preview" className="w-full h-64 object-cover" />
-              <button
-                type="button"
-                onClick={() => {
-                  setFile(null)
-                  setPreview(null)
-                }}
-                className="absolute top-2 right-2 p-1 bg-red-600 text-white rounded-full hover:bg-red-700 transition-colors"
-              >
-                <FiX size={20} />
-              </button>
-            </div>
-          ) : (
-            <label className="flex flex-col items-center justify-center w-full h-64 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
-              <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                <FiUpload className="w-10 h-10 text-gray-400 mb-2" />
-                <p className="text-sm text-gray-700 font-medium">
-                  Click to upload or drag and drop
-                </p>
-                <p className="text-xs text-gray-500">PNG, JPG, GIF up to 100MB</p>
-              </div>
-              <input
-                type="file"
-                className="hidden"
-                accept="image/*"
-                onChange={handleFileChange}
-              />
-            </label>
-          )}
+          <MediaUpload
+            value={formData.cover_media}
+            mediaType={formData.media_type}
+            onChange={handleMediaUpload}
+            folder="work-categories"
+            acceptVideo={true}
+          />
         </div>
 
         {/* Order Position */}

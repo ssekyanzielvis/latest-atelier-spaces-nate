@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { supabase } from '@/lib/supabase/client'
-import { FiUpload, FiX } from 'react-icons/fi'
+import MediaUpload from '@/components/admin/MediaUpload'
 
 interface WorkCategory {
   id: string
@@ -11,6 +11,8 @@ interface WorkCategory {
   slug: string
   description: string | null
   cover_image: string | null
+  cover_media?: string | null
+  media_type?: 'image' | 'video'
   order_position: number
   is_active: boolean
 }
@@ -23,9 +25,9 @@ export default function EditWorkCategoryPage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [file, setFile] = useState<File | null>(null)
-  const [preview, setPreview] = useState<string | null>(null)
-  const [originalCoverImage, setOriginalCoverImage] = useState<string | null>(null)
+  const [coverMedia, setCoverMedia] = useState<string | null>(null)
+  const [mediaType, setMediaType] = useState<'image' | 'video'>('image')
+  const [originalCoverMedia, setOriginalCoverMedia] = useState<string | null>(null)
 
   const [formData, setFormData] = useState<WorkCategory>({
     id: categoryId,
@@ -33,6 +35,8 @@ export default function EditWorkCategoryPage() {
     slug: '',
     description: '',
     cover_image: null,
+    cover_media: null,
+    media_type: 'image',
     order_position: 0,
     is_active: true,
   })
@@ -53,8 +57,10 @@ export default function EditWorkCategoryPage() {
       }
 
       setFormData(data)
-      setOriginalCoverImage(data.cover_image)
-      setPreview(data.cover_image)
+      const coverMediaUrl = data.cover_media || data.cover_image
+      setOriginalCoverMedia(coverMediaUrl)
+      setCoverMedia(coverMediaUrl)
+      setMediaType(data.media_type || 'image')
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred')
     } finally {
@@ -62,23 +68,9 @@ export default function EditWorkCategoryPage() {
     }
   }
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFile = e.target.files?.[0]
-    if (!selectedFile) return
-
-    if (!selectedFile.type.startsWith('image/')) {
-      setError('Please select an image file')
-      return
-    }
-
-    setFile(selectedFile)
-
-    // Generate preview
-    const reader = new FileReader()
-    reader.onload = (event) => {
-      setPreview(event.target?.result as string)
-    }
-    reader.readAsDataURL(selectedFile)
+  const handleMediaUpload = (url: string, type: 'image' | 'video') => {
+    setCoverMedia(url)
+    setMediaType(type)
   }
 
   const handleInputChange = (
@@ -130,52 +122,19 @@ export default function EditWorkCategoryPage() {
         throw new Error('Slug is required')
       }
 
-      let coverImageUrl = formData.cover_image
-
-      // Upload new cover image if provided
-      if (file) {
-        console.log('Uploading new cover image:', { name: file.name, size: file.size })
-
-        const fileName = `${Date.now()}-${file.name.replace(/\s+/g, '-')}`
-
-        const { data: uploadData, error: uploadError } = await supabase.storage
-          .from('work-categories')
-          .upload(fileName, file)
-
-        if (uploadError) {
-          console.error('Upload error:', uploadError)
-          throw new Error(uploadError.message || 'Failed to upload cover image')
-        }
-
-        console.log('File uploaded successfully:', uploadData)
-
-        // Get public URL
-        const { data: urlData } = supabase.storage
-          .from('work-categories')
-          .getPublicUrl(fileName)
-
-        coverImageUrl = urlData?.publicUrl
-
-        if (!coverImageUrl) {
-          throw new Error('Failed to get cover image URL')
-        }
-
-        // Delete old cover image if it exists and is different
-        if (originalCoverImage && originalCoverImage !== coverImageUrl) {
-          try {
-            const oldFileName = originalCoverImage.split('/').pop()
-            if (oldFileName) {
-              await supabase.storage
-                .from('work-categories')
-                .remove([oldFileName])
-            }
-          } catch (err) {
-            console.error('Error deleting old cover image:', err)
-            // Continue despite error
+      // Delete old cover media if it exists and URL has changed
+      if (originalCoverMedia && coverMedia && originalCoverMedia !== coverMedia) {
+        try {
+          const oldFileName = originalCoverMedia.split('/').pop()
+          if (oldFileName) {
+            await supabase.storage
+              .from('work-categories')
+              .remove([oldFileName])
           }
+        } catch (err) {
+          console.error('Error deleting old cover media:', err)
+          // Continue despite error
         }
-
-        console.log('New cover image URL:', coverImageUrl)
       }
 
       // Update category
@@ -189,7 +148,9 @@ export default function EditWorkCategoryPage() {
           name: formData.name,
           slug: formData.slug,
           description: formData.description || null,
-          cover_image: coverImageUrl,
+          cover_image: coverMedia,
+          cover_media: coverMedia,
+          media_type: mediaType,
           order_position: formData.order_position,
           is_active: formData.is_active,
         }),
@@ -282,44 +243,18 @@ export default function EditWorkCategoryPage() {
           />
         </div>
 
-        {/* Cover Image */}
+        {/* Cover Media */}
         <div>
           <label className="block text-sm font-semibold text-gray-700 mb-3">
-            Cover Image
+            Cover Image or Video
           </label>
-          {preview ? (
-            <div className="relative bg-gray-100 rounded-lg overflow-hidden mb-4">
-              <img src={preview} alt="Preview" className="w-full h-64 object-cover" />
-              <button
-                type="button"
-                onClick={() => {
-                  if (file) {
-                    setFile(null)
-                    setPreview(originalCoverImage)
-                  }
-                }}
-                className="absolute top-2 right-2 p-1 bg-red-600 text-white rounded-full hover:bg-red-700 transition-colors"
-              >
-                <FiX size={20} />
-              </button>
-            </div>
-          ) : (
-            <label className="flex flex-col items-center justify-center w-full h-64 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
-              <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                <FiUpload className="w-10 h-10 text-gray-400 mb-2" />
-                <p className="text-sm text-gray-700 font-medium">
-                  Click to upload or drag and drop
-                </p>
-                <p className="text-xs text-gray-500">PNG, JPG, GIF up to 100MB</p>
-              </div>
-              <input
-                type="file"
-                className="hidden"
-                accept="image/*"
-                onChange={handleFileChange}
-              />
-            </label>
-          )}
+          <MediaUpload
+            value={coverMedia || ''}
+            mediaType={mediaType}
+            onChange={handleMediaUpload}
+            folder="work-categories"
+            acceptVideo={true}
+          />
         </div>
 
         {/* Order Position */}
