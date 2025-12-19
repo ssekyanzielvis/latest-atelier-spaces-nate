@@ -1,10 +1,10 @@
 'use client'
 
 import Link from 'next/link'
-import { FiEye, FiLogOut, FiUsers, FiMenu } from 'react-icons/fi'
+import { FiEye, FiLogOut, FiUsers, FiMenu, FiClock, FiCalendar } from 'react-icons/fi'
 import { Button } from '@/components/ui/button'
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 interface AdminHeaderProps {
   onMenuClick: () => void
@@ -13,6 +13,20 @@ interface AdminHeaderProps {
 export default function AdminHeader({ onMenuClick }: AdminHeaderProps) {
   const router = useRouter()
   const [isLoggingOut, setIsLoggingOut] = useState(false)
+  const [currentDateTime, setCurrentDateTime] = useState({ date: '', time: '' })
+
+  useEffect(() => {
+    const updateDateTime = () => {
+      const now = new Date()
+      setCurrentDateTime({
+        date: now.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' }),
+        time: now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
+      })
+    }
+    updateDateTime()
+    const interval = setInterval(updateDateTime, 1000)
+    return () => clearInterval(interval)
+  }, [])
 
   const handleLogout = async () => {
     setIsLoggingOut(true)
@@ -50,6 +64,19 @@ export default function AdminHeader({ onMenuClick }: AdminHeaderProps) {
           <h1 className="text-base sm:text-lg font-semibold text-gray-900 truncate">Admin Dashboard</h1>
           <p className="text-xs text-gray-500 mt-0.5 hidden sm:block">Manage your content</p>
         </div>
+
+        {/* Date and Time Display */}
+        <div className="hidden lg:flex items-center gap-4 text-sm text-gray-700 mr-4">
+          <div className="flex items-center gap-1.5">
+            <FiCalendar className="text-gray-500" size={16} />
+            <span className="font-medium">{currentDateTime.date}</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <FiClock className="text-gray-500" size={16} />
+            <span className="font-mono">{currentDateTime.time}</span>
+          </div>
+        </div>
+
         <div className="flex items-center gap-2 flex-shrink-0">
           <Link href="/admin/register">
             <Button 
