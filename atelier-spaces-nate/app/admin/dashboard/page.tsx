@@ -52,24 +52,24 @@ async function getStats() {
 async function getAnalytics() {
   try {
     // Get total visits
-    const { count: totalVisits } = await supabaseAdmin
-      .from('site_analytics')
+    const { count: totalVisits } = await (supabaseAdmin
+      .from('site_analytics') as any)
       .select('*', { count: 'exact', head: true })
 
     // Get today's visits
     const today = new Date().toISOString().split('T')[0]
-    const { count: todayVisits } = await supabaseAdmin
-      .from('site_analytics')
+    const { count: todayVisits } = await (supabaseAdmin
+      .from('site_analytics') as any)
       .select('*', { count: 'exact', head: true })
       .gte('created_at', `${today}T00:00:00`)
 
     // Get unique visitors today
-    const { data: todayData } = await supabaseAdmin
-      .from('site_analytics')
+    const { data: todayData } = await (supabaseAdmin
+      .from('site_analytics') as any)
       .select('visitor_ip')
       .gte('created_at', `${today}T00:00:00`)
 
-    const uniqueVisitorsToday = new Set(todayData?.map(d => d.visitor_ip)).size
+    const uniqueVisitorsToday = new Set(todayData?.map((d: any) => d.visitor_ip)).size
 
     return {
       totalVisits: totalVisits || 0,
