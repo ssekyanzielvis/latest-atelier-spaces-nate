@@ -1,0 +1,25 @@
+<svg width="640" height="220" viewBox="0 0 640 220" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Black square background -->
+  <rect width="385" height="220" fill="black"/>
+  
+  <!-- White text inside black box -->
+  <text x="210" y="60" font-family="Arial, sans-serif" font-size="48" font-weight="300" fill="white" letter-spacing="2">n</text>
+  <text x="260" y="60" font-family="Arial, sans-serif" font-size="48" font-weight="300" fill="white" letter-spacing="2">e</text>
+  <text x="297" y="60" font-family="Arial, sans-serif" font-size="48" font-weight="300" fill="white" letter-spacing="2">a</text>
+  
+  <text x="205" y="120" font-family="Arial, sans-serif" font-size="48" font-weight="300" fill="white" letter-spacing="2">s</text>
+  <text x="242" y="120" font-family="Arial, sans-serif" font-size="48" font-weight="300" fill="white" letter-spacing="2">e</text>
+  <text x="280" y="120" font-family="Arial, sans-serif" font-size="48" font-weight="300" fill="white" letter-spacing="2">a</text>
+  <text x="317" y="120" font-family="Arial, sans-serif" font-size="48" font-weight="300" fill="white" letter-spacing="2">c</text>
+  
+  <text x="210" y="180" font-family="Arial, sans-serif" font-size="48" font-weight="300" fill="white" letter-spacing="2">p</text>
+  <text x="260" y="180" font-family="Arial, sans-serif" font-size="48" font-weight="300" fill="white" letter-spacing="2">a</text>
+  
+  <text x="230" y="105" font-family="Arial, sans-serif" font-size="28" font-weight="300" fill="white" letter-spacing="2">t</text>
+  <text x="230" y="150" font-family="Arial, sans-serif" font-size="28" font-weight="300" fill="white" letter-spacing="2">s</text>
+  
+  <!-- Black text outside box -->
+  <text x="410" y="100" font-family="Arial, sans-serif" font-size="72" font-weight="700" fill="black">ATELIER</text>
+  <text x="410" y="160" font-family="Arial, sans-serif" font-size="72" font-weight="700" fill="black">SPACES</text>
+  <text x="410" y="210" font-family="Arial, sans-serif" font-size="72" font-weight="700" fill="black">NATE</text>
+</svg>

@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { useState, useEffect } from 'react'
 import { FiMenu, FiX, FiClock, FiCalendar } from 'react-icons/fi'
 
@@ -37,7 +38,14 @@ export default function Header() {
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center hover:opacity-90 transition-opacity">
-            <span className="text-2xl font-bold text-gray-900 tracking-tight">ATELIER</span>
+            <Image 
+              src="/images/logo.svg" 
+              alt="Atelier Spaces Nate" 
+              width={160}
+              height={44}
+              priority
+              className="h-11 w-auto"
+            />
           </Link>
 
           {/* Date and Time Display - Hidden on Mobile */}
