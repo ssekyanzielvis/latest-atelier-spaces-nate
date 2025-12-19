@@ -1,6 +1,7 @@
 import Header from '@/components/public/Header'
 import Footer from '@/components/public/Footer'
 import AnalyticsTracker from '@/components/AnalyticsTracker'
+import ToastNotifications from '@/components/ToastNotifications'
 import '../globals.css'
 
 export default function PublicLayout({
