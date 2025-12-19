@@ -282,7 +282,7 @@ export default async function HomePage() {
 
       {/* Featured Works Section */}
       <section id="featured-works" className="py-16 md:py-24 bg-white">
-        <div className="container mx-auto px-4">
+        <div className="w-full px-4">
           <div className="flex items-center justify-between mb-12">
             <div>
               <h2 className="text-3xl md:text-4xl font-bold text-gray-900">Featured Works</h2>
@@ -292,7 +292,7 @@ export default async function HomePage() {
 
           {featuredWorks.length > 0 ? (
             <>
-              {/* Display first 3 works in 2-column grid */}
+              {/* Display first 3 works in 2-column grid - Full Width */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
                 {featuredWorks.slice(0, 3).map((work) => (
                   <Link 
@@ -300,12 +300,12 @@ export default async function HomePage() {
                     href={`/works/${work.slug}`}
                     className="group block bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-all duration-300"
                   >
-                    <div className="relative h-64 md:h-80 overflow-hidden">
+                    <div className="relative h-80 md:h-96 overflow-hidden">
                       <ImageWithError
                         src={work.image}
                         alt={work.title}
                         fill
-                        className="object-cover group-hover:scale-105 transition-transform duration-300"
+                        className="object-contain group-hover:scale-105 transition-transform duration-300"
                         errorMessage="Failed to load work image"
                       />
                     </div>

@@ -34,7 +34,7 @@ export default async function WorksPage() {
 
   return (
     <div className="py-12 md:py-20">
-      <div className="container mx-auto px-4">
+      <div className="w-full px-4">
         <div className="mb-12">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">Our Works</h1>
           <p className="text-xl text-gray-600 max-w-2xl">
@@ -42,7 +42,7 @@ export default async function WorksPage() {
           </p>
         </div>
 
-        {/* Works Grid */}
+        {/* Works Grid - Full Width */}
         {works.length === 0 ? (
           <div className="text-center py-12">
             <p className="text-gray-600 text-lg">No works available at the moment.</p>
@@ -55,12 +55,12 @@ export default async function WorksPage() {
                 href={`/works/${work.slug}`}
                 className="group bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-all duration-300"
               >
-                <div className="relative h-64 overflow-hidden">
+                <div className="relative h-80 md:h-96 overflow-hidden">
                   <ImageWithError
                     src={work.image}
                     alt={work.title}
                     fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-300"
+                    className="object-contain group-hover:scale-105 transition-transform duration-300"
                     errorMessage="Failed to load work image"
                   />
                   {work.featured && (

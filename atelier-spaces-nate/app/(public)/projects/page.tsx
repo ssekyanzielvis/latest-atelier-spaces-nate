@@ -71,10 +71,10 @@ export default function ProjectsPage() {
         </div>
       </div>
 
-      {/* Projects Grid */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
+      {/* Projects Grid - Full Width */}
+      <div className="w-full px-4 py-16 md:py-24">
         {error && (
-          <div className="mb-8 p-4 bg-red-50 border border-red-200 rounded-lg text-center">
+          <div className="mb-8 p-4 bg-red-50 border border-red-200 rounded-lg text-center max-w-4xl mx-auto">
             <p className="text-red-800">{error}</p>
           </div>
         )}
@@ -91,12 +91,12 @@ export default function ProjectsPage() {
                 href={`/projects/${project.slug}`}
                 className="group overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300"
               >
-                <div className="relative h-64 md:h-72 overflow-hidden bg-gray-200">
+                <div className="relative h-80 md:h-96 overflow-hidden bg-gray-200">
                   <ImageWithError
                     src={project.image}
                     alt={project.title}
                     fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-300"
+                    className="object-contain group-hover:scale-105 transition-transform duration-300"
                   />
                   {project.featured && (
                     <div className="absolute top-4 right-4 bg-black text-white px-3 py-1 text-xs font-semibold rounded">
