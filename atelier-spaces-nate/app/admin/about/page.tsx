@@ -39,46 +39,9 @@ export default async function AboutAdminPage() {
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
           <div className="p-6 space-y-6">
             <div>
-              <h3 className="text-sm font-semibold text-gray-700 mb-2">Title</h3>
-              <p className="text-gray-900">{aboutSection.title}</p>
+              <h3 className="text-sm font-semibold text-gray-700 mb-2">About Content</h3>
+              <p className="text-gray-900 whitespace-pre-wrap">{(aboutSection as any).about || aboutSection.content}</p>
             </div>
-
-            <div>
-              <h3 className="text-sm font-semibold text-gray-700 mb-2">Content</h3>
-              <p className="text-gray-900 whitespace-pre-wrap">{aboutSection.content}</p>
-            </div>
-
-            {aboutSection.mission && (
-              <div>
-                <h3 className="text-sm font-semibold text-gray-700 mb-2">Mission</h3>
-                <p className="text-gray-900 whitespace-pre-wrap">{aboutSection.mission}</p>
-              </div>
-            )}
-
-            {aboutSection.vision && (
-              <div>
-                <h3 className="text-sm font-semibold text-gray-700 mb-2">Vision</h3>
-                <p className="text-gray-900 whitespace-pre-wrap">{aboutSection.vision}</p>
-              </div>
-            )}
-
-            {aboutSection.values && (
-              <div>
-                <h3 className="text-sm font-semibold text-gray-700 mb-2">Values</h3>
-                <p className="text-gray-900 whitespace-pre-wrap">{aboutSection.values}</p>
-              </div>
-            )}
-
-            {aboutSection.image && (
-              <div>
-                <h3 className="text-sm font-semibold text-gray-700 mb-2">Image</h3>
-                <img 
-                  src={aboutSection.image} 
-                  alt="About section" 
-                  className="w-full max-w-md rounded-lg"
-                />
-              </div>
-            )}
 
             <div className="flex items-center gap-3 pt-4 border-t">
               <Link

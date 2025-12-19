@@ -79,12 +79,7 @@ CREATE TABLE IF NOT EXISTS works (
 -- =====================================================
 CREATE TABLE IF NOT EXISTS about_section (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  title VARCHAR(255) NOT NULL,
-  content TEXT NOT NULL,
-  mission TEXT,
-  vision TEXT,
-  values TEXT,
-  image TEXT, -- About section image URL
+  about TEXT NOT NULL,
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 

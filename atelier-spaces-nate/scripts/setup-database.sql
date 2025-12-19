@@ -153,12 +153,7 @@ CREATE INDEX IF NOT EXISTS idx_team_active ON team_members(is_active);
 -- 9. About Section Table (Singleton)
 CREATE TABLE IF NOT EXISTS about_section (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  title VARCHAR(200) NOT NULL,
-  content TEXT NOT NULL,
-  mission TEXT,
-  vision TEXT,
-  values TEXT,
-  image TEXT,
+  about TEXT NOT NULL,
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
