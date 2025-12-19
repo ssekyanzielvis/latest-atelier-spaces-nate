@@ -3,15 +3,16 @@ import { supabaseAdmin } from '@/lib/supabase/server'
 
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    console.log('🔍 Fetching gallery item:', params.id)
+    const { id } = await params
+    console.log('🔍 Fetching gallery item:', id)
 
     const { data, error } = await (supabaseAdmin
       .from('gallery') as any)
       .select('*')
-      .eq('id', params.id)
+      .eq('id', id)
       .single()
 
     if (error) {

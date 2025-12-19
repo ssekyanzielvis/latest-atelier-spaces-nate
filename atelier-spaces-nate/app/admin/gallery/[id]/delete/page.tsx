@@ -6,20 +6,24 @@ import { FiTrash2, FiX, FiAlertTriangle } from 'react-icons/fi'
 import Image from 'next/image'
 import { showToast } from '@/components/ToastNotifications'
 
-export default function DeleteGalleryItemPage({ params }: { params: { id: string } }) {
+export default function DeleteGalleryItemPage({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter()
   const [isDeleting, setIsDeleting] = useState(false)
   const [error, setError] = useState('')
   const [galleryItem, setGalleryItem] = useState<any>(null)
   const [loading, setLoading] = useState(true)
+  const [galleryId, setGalleryId] = useState<string>('')
 
   useEffect(() => {
-    fetchGalleryItem()
+    params.then(({ id }) => {
+      setGalleryId(id)
+      fetchGalleryItem(id)
+    })
   }, [])
 
-  const fetchGalleryItem = async () => {
+  const fetchGalleryItem = async (id: string) => {
     try {
-      const response = await fetch(`/api/gallery/${params.id}`)
+      const response = await fetch(`/api/gallery/${id}`)
       if (response.ok) {
         const data = await response.json()
         setGalleryItem(data)
@@ -42,9 +46,9 @@ export default function DeleteGalleryItemPage({ params }: { params: { id: string
     setError('')
 
     try {
-      console.log('🗑️ Deleting gallery item:', params.id)
+      console.log('🗑️ Deleting gallery item:', galleryId)
 
-      const response = await fetch(`/api/gallery?id=${params.id}`, {
+      const response = await fetch(`/api/gallery?id=${galleryId}`, {
         method: 'DELETE',
       })
 
