@@ -175,7 +175,7 @@ export default async function HomePage() {
         <section id="about" className="py-8 md:py-12">
           <div className="w-full px-4">
             <Link 
-              href="/team"
+              href="/about"
               className="group relative block overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 h-[350px] md:h-[400px]"
             >
               {/* Full Background Image */}
