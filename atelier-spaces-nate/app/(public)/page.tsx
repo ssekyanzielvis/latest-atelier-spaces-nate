@@ -171,7 +171,7 @@ export default async function HomePage() {
       {/* About Us Section - Visual Card with Overlay */}
       {aboutSection && aboutSection.image && (
         <section id="about" className="py-8 md:py-12">
-          <div className="w-full px-4">
+          <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8">
             <Link 
               href="/about"
               className="group relative block overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 h-[350px] md:h-[400px]"
@@ -214,7 +214,7 @@ export default async function HomePage() {
 
       {/* Gallery Preview Section - 4 Items in 2x2 Grid */}
       <section id="gallery-preview" className="py-8 md:py-12 bg-gray-50">
-        <div className="w-full px-4">
+        <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8">
           <div className="flex items-center justify-between mb-8">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900">Gallery</h2>
             <Link 
@@ -287,7 +287,7 @@ export default async function HomePage() {
 
       {/* Featured Works Section */}
       <section id="featured-works" className="py-8 md:py-12 bg-white">
-        <div className="w-full px-4">
+        <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8">
           <div className="flex items-center justify-between mb-8">
             <div>
               <h2 className="text-3xl md:text-4xl font-bold text-gray-900">Featured Works</h2>
@@ -388,7 +388,7 @@ export default async function HomePage() {
 
       {/* Other Works Section (Categories) */}
       <section id="work-categories" className="py-8 md:py-12 bg-gray-50">
-        <div className="w-full px-4">
+        <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8">
           <div className="mb-8">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900">Other Works</h2>
           </div>
@@ -443,7 +443,7 @@ export default async function HomePage() {
 
       {/* Our Team Section */}
       <section id="team" className="py-8 md:py-12 bg-white">
-        <div className="w-full px-4">
+        <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8">
           <div className="mb-8">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900">Our Team</h2>
           </div>
@@ -510,7 +510,7 @@ export default async function HomePage() {
 
       {/* CTA Section */}
       <section className="py-12 md:py-16 bg-black text-white">
-        <div className="w-full px-4 text-center">
+        <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8 text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">Ready to Start Your Project?</h2>
           <p className="text-lg text-white/80 mb-6 line-clamp-2">
             Let's collaborate to bring your creative vision to life

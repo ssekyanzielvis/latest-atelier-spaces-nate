@@ -65,14 +65,14 @@ export default function ProjectsPage() {
     <main className="bg-white min-h-screen">
       {/* Page Header */}
       <div className="bg-black text-white py-16 md:py-24">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">Our Projects</h1>
           <p className="text-lg text-gray-300">Explore our latest architectural projects and designs</p>
         </div>
       </div>
 
-      {/* Projects Grid - Full Width */}
-      <div className="w-full px-4 py-16 md:py-24">
+      {/* Projects Grid */}
+      <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8 py-16 md:py-24">
         {error && (
           <div className="mb-8 p-4 bg-red-50 border border-red-200 rounded-lg text-center max-w-4xl mx-auto">
             <p className="text-red-800">{error}</p>

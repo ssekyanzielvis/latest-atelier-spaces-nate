@@ -77,7 +77,7 @@ export default async function WorkDetailPage({ params }: { params: Promise<{ slu
 
   return (
     <div className="py-12 md:py-20">
-      <div className="container mx-auto px-4">
+      <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8">
         {/* Hero Image */}
         <div className="relative aspect-[21/9] overflow-hidden rounded-lg mb-8">
           <ImageWithError

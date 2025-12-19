@@ -57,7 +57,7 @@ export default async function AboutPage() {
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
           </div>
           <div className="absolute inset-0 flex items-end">
-            <div className="w-full px-4 md:px-8 pb-12 md:pb-16">
+            <div className="max-w-7xl mx-auto w-full px-4 md:px-6 lg:px-8 pb-12 md:pb-16">
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4">
                 {aboutSection.title}
               </h1>
@@ -68,7 +68,7 @@ export default async function AboutPage() {
 
       {/* Main Content Section */}
       <section className="py-12 md:py-16 lg:py-20">
-        <div className="max-w-5xl mx-auto px-4 md:px-8">
+        <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8">
           {/* Main Description */}
           <div className="bg-white rounded-xl shadow-lg p-8 md:p-10 lg:p-12 mb-12">
             <p className="text-lg md:text-xl text-gray-700 leading-relaxed whitespace-pre-wrap">
