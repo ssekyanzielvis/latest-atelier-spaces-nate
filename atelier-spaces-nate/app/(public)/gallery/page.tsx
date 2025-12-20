@@ -89,7 +89,7 @@ export default async function GalleryPage() {
                           <div className="relative h-64 bg-gray-100 overflow-hidden">
                             {item.media_type === 'video' ? (
                               <video
-                                src={item.media_url || item.image_url}
+                                src={item.media_url}
                                 controls
                                 className="w-full h-full object-cover"
                                 preload="metadata"
@@ -98,7 +98,7 @@ export default async function GalleryPage() {
                               </video>
                             ) : (
                               <Image
-                                src={item.media_url || item.image_url}
+                                src={item.media_url}
                                 alt={item.title}
                                 fill
                                 className="object-cover group-hover:scale-110 transition-transform duration-500"
@@ -140,7 +140,7 @@ export default async function GalleryPage() {
                         <div className="relative h-64 bg-gray-100 overflow-hidden">
                           {item.media_type === 'video' ? (
                             <video
-                              src={item.media_url || item.image_url}
+                              src={item.media_url}
                               controls
                               className="w-full h-full object-cover"
                               preload="metadata"
@@ -149,7 +149,7 @@ export default async function GalleryPage() {
                             </video>
                           ) : (
                             <Image
-                              src={item.media_url || item.image_url}
+                              src={item.media_url}
                               alt={item.title}
                               fill
                               className="object-cover group-hover:scale-110 transition-transform duration-500"

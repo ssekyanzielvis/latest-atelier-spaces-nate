@@ -194,7 +194,7 @@ export default async function HomePage() {
           {galleryItems.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-1.5">
               {galleryItems.map((item) => {
-                const mediaUrl = item.media_url || item.image_url || ''
+                const mediaUrl = item.media_url || ''
                 return (
                 <div
                   key={item.id}
