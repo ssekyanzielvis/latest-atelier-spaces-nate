@@ -80,7 +80,7 @@ export default function CollaboratePage() {
             </div>
           ) : (
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-1.5">
                 <div>
                   <Label htmlFor="name">Name *</Label>
                   <Input
@@ -109,7 +109,7 @@ export default function CollaboratePage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-1.5">
                 <div>
                   <Label htmlFor="company">Company</Label>
                   <Input
@@ -131,7 +131,7 @@ export default function CollaboratePage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-1.5">
                 <div>
                   <Label htmlFor="project_type">Project Type</Label>
                   <Input

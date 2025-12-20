@@ -91,7 +91,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
 
       {/* Content */}
       <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8 py-16 md:py-24">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
           {/* Main Content */}
           <div className="lg:col-span-2">
             <div className="mb-8">
@@ -131,7 +131,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
             {/* Project Information */}
             <div className="mt-12 bg-gray-50 rounded-lg p-6">
               <h2 className="text-xl font-bold mb-4">Project Information</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-1.5">
                 <div>
                   <p className="text-sm text-gray-600 mb-1">Project ID</p>
                   <p className="font-medium text-gray-900">{project.id}</p>

@@ -8,7 +8,7 @@ export default function ContactPage() {
             Get in touch with us for inquiries and collaborations
           </p>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-2 mt-12">
             <div>
               <h3 className="font-semibold text-lg mb-2">Address</h3>
               <p className="text-muted-foreground">

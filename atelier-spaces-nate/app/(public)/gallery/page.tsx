@@ -80,7 +80,7 @@ export default async function GalleryPage() {
                     <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-6">
                       {category}
                     </h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                       {categoryItems.map((item: any) => (
                         <div
                           key={item.id}

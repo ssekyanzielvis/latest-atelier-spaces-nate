@@ -77,7 +77,7 @@ export default async function AboutPage() {
           </div>
 
           {/* Mission, Vision, Values in Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-2 mb-12">
             {/* Mission */}
             {aboutSection.mission && (
               <div className="bg-white rounded-xl shadow-lg overflow-hidden border-t-4 border-blue-600">

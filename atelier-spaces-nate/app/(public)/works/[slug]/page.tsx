@@ -90,7 +90,7 @@ export default async function WorkDetailPage({ params }: { params: Promise<{ slu
           />
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
           {/* Main Content */}
           <div className="lg:col-span-2">
             <div className="mb-8">
@@ -114,7 +114,7 @@ export default async function WorkDetailPage({ params }: { params: Promise<{ slu
             {galleryImages.length > 0 && (
               <div className="mt-12">
                 <h2 className="text-2xl font-bold mb-6">Gallery</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-1">
                   {galleryImages.map((image, index) => (
                     <div key={index} className="relative aspect-video overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-shadow">
                       <ImageWithError
@@ -133,7 +133,7 @@ export default async function WorkDetailPage({ params }: { params: Promise<{ slu
             {/* Additional Information */}
             <div className="mt-12 bg-gray-50 rounded-lg p-6">
               <h2 className="text-xl font-bold mb-4">Work Information</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-1.5">
                 <div>
                   <p className="text-sm text-gray-600 mb-1">Work ID</p>
                   <p className="font-medium text-gray-900">{work.id}</p>

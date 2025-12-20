@@ -54,7 +54,7 @@ export default async function TeamPage() {
         </div>
 
         {teamMembers.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2">
             {teamMembers.map((member) => (
               <div key={member.id} className="group">
                 <div className="relative aspect-[3/4] overflow-hidden rounded-lg bg-muted mb-4">

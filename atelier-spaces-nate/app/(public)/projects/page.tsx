@@ -84,7 +84,7 @@ export default function ProjectsPage() {
             <p className="text-gray-600 text-lg">No projects available at this time.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
             {projects.map((project) => (
               <Link
                 key={project.id}
