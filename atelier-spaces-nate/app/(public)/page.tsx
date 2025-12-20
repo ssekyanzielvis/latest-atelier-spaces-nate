@@ -205,7 +205,7 @@ export default async function HomePage() {
           </div>
 
           {galleryItems.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-1.5">
               {galleryItems.map((item) => {
                 const mediaUrl = item.media_url || item.image_url || ''
                 return (
@@ -293,7 +293,7 @@ export default async function HomePage() {
           {featuredWorks.length > 0 ? (
             <>
               {/* Display first 3 works - First 2 in portrait, third in landscape */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-8">
                 {featuredWorks.slice(0, 3).map((work, index) => (
                   <Link 
                     key={work.id} 
@@ -384,7 +384,7 @@ export default async function HomePage() {
           </div>
 
           {workCategories.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
               {workCategories.map((category) => {
                 const coverMediaUrl = (category as any).cover_media || category.cover_image || ''
                 const mediaType = (category as any).media_type || 'image'
@@ -457,7 +457,7 @@ export default async function HomePage() {
           </div>
 
           {teamMembers.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
               {teamMembers.map((member: TeamMember) => (
                 <div
                   key={member.id}
