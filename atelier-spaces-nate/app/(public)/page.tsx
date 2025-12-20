@@ -205,12 +205,14 @@ export default async function HomePage() {
                     {item.media_type === 'video' ? (
                       <>
                         <video
-                          src={mediaUrl}
                           className="w-full h-full object-cover"
-                          preload="metadata"
-                          muted
+                          controls
+                          controlsList="nodownload"
+                          preload="auto"
                           playsInline
                         >
+                          <source src={mediaUrl} type="video/mp4" />
+                          <source src={mediaUrl} type="video/webm" />
                           Your browser does not support the video tag.
                         </video>
                         {/* Gradient Overlay */}

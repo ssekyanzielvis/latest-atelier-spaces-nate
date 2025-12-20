@@ -89,11 +89,14 @@ export default async function GalleryPage() {
                           <div className="relative h-64 bg-gray-100 overflow-hidden">
                             {item.media_type === 'video' ? (
                               <video
-                                src={item.media_url}
                                 controls
+                                controlsList="nodownload"
+                                preload="auto"
                                 className="w-full h-full object-cover"
-                                preload="metadata"
+                                playsInline
                               >
+                                <source src={item.media_url} type="video/mp4" />
+                                <source src={item.media_url} type="video/webm" />
                                 Your browser does not support the video tag.
                               </video>
                             ) : (
@@ -140,11 +143,14 @@ export default async function GalleryPage() {
                         <div className="relative h-64 bg-gray-100 overflow-hidden">
                           {item.media_type === 'video' ? (
                             <video
-                              src={item.media_url}
                               controls
+                              controlsList="nodownload"
+                              preload="auto"
                               className="w-full h-full object-cover"
-                              preload="metadata"
+                              playsInline
                             >
+                              <source src={item.media_url} type="video/mp4" />
+                              <source src={item.media_url} type="video/webm" />
                               Your browser does not support the video tag.
                             </video>
                           ) : (

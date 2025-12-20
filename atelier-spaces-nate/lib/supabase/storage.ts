@@ -30,17 +30,36 @@ const FOLDER_TO_BUCKET: Record<string, string> = {
 
 export async function uploadMedia(file: File, folder: string = 'general'): Promise<string> {
   const bucketName = FOLDER_TO_BUCKET[folder] || STORAGE_BUCKETS.COLLABORATIONS
-  const fileExt = file.name.split('.').pop()
+  const fileExt = file.name.split('.').pop()?.toLowerCase()
   const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`
 
-  console.log(`Uploading to bucket: ${bucketName}, file: ${fileName}, type: ${file.type}`)
+  // Ensure proper MIME type for videos
+  let contentType = file.type
+  if (!contentType || contentType === 'application/octet-stream') {
+    // Detect MIME type from extension if not provided
+    const mimeTypes: Record<string, string> = {
+      'mp4': 'video/mp4',
+      'webm': 'video/webm',
+      'mov': 'video/quicktime',
+      'avi': 'video/x-msvideo',
+      'mkv': 'video/x-matroska',
+      'jpg': 'image/jpeg',
+      'jpeg': 'image/jpeg',
+      'png': 'image/png',
+      'webp': 'image/webp',
+      'gif': 'image/gif'
+    }
+    contentType = mimeTypes[fileExt || ''] || file.type
+  }
+
+  console.log(`Uploading to bucket: ${bucketName}, file: ${fileName}, type: ${contentType}`)
 
   const { data, error } = await supabaseAdmin.storage
     .from(bucketName)
     .upload(fileName, file, {
       cacheControl: '3600',
       upsert: false,
-      contentType: file.type,
+      contentType: contentType,
     })
 
   if (error) {
