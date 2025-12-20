@@ -115,7 +115,6 @@ async function getTeamMembers(): Promise<TeamMember[]> {
     .select('*')
     .eq('is_active', true)
     .order('order_position', { ascending: true })
-    .limit(4)
 
   if (error) {
     console.error('Error fetching team members:', error)
