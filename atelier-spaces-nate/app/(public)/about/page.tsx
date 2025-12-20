@@ -71,7 +71,7 @@ export default async function AboutPage() {
         <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8">
           {/* Main Description */}
           <div className="bg-white rounded-xl shadow-lg p-8 md:p-10 lg:p-12 mb-12">
-            <p className="text-lg md:text-xl text-gray-700 leading-relaxed whitespace-pre-wrap">
+            <p className="text-xl md:text-2xl text-gray-900 leading-relaxed whitespace-pre-wrap font-semibold">
               {aboutSection.content}
             </p>
           </div>
@@ -88,7 +88,7 @@ export default async function AboutPage() {
                     </svg>
                     <h3 className="text-2xl font-bold text-gray-900">Our Mission</h3>
                   </div>
-                  <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">
+                  <p className="text-base md:text-lg text-gray-900 leading-relaxed whitespace-pre-wrap font-medium">
                     {aboutSection.mission}
                   </p>
                 </div>
@@ -106,7 +106,7 @@ export default async function AboutPage() {
                     </svg>
                     <h3 className="text-2xl font-bold text-gray-900">Our Vision</h3>
                   </div>
-                  <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">
+                  <p className="text-base md:text-lg text-gray-900 leading-relaxed whitespace-pre-wrap font-medium">
                     {aboutSection.vision}
                   </p>
                 </div>
@@ -123,7 +123,7 @@ export default async function AboutPage() {
                     </svg>
                     <h3 className="text-2xl font-bold text-gray-900">Core Values</h3>
                   </div>
-                  <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">
+                  <p className="text-base md:text-lg text-gray-900 leading-relaxed whitespace-pre-wrap font-medium">
                     {aboutSection.values}
                   </p>
                 </div>
