@@ -228,7 +228,7 @@ export default async function HomePage() {
                           errorMessage="Failed to load gallery image"
                         />
                         {/* Gradient Overlay */}
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                       </>
                     )}
                   </div>
@@ -301,7 +301,7 @@ export default async function HomePage() {
                         errorMessage="Failed to load work image"
                       />
                       {/* Gradient Overlay */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent"></div>
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                     </div>
 
                     {/* Content Overlay - Max 3 Lines */}
@@ -406,7 +406,7 @@ export default async function HomePage() {
                         )}
                       </>
                     )}
-                    <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/40 to-black/80"></div>
+                    <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/40 to-black/80 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                     <div className="absolute inset-0 flex flex-col justify-end p-6 md:p-8">
                       <h3 className="text-2xl md:text-3xl font-bold text-white mb-2 line-clamp-1 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
                         {category.name}
