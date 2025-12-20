@@ -127,41 +127,6 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
                 <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">{project.other_info}</p>
               </div>
             )}
-
-            {/* Project Information */}
-            <div className="mt-12 bg-gray-50 rounded-lg p-6">
-              <h2 className="text-xl font-bold mb-4">Project Information</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-1.5">
-                <div>
-                  <p className="text-sm text-gray-600 mb-1">Project ID</p>
-                  <p className="font-medium text-gray-900">{project.id}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-600 mb-1">Slug</p>
-                  <p className="font-medium text-gray-900">{project.slug}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-600 mb-1">Created</p>
-                  <p className="font-medium text-gray-900">
-                    {new Date(project.created_at).toLocaleDateString('en-US', {
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric'
-                    })}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-600 mb-1">Last Updated</p>
-                  <p className="font-medium text-gray-900">
-                    {new Date(project.updated_at).toLocaleDateString('en-US', {
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric'
-                    })}
-                  </p>
-                </div>
-              </div>
-            </div>
           </div>
 
           {/* Sidebar */}
