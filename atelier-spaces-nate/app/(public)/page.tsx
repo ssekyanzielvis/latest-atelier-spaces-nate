@@ -494,15 +494,15 @@ export default async function HomePage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-12 md:py-16 bg-black text-white">
+      <section className="py-12 md:py-16 bg-white text-black">
         <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8 text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">Ready to Start Your Project?</h2>
-          <p className="text-lg text-white/80 mb-6 line-clamp-2">
+          <p className="text-lg text-black/80 mb-6 line-clamp-2">
             Let's collaborate to bring your creative vision to life
           </p>
           <Link 
             href="/collaborate"
-            className="inline-flex items-center gap-2 px-8 py-3 bg-white text-black rounded-lg hover:bg-gray-100 transition-colors font-semibold"
+            className="inline-flex items-center gap-2 px-8 py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors font-semibold"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
