@@ -58,7 +58,7 @@ export default async function AboutPage() {
           </div>
           <div className="absolute inset-0 flex items-end">
             <div className="max-w-7xl mx-auto w-full px-4 md:px-6 lg:px-8 pb-12 md:pb-16">
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-4">
                 {aboutSection.title}
               </h1>
             </div>
