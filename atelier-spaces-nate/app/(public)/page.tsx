@@ -465,10 +465,10 @@ export default async function HomePage() {
 
                   {/* Details Below Image */}
                   <div className="p-6">
-                    <h3 className="text-xl font-bold text-gray-900 mb-2 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">{member.name}</h3>
-                    <p className="text-sm text-gray-600 mb-3 opacity-0 group-hover:opacity-100 transition-all duration-300 delay-75 transform translate-y-2 group-hover:translate-y-0">{member.position}</p>
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">{member.name}</h3>
+                    <p className="text-sm text-gray-700 mb-3">{member.position}</p>
                     {member.bio && (
-                      <p className="text-sm text-gray-700 opacity-0 group-hover:opacity-100 transition-all duration-300 delay-100 transform translate-y-2 group-hover:translate-y-0">{member.bio}</p>
+                      <p className="text-sm text-gray-600">{member.bio}</p>
                     )}
                   </div>
                 </div>
