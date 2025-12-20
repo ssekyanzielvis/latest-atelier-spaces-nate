@@ -458,57 +458,34 @@ export default async function HomePage() {
           </div>
 
           {teamMembers.length > 0 ? (
-            <>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
-                {teamMembers.map((member: TeamMember) => (
-                  <Link
-                    key={member.id}
-                    href="/team"
-                    className="group relative overflow-hidden rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300 h-[350px]"
-                  >
-                    {/* Full Background Image */}
-                    <div className="absolute inset-0 w-full h-full">
-                      <ImageWithError
-                        src={member.image}
-                        alt={member.name}
-                        fill
-                        className="object-cover group-hover:scale-110 transition-transform duration-500"
-                        errorMessage="Failed to load team member image"
-                      />
-                      {/* Gradient Overlay */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/60 to-transparent"></div>
-                    </div>
-
-                    {/* Content Overlay - Max 3 Lines */}
-                    <div className="absolute inset-0 flex flex-col justify-end p-6 text-white z-10">
-                      <h3 className="text-xl font-bold mb-1 line-clamp-1">{member.name}</h3>
-                      <p className="text-sm text-gray-300 mb-2 line-clamp-1">{member.position}</p>
-                      {member.bio && (
-                        <p className="text-sm text-gray-200 line-clamp-1 mb-3">{member.bio}</p>
-                      )}
-                      <div className="flex items-center justify-end pt-3 border-t border-white/20">
-                        <span className="text-white font-semibold group-hover:translate-x-1 transition-transform inline-flex items-center gap-2 text-sm">
-                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                          </svg>
-                          View Profile
-                        </span>
-                      </div>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-              
-              <div className="text-center">
-                <Link 
-                  href="/team"
-                  className="inline-block px-8 py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors"
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+              {teamMembers.map((member: TeamMember) => (
+                <div
+                  key={member.id}
+                  className="bg-white rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden"
                 >
-                  View All Team Members
-                </Link>
-              </div>
-            </>
+                  {/* Profile Image */}
+                  <div className="relative w-full h-64 overflow-hidden">
+                    <ImageWithError
+                      src={member.image}
+                      alt={member.name}
+                      fill
+                      className="object-cover transition-transform duration-500"
+                      errorMessage="Failed to load team member image"
+                    />
+                  </div>
+
+                  {/* Details Below Image */}
+                  <div className="p-6">
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">{member.name}</h3>
+                    <p className="text-sm text-gray-600 mb-3">{member.position}</p>
+                    {member.bio && (
+                      <p className="text-sm text-gray-700">{member.bio}</p>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
           ) : (
             <div className="text-center py-12 text-gray-500">
               <p>No team members available at the moment.</p>
