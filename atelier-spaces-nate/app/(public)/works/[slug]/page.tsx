@@ -129,41 +129,6 @@ export default async function WorkDetailPage({ params }: { params: Promise<{ slu
                 </div>
               </div>
             )}
-
-            {/* Additional Information */}
-            <div className="mt-12 bg-gray-50 rounded-lg p-6">
-              <h2 className="text-xl font-bold mb-4">Work Information</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-1.5">
-                <div>
-                  <p className="text-sm text-gray-600 mb-1">Work ID</p>
-                  <p className="font-medium text-gray-900">{work.id}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-600 mb-1">Slug</p>
-                  <p className="font-medium text-gray-900">{work.slug}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-600 mb-1">Created</p>
-                  <p className="font-medium text-gray-900">
-                    {new Date(work.created_at).toLocaleDateString('en-US', {
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric'
-                    })}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-600 mb-1">Last Updated</p>
-                  <p className="font-medium text-gray-900">
-                    {new Date(work.updated_at).toLocaleDateString('en-US', {
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric'
-                    })}
-                  </p>
-                </div>
-              </div>
-            </div>
           </div>
 
           {/* Sidebar */}
