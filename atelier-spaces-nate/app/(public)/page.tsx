@@ -12,20 +12,7 @@ type WorkCategory = Database['public']['Tables']['work_categories']['Row']
 type AboutSection = Database['public']['Tables']['about_section']['Row']
 type TeamMember = Database['public']['Tables']['team_members']['Row']
 type SloganSection = Database['public']['Tables']['slogan_section']['Row']
-
-type GalleryItem = {
-  id: string
-  title: string
-  description: string | null
-  image_url?: string
-  media_url?: string
-  media_type?: 'image' | 'video'
-  category: string | null
-  order_position: number
-  is_active: boolean
-  created_at: string
-  updated_at: string
-}
+type GalleryItem = Database['public']['Tables']['gallery']['Row']
 
 
 async function getHeroSlides(): Promise<HeroSlide[]> {
