@@ -88,7 +88,7 @@ export default function MediaUpload({
   }
 
   const acceptedTypes = acceptVideo 
-    ? 'image/jpeg,image/png,image/webp,image/gif,video/mp4,video/webm,video/quicktime,video/x-msvideo,video/x-matroska'
+    ? 'image/jpeg,image/png,image/webp,image/gif,video/mp4,video/webm,video/quicktime,video/x-msvideo,video/x-matroska,.mp4,.webm,.mov,.avi,.mkv'
     : 'image/jpeg,image/png,image/webp,image/gif'
 
   return (
