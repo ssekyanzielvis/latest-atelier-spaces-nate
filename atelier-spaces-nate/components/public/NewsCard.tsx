@@ -37,14 +37,14 @@ export default function NewsCard({ article }: NewsCardProps) {
         )}
       </div>
       <div className="mt-3">
-        <p className="text-xs text-muted-foreground">{formatDate(article.published_date)}</p>
-        <h3 className="font-semibold text-lg mt-1 group-hover:text-primary transition-colors line-clamp-2">
+        <p className="text-xs text-muted-foreground opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">{formatDate(article.published_date)}</p>
+        <h3 className="font-semibold text-lg mt-1 line-clamp-2 opacity-0 group-hover:opacity-100 transition-all duration-300 delay-75 transform translate-y-2 group-hover:translate-y-0">
           {article.title}
         </h3>
         {article.excerpt && (
-          <p className="text-sm text-muted-foreground mt-2 line-clamp-2 mb-3">{article.excerpt}</p>
+          <p className="text-sm text-muted-foreground mt-2 line-clamp-2 mb-3 opacity-0 group-hover:opacity-100 transition-all duration-300 delay-100 transform translate-y-2 group-hover:translate-y-0">{article.excerpt}</p>
         )}
-        <div className="flex items-center justify-end pt-3 border-t border-gray-200 mt-3">
+        <div className="flex items-center justify-end pt-3 border-t border-gray-200 mt-3 opacity-0 group-hover:opacity-100 transition-all duration-300 delay-150 transform translate-y-2 group-hover:translate-y-0">
           <span className="text-black font-semibold group-hover:translate-x-1 transition-transform inline-flex items-center gap-2 text-sm">
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />

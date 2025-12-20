@@ -95,12 +95,12 @@ export default async function CategoryPage({ params }: { params: { slug: string 
                     />
                   </div>
                   <div className="p-6">
-                    <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-gray-700">
+                    <h3 className="text-xl font-bold text-gray-900 mb-2 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
                       {work.title}
                     </h3>
-                    <p className="text-gray-600 line-clamp-2">{work.description}</p>
+                    <p className="text-gray-600 line-clamp-2 opacity-0 group-hover:opacity-100 transition-all duration-300 delay-75 transform translate-y-2 group-hover:translate-y-0">{work.description}</p>
                     {work.year && (
-                      <p className="text-sm text-gray-500 mt-2">{work.year}</p>
+                      <p className="text-sm text-gray-500 mt-2 opacity-0 group-hover:opacity-100 transition-all duration-300 delay-100 transform translate-y-2 group-hover:translate-y-0">{work.year}</p>
                     )}
                   </div>
                 </Link>

@@ -81,19 +81,19 @@ export default async function WorksPage() {
 
                 {/* Content Overlay */}
                 <div className="absolute inset-0 flex flex-col justify-end p-6 text-white z-10">
-                  <h3 className="text-xl md:text-2xl font-bold mb-2 group-hover:text-gray-200 transition-colors">
+                  <h3 className="text-xl md:text-2xl font-bold mb-2 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
                     {work.title}
                   </h3>
-                  <p className="text-sm text-gray-300 line-clamp-2 mb-4">{work.description}</p>
+                  <p className="text-sm text-gray-300 line-clamp-2 mb-4 opacity-0 group-hover:opacity-100 transition-all duration-300 delay-75 transform translate-y-2 group-hover:translate-y-0">{work.description}</p>
                   
-                  <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center justify-between mb-4 opacity-0 group-hover:opacity-100 transition-all duration-300 delay-100 transform translate-y-2 group-hover:translate-y-0">
                     <div className="flex gap-3 text-sm text-gray-200">
                       {work.client && <span className="font-medium">Client: {work.client}</span>}
                       {work.year && <span className="font-medium">Year: {work.year}</span>}
                     </div>
                   </div>
                   
-                  <div className="flex items-center justify-between pt-3 border-t border-white/20">
+                  <div className="flex items-center justify-between pt-3 border-t border-white/20 opacity-0 group-hover:opacity-100 transition-all duration-300 delay-150 transform translate-y-2 group-hover:translate-y-0">
                     <span className="text-sm text-gray-300 flex items-center gap-2">
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />

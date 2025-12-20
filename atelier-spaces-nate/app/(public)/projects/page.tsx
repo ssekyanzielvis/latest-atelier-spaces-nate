@@ -112,19 +112,19 @@ export default function ProjectsPage() {
 
                 {/* Content Overlay */}
                 <div className="absolute inset-0 flex flex-col justify-end p-6 text-white z-10">
-                  <h3 className="text-xl md:text-2xl font-bold mb-2 group-hover:text-gray-200 transition-colors">
+                  <h3 className="text-xl md:text-2xl font-bold mb-2 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
                     {project.title}
                   </h3>
-                  <p className="text-sm text-gray-200 mb-3 flex items-center gap-2">
+                  <p className="text-sm text-gray-200 mb-3 flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 delay-75 transform translate-y-2 group-hover:translate-y-0">
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                     </svg>
                     {project.location}
                   </p>
-                  <p className="text-sm text-gray-300 line-clamp-2 mb-4">{project.description}</p>
+                  <p className="text-sm text-gray-300 line-clamp-2 mb-4 opacity-0 group-hover:opacity-100 transition-all duration-300 delay-100 transform translate-y-2 group-hover:translate-y-0">{project.description}</p>
                   
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between opacity-0 group-hover:opacity-100 transition-all duration-300 delay-150 transform translate-y-2 group-hover:translate-y-0">
                     <div className="flex flex-wrap gap-2">
                       {project.year && (
                         <span className="text-xs bg-white/20 backdrop-blur-sm text-white px-3 py-1 rounded">

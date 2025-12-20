@@ -66,12 +66,12 @@ export default async function TeamPage() {
                     errorMessage="Failed to load team member image"
                   />
                 </div>
-                <h3 className="font-semibold text-xl">{member.name}</h3>
-                <p className="text-muted-foreground">{member.position}</p>
+                <h3 className="font-semibold text-xl opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">{member.name}</h3>
+                <p className="text-muted-foreground opacity-0 group-hover:opacity-100 transition-all duration-300 delay-75 transform translate-y-2 group-hover:translate-y-0">{member.position}</p>
                 {member.bio && (
-                  <p className="text-sm text-muted-foreground mt-2 line-clamp-3">{member.bio}</p>
+                  <p className="text-sm text-muted-foreground mt-2 line-clamp-3 opacity-0 group-hover:opacity-100 transition-all duration-300 delay-100 transform translate-y-2 group-hover:translate-y-0">{member.bio}</p>
                 )}
-                <div className="flex items-center justify-between mt-4 pt-3 border-t border-gray-200">
+                <div className="flex items-center justify-between mt-4 pt-3 border-t border-gray-200 opacity-0 group-hover:opacity-100 transition-all duration-300 delay-150 transform translate-y-2 group-hover:translate-y-0">
                   <div className="flex gap-3">
                   {member.email && (
                     <a

@@ -235,16 +235,16 @@ export default async function HomePage() {
 
                   {/* Content Overlay */}
                   <div className="absolute inset-0 flex flex-col justify-end p-6 text-white z-10">
-                    <h3 className="text-xl font-bold mb-2 line-clamp-1">
+                    <h3 className="text-xl font-bold mb-2 line-clamp-1 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
                       {item.title}
                     </h3>
                     {item.description && (
-                      <p className="text-sm text-gray-200 line-clamp-2">
+                      <p className="text-sm text-gray-200 line-clamp-2 opacity-0 group-hover:opacity-100 transition-all duration-300 delay-75 transform translate-y-2 group-hover:translate-y-0">
                         {item.description}
                       </p>
                     )}
                     {item.category && (
-                      <span className="inline-block mt-2 px-3 py-1 text-xs bg-white/20 rounded-full">
+                      <span className="inline-block mt-2 px-3 py-1 text-xs bg-white/20 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 delay-100 transform translate-y-2 group-hover:translate-y-0">
                         {item.category}
                       </span>
                     )}
@@ -306,11 +306,11 @@ export default async function HomePage() {
 
                     {/* Content Overlay - Max 3 Lines */}
                     <div className="absolute inset-0 flex flex-col justify-end p-6 text-white z-10">
-                      <h3 className="text-xl md:text-2xl font-bold mb-2 line-clamp-1 group-hover:text-gray-200 transition-colors">
+                      <h3 className="text-xl md:text-2xl font-bold mb-2 line-clamp-1 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
                         {work.title}
                       </h3>
-                      <p className="text-sm text-gray-300 line-clamp-2 mb-4">{work.description}</p>
-                      <div className="flex items-center justify-end pt-3 border-t border-white/20">
+                      <p className="text-sm text-gray-300 line-clamp-2 mb-4 opacity-0 group-hover:opacity-100 transition-all duration-300 delay-75 transform translate-y-2 group-hover:translate-y-0">{work.description}</p>
+                      <div className="flex items-center justify-end pt-3 border-t border-white/20 opacity-0 group-hover:opacity-100 transition-all duration-300 delay-150 transform translate-y-2 group-hover:translate-y-0">
                         <span className="text-white font-semibold group-hover:translate-x-1 transition-transform inline-flex items-center gap-2 text-sm">
                           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -408,15 +408,15 @@ export default async function HomePage() {
                     )}
                     <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/40 to-black/80"></div>
                     <div className="absolute inset-0 flex flex-col justify-end p-6 md:p-8">
-                      <h3 className="text-2xl md:text-3xl font-bold text-white mb-2 line-clamp-1 group-hover:scale-105 transition-transform">
+                      <h3 className="text-2xl md:text-3xl font-bold text-white mb-2 line-clamp-1 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
                         {category.name}
                       </h3>
                       {category.description && (
-                        <p className="text-white/90 text-sm md:text-base line-clamp-2 mb-3">
+                        <p className="text-white/90 text-sm md:text-base line-clamp-2 mb-3 opacity-0 group-hover:opacity-100 transition-all duration-300 delay-75 transform translate-y-2 group-hover:translate-y-0">
                           {category.description}
                         </p>
                       )}
-                      <div className="flex items-center justify-end pt-3 border-t border-white/20">
+                      <div className="flex items-center justify-end pt-3 border-t border-white/20 opacity-0 group-hover:opacity-100 transition-all duration-300 delay-150 transform translate-y-2 group-hover:translate-y-0">
                         <span className="text-white font-semibold group-hover:translate-x-1 transition-transform inline-flex items-center gap-2 text-sm">
                           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -465,10 +465,10 @@ export default async function HomePage() {
 
                   {/* Details Below Image */}
                   <div className="p-6">
-                    <h3 className="text-xl font-bold text-gray-900 mb-2">{member.name}</h3>
-                    <p className="text-sm text-gray-600 mb-3">{member.position}</p>
+                    <h3 className="text-xl font-bold text-gray-900 mb-2 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">{member.name}</h3>
+                    <p className="text-sm text-gray-600 mb-3 opacity-0 group-hover:opacity-100 transition-all duration-300 delay-75 transform translate-y-2 group-hover:translate-y-0">{member.position}</p>
                     {member.bio && (
-                      <p className="text-sm text-gray-700">{member.bio}</p>
+                      <p className="text-sm text-gray-700 opacity-0 group-hover:opacity-100 transition-all duration-300 delay-100 transform translate-y-2 group-hover:translate-y-0">{member.bio}</p>
                     )}
                   </div>
                 </div>

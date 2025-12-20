@@ -110,11 +110,11 @@ export default async function GalleryPage() {
                             )}
                           </div>
                           <div className="p-6">
-                            <h3 className="text-xl font-bold text-gray-900 mb-2">
+                            <h3 className="text-xl font-bold text-gray-900 mb-2 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
                               {item.title}
                             </h3>
                             {item.description && (
-                              <p className="text-gray-600 text-sm line-clamp-3">
+                              <p className="text-gray-600 text-sm line-clamp-3 opacity-0 group-hover:opacity-100 transition-all duration-300 delay-75 transform translate-y-2 group-hover:translate-y-0">
                                 {item.description}
                               </p>
                             )}
