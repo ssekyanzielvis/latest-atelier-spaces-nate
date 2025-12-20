@@ -49,11 +49,15 @@ export default async function WorksPage() {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-            {works.map((work) => (
+            {works.map((work, index) => (
               <Link
                 key={work.id}
                 href={`/works/${work.slug}`}
-                className="group relative overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-all duration-300 h-[400px] sm:h-[450px] md:h-[500px]"
+                className={`group relative overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-all duration-300 ${
+                  index === works.length - 1 && works.length % 2 === 1
+                    ? 'md:col-span-2 h-[350px] sm:h-[400px]'
+                    : 'h-[400px] sm:h-[450px] md:h-[500px]'
+                }`}
               >
                 {/* Full Background Image */}
                 <div className="absolute inset-0 w-full h-full">
