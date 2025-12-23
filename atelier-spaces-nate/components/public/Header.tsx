@@ -24,7 +24,7 @@ export default function Header() {
 
   const navLinks = [
     { href: '/', label: 'Home' },
-    { href: '/projects', label: 'Projects' },
+    { href: '/#work-categories', label: 'ANS Studio' },
     { href: '/works', label: 'Works' },
     // Gallery link removed
     { href: '/news', label: 'News' },
