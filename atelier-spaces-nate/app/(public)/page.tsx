@@ -271,11 +271,11 @@ export default async function HomePage() {
         </section>
       )}
 
-      {/* Other Works Section (Categories) */}
+      {/* ANS Studio Section (Categories) */}
       <section id="work-categories" className="py-8 md:py-12 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8">
           <div className="mb-8">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900">Other Works</h2>
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900">ANS Studio</h2>
           </div>
 
           {workCategories.length > 0 ? (
