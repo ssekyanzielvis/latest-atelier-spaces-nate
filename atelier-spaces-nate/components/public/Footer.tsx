@@ -11,9 +11,9 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 md:gap-12">
           {/* Brand Section */}
           <div className="space-y-4">
-            <h3 className="text-xl font-bold text-white">ATELIER</h3>
+            <h3 className="text-xl font-bold text-white">Atelier Spaces Nate</h3>
             <p className="text-white text-sm leading-relaxed">
-              A research-led design studio working with form, systems, and cultural intelligence, rooted in African contexts.
+              Atelier Spaces Nate is a multi disciplinary design studio working with form, systems, and cultural intelligence. Our work spans object design, spatial thinking, game systems, and speculative futures rooted in African context. 
             </p>
           </div>
 
