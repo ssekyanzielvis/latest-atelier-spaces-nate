@@ -141,14 +141,13 @@ async function getGalleryItems(): Promise<GalleryItem[]> {
 }
 
 export default async function HomePage() {
-  const [heroSlides, featuredWorks, workCategories, aboutSection, teamMembers, sloganSection, galleryItems] = await Promise.all([
+  const [heroSlides, featuredWorks, workCategories, aboutSection, teamMembers, sloganSection] = await Promise.all([
     getHeroSlides(),
     getFeaturedWorks(),
     getWorkCategories(),
     getAboutSection(),
     getTeamMembers(),
     getSloganSection(),
-    getGalleryItems(),
   ])
 
   return (
@@ -175,100 +174,7 @@ export default async function HomePage() {
         </section>
       )}
 
-      {/* Gallery Preview Section - 4 Items in 2x2 Grid */}
-      <section id="gallery-preview" className="py-8 md:py-12 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8">
-          <div className="flex items-center justify-between mb-8">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900">&nbsp;</h2>
-            <Link 
-              href="/gallery"
-              className="text-sm md:text-base font-semibold text-blue-600 hover:text-blue-800 inline-flex items-center gap-2"
-            >
-              View All
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-              </svg>
-            </Link>
-          </div>
-
-          {galleryItems.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-1.5">
-              {galleryItems.map((item) => {
-                const mediaUrl = item.media_url || ''
-                return (
-                <div
-                  key={item.id}
-                  className="group relative overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 h-[300px]"
-                >
-                  {/* Gallery Media */}
-                  <div className="absolute inset-0 w-full h-full">
-                    {item.media_type === 'video' ? (
-                      <>
-                        <video
-                          className="w-full h-full object-cover"
-                          controls
-                          controlsList="nodownload"
-                          preload="auto"
-                          playsInline
-                        >
-                          <source src={mediaUrl} type="video/mp4" />
-                          <source src={mediaUrl} type="video/webm" />
-                          Your browser does not support the video tag.
-                        </video>
-                        {/* Gradient Overlay */}
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
-                      </>
-                    ) : (
-                      <>
-                        <ImageWithError
-                          src={mediaUrl}
-                          alt={item.title}
-                          fill
-                          className="object-cover group-hover:scale-110 transition-transform duration-500"
-                          errorMessage="Failed to load gallery image"
-                        />
-                        {/* Gradient Overlay */}
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                      </>
-                    )}
-                  </div>
-
-                  {/* Content Overlay */}
-                  <div className="absolute inset-0 flex flex-col justify-end p-6 text-white z-10">
-                    <h3 className="text-xl font-bold mb-2 line-clamp-1 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
-                      {item.title}
-                    </h3>
-                    {item.description && (
-                      <p className="text-sm text-gray-200 line-clamp-2 opacity-0 group-hover:opacity-100 transition-all duration-300 delay-75 transform translate-y-2 group-hover:translate-y-0">
-                        {item.description}
-                      </p>
-                    )}
-                    {item.category && (
-                      <span className="inline-block mt-2 px-3 py-1 text-xs bg-white/20 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 delay-100 transform translate-y-2 group-hover:translate-y-0">
-                        {item.category}
-                      </span>
-                    )}
-                  </div>
-                </div>
-              )})}
-            </div>
-          ) : (
-            <div className="text-center py-12">
-              <p className="text-gray-600 mb-6">No gallery items available yet.</p>
-              <Link 
-                href="/gallery"
-                className="inline-flex items-center gap-2 px-6 py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors"
-              >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                </svg>
-                Visit Gallery
-              </Link>
-            </div>
-          )}
-        </div>
-      </section>
+      {/* Gallery section removed as requested */}
 
       {/* Featured Works Section */}
       <section id="featured-works" className="py-8 md:py-12 bg-white">

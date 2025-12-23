@@ -26,7 +26,7 @@ export default function Header() {
     { href: '/', label: 'Home' },
     { href: '/projects', label: 'Projects' },
     { href: '/works', label: 'Works' },
-    { href: '/gallery', label: 'Gallery' },
+    // Gallery link removed
     { href: '/news', label: 'News' },
     { href: '/team', label: 'Team' },
     { href: '/collaborate', label: 'Collaborate' },
