@@ -33,7 +33,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link href="/projects" className="text-white hover:text-gray-300 text-sm transition-colors">
-                  Projects
+            ANS Studio
                 </Link>
               </li>
               <li>
