@@ -1,8 +1,47 @@
+
 import Link from 'next/link'
 import { supabaseAdmin } from '@/lib/supabase/server'
 import HeroSection from '@/components/public/HeroSection'
 import ImageWithError from '@/components/ImageWithError'
 import { Database } from '@/types/database'
+
+// SEO: Next.js Metadata
+export const metadata = {
+  title: 'Atelier Spaces Nate | Inspiring Architecture & Design',
+  description: 'Discover innovative architecture, interior design, and creative works by Atelier Spaces Nate. Explore our portfolio, team, and collaborations.',
+  keywords: 'architecture, interior design, creative works, atelier, studio, portfolio, team, collaborations',
+  openGraph: {
+    title: 'Atelier Spaces Nate',
+    description: 'Discover innovative architecture, interior design, and creative works by Atelier Spaces Nate.',
+    url: 'https://your-domain.com/',
+    siteName: 'Atelier Spaces Nate',
+    images: [
+      {
+        url: 'https://your-domain.com/images/og-image.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'Atelier Spaces Nate - Inspiring Architecture & Design',
+      },
+    ],
+    locale: 'en_US',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Atelier Spaces Nate',
+    description: 'Discover innovative architecture, interior design, and creative works by Atelier Spaces Nate.',
+    images: ['https://your-domain.com/images/og-image.jpg'],
+    creator: '@your_twitter',
+  },
+  robots: {
+    index: true,
+    follow: true,
+    nocache: false,
+  },
+  alternates: {
+    canonical: 'https://your-domain.com/',
+  },
+};
 
 export const revalidate = 0
 
@@ -140,6 +179,7 @@ async function getGalleryItems(): Promise<GalleryItem[]> {
   return data || []
 }
 
+import { Fragment } from 'react';
 export default async function HomePage() {
   const [heroSlides, featuredWorks, workCategories, aboutSection, teamMembers, sloganSection] = await Promise.all([
     getHeroSlides(),
@@ -151,7 +191,22 @@ export default async function HomePage() {
   ])
 
   return (
-    <>
+    <Fragment>
+      {/* Structured Data for SEO */}
+      <script type="application/ld+json" suppressHydrationWarning dangerouslySetInnerHTML={{
+        __html: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Organization",
+          "name": "Atelier Spaces Nate",
+          "url": "https://your-domain.com/",
+          "logo": "https://your-domain.com/images/logo.png",
+          "sameAs": [
+            "https://www.facebook.com/yourpage",
+            "https://www.instagram.com/yourpage"
+          ],
+          "description": "Discover innovative architecture, interior design, and creative works by Atelier Spaces Nate. Explore our portfolio, team, and collaborations."
+        })
+      }} />
       {/* Dynamic Images Section (Hero Slides) */}
       <HeroSection slides={heroSlides} />
 
@@ -407,6 +462,6 @@ export default async function HomePage() {
           </Link>
         </div>
       </section>
-    </>
+    </Fragment>
   )
 }
