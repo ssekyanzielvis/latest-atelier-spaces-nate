@@ -483,6 +483,78 @@ export interface Database {
           updated_at?: string
         }
       }
+      moon_voyage: {
+        Row: {
+          id: string
+          title: string
+          subtitle: string | null
+          hero_image: string | null
+          vision_title: string
+          vision_content: string
+          vision_image: string | null
+          challenge_title: string
+          challenge_content: string
+          challenge_date: string | null
+          challenge_location: string | null
+          funding_goal: string | null
+          funding_description: string | null
+          funding_image: string | null
+          board_price: string | null
+          support_price: string | null
+          payment_momo: string | null
+          payment_bank: string | null
+          payment_message: string | null
+          is_active: boolean
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          title: string
+          subtitle?: string | null
+          hero_image?: string | null
+          vision_title: string
+          vision_content: string
+          vision_image?: string | null
+          challenge_title: string
+          challenge_content: string
+          challenge_date?: string | null
+          challenge_location?: string | null
+          funding_goal?: string | null
+          funding_description?: string | null
+          funding_image?: string | null
+          board_price?: string | null
+          support_price?: string | null
+          payment_momo?: string | null
+          payment_bank?: string | null
+          payment_message?: string | null
+          is_active?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          title?: string
+          subtitle?: string | null
+          hero_image?: string | null
+          vision_title?: string
+          vision_content?: string
+          challenge_title?: string
+          challenge_content?: string
+          challenge_date?: string | null
+          challenge_location?: string | null
+          funding_goal?: string | null
+          funding_description?: string | null
+          board_price?: string | null
+          support_price?: string | null
+          payment_momo?: string | null
+          payment_bank?: string | null
+          payment_message?: string | null
+          is_active?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+      }
       slogan_section: {
         Row: {
           id: string

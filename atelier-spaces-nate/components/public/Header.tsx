@@ -28,6 +28,7 @@ export default function Header() {
     { href: '/works', label: 'Works' },
     // Gallery link removed
     { href: '/news', label: 'News' },
+    { href: '/moon-voyage', label: 'Moon Voyage' },
     { href: '/team', label: 'Team' },
     { href: '/collaborate', label: 'Collaborate' },
   ]
@@ -38,9 +39,9 @@ export default function Header() {
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center hover:opacity-90 transition-opacity">
-            <img 
-              src="/images/logo.png" 
-              alt="Atelier Spaces Nate" 
+            <img
+              src="/images/logo.png"
+              alt="Atelier Spaces Nate"
               width="640"
               height="200"
               className="h-12 w-auto object-contain"

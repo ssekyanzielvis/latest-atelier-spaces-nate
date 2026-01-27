@@ -32,3 +32,8 @@ export type CollaborationInsert = Database['public']['Tables']['collaborations']
 
 export type AboutSection = Database['public']['Tables']['about_section']['Row']
 export type SloganSection = Database['public']['Tables']['slogan_section']['Row']
+
+export type MoonVoyage = Database['public']['Tables']['moon_voyage']['Row']
+export type MoonVoyageInsert = Database['public']['Tables']['moon_voyage']['Insert']
+export type MoonVoyageUpdate = Database['public']['Tables']['moon_voyage']['Update']
+

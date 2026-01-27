@@ -3,21 +3,22 @@
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { signOut } from '@/lib/supabase/auth'
-import { 
-  FiHome, 
-  FiFolder, 
-  FiFileText, 
-  FiImage, 
-  FiUsers, 
-  FiSliders, 
-  FiInfo, 
+import {
+  FiHome,
+  FiFolder,
+  FiFileText,
+  FiImage,
+  FiUsers,
+  FiSliders,
+  FiInfo,
   FiMessageSquare,
   FiLogOut,
   FiLayout,
   FiTag,
   FiLayers,
   FiShield,
-  FiX
+  FiX,
+  FiTarget
 } from 'react-icons/fi'
 
 const navItems = [
@@ -32,6 +33,7 @@ const navItems = [
   { href: '/admin/about', label: 'About', icon: FiInfo },
   //{ href: '/admin/gallery', label: 'Gallery', icon: FiImage },
   { href: '/admin/slogan', label: 'Slogan', icon: FiLayout },
+  { href: '/admin/moon-voyage', label: 'Moon Voyage', icon: FiTarget },
   { href: '/admin/collaborations', label: 'Collaborations', icon: FiMessageSquare },
   { href: '/admin/admins', label: 'Admin Users', icon: FiShield },
 ]
@@ -64,7 +66,7 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
           <h2 className="text-2xl font-bold tracking-tight text-white">ATELIER</h2>
           <p className="text-xs text-gray-500 mt-1.5 uppercase tracking-wide">Admin Portal</p>
         </Link>
-        
+
         {/* Close button for mobile */}
         <button
           onClick={onClose}
@@ -81,16 +83,15 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
           {navItems.map((item) => {
             const Icon = item.icon
             const isActive = pathname === item.href || pathname?.startsWith(item.href + '/')
-            
+
             return (
               <li key={item.href}>
                 <Link
                   href={item.href}
-                  className={`flex items-center gap-3 px-4 py-2.5 rounded-md transition-all duration-200 font-medium text-sm ${
-                    isActive
-                      ? 'bg-white text-gray-900 shadow-md'
-                      : 'text-gray-400 hover:bg-gray-800 hover:text-white'
-                  }`}
+                  className={`flex items-center gap-3 px-4 py-2.5 rounded-md transition-all duration-200 font-medium text-sm ${isActive
+                    ? 'bg-white text-gray-900 shadow-md'
+                    : 'text-gray-400 hover:bg-gray-800 hover:text-white'
+                    }`}
                 >
                   <Icon size={18} className="flex-shrink-0" />
                   <span>{item.label}</span>
