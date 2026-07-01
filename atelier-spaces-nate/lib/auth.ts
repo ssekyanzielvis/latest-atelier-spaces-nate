@@ -54,8 +54,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             isValid = submittedPassword === storedPasswordHash
             if (isValid) {
               const migratedHash = await hash(submittedPassword, 10)
-              await supabaseAdmin
-                .from('admins')
+              const adminsTable = supabaseAdmin.from('admins') as any
+              await adminsTable
                 .update({ password_hash: migratedHash })
                 .eq('id', admin.id)
             }
