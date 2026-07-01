@@ -28,7 +28,7 @@ export default function Header() {
     { href: '/works', label: 'Works' },
     // Gallery link removed
     { href: '/news', label: 'News' },
-    { href: '/moon-voyage', label: 'Moon Voyage' },
+    //{ href: '/moon-voyage', label: 'Moon Voyage' },
     { href: '/team', label: 'Team' },
     { href: '/collaborate', label: 'Collaborate' },
   ]

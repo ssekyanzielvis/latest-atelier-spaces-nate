@@ -12,13 +12,13 @@ export default function ContactPage() {
             <div>
               <h3 className="font-semibold text-lg mb-2">Address</h3>
               <p className="text-muted-foreground">
-                123 Architecture Street<br />
-                City, State 12345
+                Makerere<br />
+                Kampala Uganda
               </p>
             </div>
             <div>
               <h3 className="font-semibold text-lg mb-2">Phone</h3>
-              <p className="text-muted-foreground">+1 234 567 890</p>
+              <p className="text-muted-foreground">+256-770669746</p>
             </div>
             <div>
               <h3 className="font-semibold text-lg mb-2">Email</h3>
