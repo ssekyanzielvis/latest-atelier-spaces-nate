@@ -4,12 +4,11 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from 'next/navigation'
+import { signIn } from 'next-auth/react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { z } from 'zod'
-import { createSupabaseAuthClient } from '@/lib/supabase/auth'
-import Link from 'next/link'
 
 const loginSchema = z.object({
   email: z.string().email('Invalid email address'),
@@ -36,97 +35,20 @@ export default function AdminLoginPage() {
     setError(null)
 
     try {
-      const supabase = createSupabaseAuthClient()
-
-      console.log('Attempting login with email:', data.email)
-
-      const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
-        email: data.email,
+      const result = await signIn('credentials', {
+        username: data.email,
         password: data.password,
+        redirect: false,
+        callbackUrl: '/admin/dashboard',
       })
 
-      if (authError || !authData.user) {
-        console.error('Auth error:', authError)
-        setError(authError?.message || 'Invalid email or password')
+      if (!result || result.error) {
+        setError('Invalid credentials or access denied.')
         return
       }
 
-      console.log('Login successful for user:', authData.user.id)
-
-      // Verify user is an admin in the admins table
-      const { data: adminData, error: adminError } = (await (supabase
-        .from('admins') as any)
-        .select('id, is_active, role')
-        .eq('email', data.email)
-        .single()) as any
-
-      const admin = adminData as { id: string; is_active: boolean; role: string } | null
-
-      if (adminError || !admin || !admin.is_active) {
-        console.error('Admin check error:', adminError)
-        setError('Access denied. Admin account required.')
-        await supabase.auth.signOut()
-        return
-      }
-
-      console.log('Admin verified:', admin.id)
-      
-      // Get current session to verify it's set
-      const { data: sessionData } = await supabase.auth.getSession()
-      console.log('Session after login:', sessionData?.session?.user?.id)
-      const accessToken = sessionData?.session?.access_token
-      const refreshToken = sessionData?.session?.refresh_token
-      console.log('Auth token:', accessToken?.substring(0, 20) + '...')
-      
-      // Call server API to set cookies with the tokens
-      if (accessToken) {
-        console.log('Calling API to set cookies...')
-        try {
-          const cookieResponse = await fetch('/api/admin/set-cookies', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              accessToken,
-              refreshToken,
-            }),
-          })
-
-          if (cookieResponse.ok) {
-            console.log('Cookies set successfully via API')
-          } else {
-            console.error('Failed to set cookies via API:', cookieResponse.status)
-          }
-        } catch (cookieErr) {
-          console.error('Error calling set-cookies API:', cookieErr)
-        }
-      }
-      
-      // Check cookies in browser
-      console.log('Document cookies:', document.cookie.substring(0, 100))
-      
-      // Wait a moment for session to be established and cookies to be set
-      await new Promise(resolve => setTimeout(resolve, 800))
-      
-      console.log('Redirecting to dashboard...')
-      console.log('Before router.push - pathname:', window.location.pathname)
-      
-      try {
-        router.push('/admin/dashboard')
-        console.log('router.push called successfully')
-      } catch (routerErr) {
-        console.error('router.push error:', routerErr)
-      }
-      
-      try {
-        router.refresh()
-        console.log('router.refresh called successfully')
-      } catch (refreshErr) {
-        console.error('router.refresh error:', refreshErr)
-      }
-      
-      console.log('After redirect - pathname:', window.location.pathname)
+      router.push(result.url || '/admin/dashboard')
+      router.refresh()
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'An error occurred. Please try again.'
       console.error('[CATCH ERROR]', errorMessage)

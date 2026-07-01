@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { usePathname } from 'next/navigation'
 import '../globals.css'
 import AdminSidebar from '@/components/admin/Sidebar'
 import AdminHeader from '@/components/admin/AdminHeader'
@@ -12,6 +13,16 @@ export default function AdminLayout({
   children: React.ReactNode
 }) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const pathname = usePathname()
+
+  if (pathname === '/admin/login') {
+    return (
+      <>
+        <ToastNotifications />
+        {children}
+      </>
+    )
+  }
 
   return (
     <>

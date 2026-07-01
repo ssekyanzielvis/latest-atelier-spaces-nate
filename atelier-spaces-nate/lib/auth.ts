@@ -1,6 +1,6 @@
 import NextAuth from 'next-auth'
 import Credentials from 'next-auth/providers/credentials'
-import { compare } from 'bcryptjs'
+import { compare, hash } from 'bcryptjs'
 import { supabaseAdmin } from './supabase/server'
 import type { Database } from '@/types/database'
 
@@ -19,20 +19,47 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             return null
           }
 
+          const loginValue = String(credentials.username).trim()
+          const submittedPassword = String(credentials.password)
+
           const { data: admin, error } = await supabaseAdmin
             .from('admins')
-            .select('*')
-            .eq('username', credentials.username)
+            .select('id, username, email, password_hash, full_name, role, is_active')
+            .or(`username.eq.${loginValue},email.eq.${loginValue}`)
             .single() as { data: AdminRow | null; error: any }
 
           if (error || !admin || !admin.is_active) {
             return null
           }
 
-          const isValid = await compare(
-            credentials.password as string,
-            admin.password_hash
-          )
+          const storedPasswordHash = typeof admin.password_hash === 'string'
+            ? admin.password_hash
+            : null
+
+          if (!storedPasswordHash) {
+            console.error('Auth error: invalid password_hash type for admin', {
+              username: admin.username,
+              email: admin.email,
+              passwordHashType: typeof admin.password_hash,
+            })
+            return null
+          }
+
+          let isValid = false
+
+          // Support legacy plain-text values and migrate them to bcrypt on successful login.
+          if (storedPasswordHash.startsWith('$2a$') || storedPasswordHash.startsWith('$2b$') || storedPasswordHash.startsWith('$2y$')) {
+            isValid = await compare(submittedPassword, storedPasswordHash)
+          } else {
+            isValid = submittedPassword === storedPasswordHash
+            if (isValid) {
+              const migratedHash = await hash(submittedPassword, 10)
+              await supabaseAdmin
+                .from('admins')
+                .update({ password_hash: migratedHash })
+                .eq('id', admin.id)
+            }
+          }
 
           if (!isValid) {
             return null
@@ -64,6 +91,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   session: {
     strategy: 'jwt',
   },
-  secret: process.env.NEXTAUTH_SECRET,
+  secret: process.env.NEXTAUTH_SECRET || process.env.AUTH_SECRET,
   trustHost: true,
 })

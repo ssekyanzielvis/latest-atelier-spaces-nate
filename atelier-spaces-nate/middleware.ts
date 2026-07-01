@@ -9,8 +9,10 @@ export function middleware(request: NextRequest) {
     return NextResponse.next()
   }
 
-  // Check for Supabase auth token in cookies (multiple possible names)
-  const authToken = request.cookies.get('sb-access-token')?.value ||
+  // Check for auth token/session cookie (supports NextAuth and legacy Supabase cookies)
+  const authToken = request.cookies.get('authjs.session-token')?.value ||
+                    request.cookies.get('__Secure-authjs.session-token')?.value ||
+                    request.cookies.get('sb-access-token')?.value ||
                     request.cookies.get('sb:access-token')?.value ||
                     request.cookies.get('supabase-auth-token')?.value
 
