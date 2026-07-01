@@ -56,6 +56,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
               const migratedHash = await hash(submittedPassword, 10)
               await supabaseAdmin
                 .from('admins')
+                // @ts-expect-error - Supabase type inference issue with RLS policies
                 .update({ password_hash: migratedHash })
                 .eq('id', admin.id)
             }
