@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { hash } from 'bcryptjs'
 import { getSupabaseAuthAdmin } from '@/lib/supabase/auth'
 import { supabaseAdmin } from '@/lib/supabase/server'
 
@@ -6,7 +7,7 @@ export async function POST(request: Request) {
   try {
     const body: any = await request.json()
 
-    const { email, password, fullName } = body
+    const { email, password, fullName, username: providedUsername } = body
 
     // Validate required fields
     if (!email || !password || !fullName) {
@@ -24,7 +25,16 @@ export async function POST(request: Request) {
       )
     }
 
-    console.log('Creating new admin account:', email)
+    // Auto-generate username from email prefix if not provided
+    // e.g. namulishakirafavour@gmail.com → namulishakirafavour
+    const username = (providedUsername?.trim() || email.split('@')[0])
+      .toLowerCase()
+      .replace(/[^a-z0-9_]/g, '_')
+
+    console.log('Creating new admin account:', email, '| username:', username)
+
+    // Hash the password for the admins table
+    const passwordHash = await hash(password, 10)
 
     // Create Supabase auth user
     const authAdmin = getSupabaseAuthAdmin()
@@ -44,12 +54,14 @@ export async function POST(request: Request) {
 
     console.log('Auth user created:', authData.user.id)
 
-    // Add to admins table
+    // Add to admins table (username and password_hash are required NOT NULL columns)
     const { data: adminData, error: adminError } = (await (supabaseAdmin
       .from('admins') as any)
       .insert({
         id: authData.user.id,
         email,
+        username,
+        password_hash: passwordHash,
         full_name: fullName,
         is_active: true,
         role: 'admin',
@@ -71,7 +83,7 @@ export async function POST(request: Request) {
 
     const admin = adminData as any
 
-    console.log('Admin registered successfully:', admin.id)
+    console.log('Admin registered successfully:', admin.id, '| username:', admin.username)
 
     return NextResponse.json(
       {
@@ -80,6 +92,7 @@ export async function POST(request: Request) {
         admin: {
           id: admin.id,
           email: admin.email,
+          username: admin.username,
           fullName: admin.full_name,
         },
       },
